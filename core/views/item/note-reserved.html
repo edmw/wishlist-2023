@@ -1,0 +1,9 @@
+{% load static %}
+{% load i18n %}
+{% load core %}
+
+{% if wish.is_reserved %}
+<div class="mb-3 alert alert-warning" role="alert">
+    {% blocktranslate %}<strong>Please note:</strong> This wish has been <strong>reserved</strong> already. The user who reserved this wish will <strong>not</strong> be notified about any change you'll decide to make here!{% endblocktranslate %}
+</div>
+{% endif %}

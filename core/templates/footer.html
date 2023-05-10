@@ -1,0 +1,27 @@
+{% load static %}
+{% load i18n %}
+{% load core %}
+
+<footer>
+  <nav class="navbar navbar-expand navbar-dark bg-dark px-3">
+    <a class="navbar-brand d-none d-md-inline" href="{% url 'start' %}">{% translate "Wishlist" %}</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav me-auto">
+        <li class="nav-item active">
+          <a class="nav-link" href="{% url 'start' %}">{% translate "Home" %}</a>
+        </li>
+      </ul>
+      <ul class="navbar-nav ms-4">
+        <li class="nav-item active">
+          <a class="nav-link" href="{% url 'privacy-policy' %}">{% translate "Privacy policy" %}</a>
+        </li>
+        <li class="nav-item active">
+          <a class="nav-link" href="{% url 'legal-notice' %}">{% translate "Legal notice" %}</a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+</footer>

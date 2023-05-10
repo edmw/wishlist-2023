@@ -1,0 +1,16 @@
+{% load static %}
+{% load i18n %}
+{% load core %}
+
+<h3>Delete Wish</h3>
+{% if wish.deletable %}
+    <p>{% blocktranslate %}If you delete this wish, all data for that wish will be deleted. A wish already reserved but not yet received cannot be deleted.{% endblocktranslate %}</p>
+    <p>{% blocktranslate %}Caution! Deleted wishes cannot be restored.{% endblocktranslate %}</p>
+    <form method="get" action="{{ wish.get_absolute_delete_url }}" class="wl-form">
+        {% input_to_previous %}
+        {% include 'form_submit.html' with label=_('Delete this wish permanently') danger=True %}
+    </form>
+{% else %}
+    <p class="text-muted">{% blocktranslate %}This wish has already been reserved. A wish already reserved but not yet received cannot be deleted. It must first be released to be able to delete it.{% endblocktranslate %}</p>
+    {% include 'form_submit.html' with label=_('Delete this wish permanently') disabled=True %}
+{% endif %}

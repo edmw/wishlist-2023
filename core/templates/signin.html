@@ -1,0 +1,24 @@
+{% load static %}
+{% load i18n %}
+{% load core %}
+{% load socialaccount %}
+
+{% if core.access != "public" %}
+    <div class="mt-4 alert alert-primary" role="alert">
+        {% if core.access == "existing" %}
+            {% translate "Regrettably our service is restricted to returning users at the moment. If you are a not a returning user, but interested in using our service we kindly ask you to come back at a later time." %}
+        {% else %}
+            {% translate "Unfortunately we are unable to perform any sign ins at the moment. This is an unexpected condition and we try to restore the service into its normal state as soon as possible." %}
+        {% endif %}
+    </div>
+{% endif %}
+{% if core.access == "public" or core.access == "existing" %}
+    <ul id="signin" class="justify-content-md-start">
+        <li>
+            <form action="{% provider_login_url 'google' %}" method="post">
+                {% csrf_token %}
+                <button id="google-signin" class="btn btn-light px-4 mb-4" type="submit">{% translate "Sign in using Google" %}</button>
+            </form>
+        </li>
+    </ul>
+{% endif %}

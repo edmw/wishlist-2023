@@ -1,0 +1,61 @@
+{% load static %}
+{% load i18n %}
+{% load core %}
+
+<section>
+    <h3>
+        <a href="{{ user.get_absolute_lists_url }}">{% translate "Your Lists" %}</a> {% progress_meter wishlists_count core.maximum_number_of_wishlists_per_user %}
+    </h3>
+    {% if wishlists_count == 0 %}
+        <p class="mt-3 mb-4">
+            {% url 'list-create' user.id as create_url %}
+            {% make_linked_url create_url as linked_create_url %}
+            {% blocktranslate with url=linked_create_url %}You don't have a wish list yet. Start collecting your wishes on a <a href="{{ url }}">new wish list</a> right now.{% endblocktranslate %}
+        </p>
+    {% else %}
+        <div class="table-responsive">
+            <table class="table wl-table wl-lists">
+                <colgroup>
+                    <col />
+                    <col />
+                    <col />
+                    <col />
+                </colgroup>
+                <thead>
+                    <tr>
+                        <th>{% translate "Name" %}</th>
+                        <th>{% translate "Wishes" %}</th>
+                        <th>{% translate "Visibility" %}</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for wishlist in wishlists %}
+                        <tr>
+                            <td class="wl-title" data-label="{% translate 'Name' %}">
+                                <a href="{{ wishlist.get_absolute_url }}">{{ wishlist.name }}</a>
+                            </td>
+                            <td class="wl-items wl-actions wl-actions-left" data-label="{% translate 'Wishes' %}">
+                                <a href="{{ wishlist.get_absolute_items_url }}" title="{% translate 'Edit items' %}" class="btn btn-action me-3">{% icon "edit-2" %}</a>{{ wishlist.wishes_count }}
+                            </td>
+                            <td class="wl-visibility" data-label="{% translate 'Visibility' %}">{{ wishlist.visibility.display }}</td>
+                            <td class="wl-actions wl-actions-right" data-label="">
+                                <div class="btn-group" role="group">
+                                    <a href="{{ wishlist.get_absolute_export_url }}" title="{% translate 'Export list' %}" class="btn btn-action ms-3">{% icon "download" %}</a>
+                                    <a href="{% make_linked_url wishlist.get_absolute_edit_url %}" title="{% translate 'Edit list' %}" class="btn btn-action ms-3">{% icon "edit" %}</a>
+                                    <a href="{% make_linked_url wishlist.get_absolute_delete_url %}" title="{% translate 'Delete list' %}" class="btn btn-action ms-3">{% icon "delete" %}</a>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% endif %}
+    {% if wishlists_count < core.maximum_number_of_wishlists_per_user %}
+        <div class="btn-toolbar justify-content-center justify-content-sm-start mt-4 mb-5">
+            <a class="btn btn-secondary me-3" href="{% linked_url 'list-create' user.id %}">{% translate "Create new List" %}</a>
+            <a class="btn btn-link text-secondary me-3" href="#">{% translate "Import list" %}</a>
+        </div>
+    {% endif %}
+</section>

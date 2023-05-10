@@ -1,0 +1,50 @@
+{% extends "page.html" %}
+
+{% load static %}
+{% load i18n %}
+{% load core %}
+
+{% block header %}
+    {% with title="Notifications" %}
+        {{ block.super }}
+    {% endwith %}
+{% endblock header %}
+{% block content %}
+    <div class="content">
+        <h3>{% translate "Test Notifications" %}</h3>
+        <section>
+            <p>{% translate "A message was sent to these Notification Services:" %}</p>
+            <div class="container-fluid keys-values">
+                <div class="row">
+                    <div class="col-sm-6 key">{% translate "Email" %}</div>
+                    <div class="col-sm-6 value">
+                        {% if send_result.email == True %}
+                            {% cheering "Successfully sent" %}
+                        {% else %}
+                            {% if send_result.email == False %}
+                                {% booing "Failure" %}
+                            {% else %}
+                                {% informative "Not enabled" %}
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6 key">{% translate "Pushover" %}</div>
+                    <div class="col-sm-6 value">
+                        {% if send_result.pushover == True %}
+                            {% cheering "Successfully sent" %}
+                        {% else %}
+                            {% if send_result.pushover == False %}
+                                {% booing "Failure" %}
+                            {% else %}
+                                {% informative "Not enabled" %}
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="row row-cols-auto gap-3 align-items-center">{% link_to_previous _("Back") %}</div>
+        </section>
+    </div>
+{% endblock content %}

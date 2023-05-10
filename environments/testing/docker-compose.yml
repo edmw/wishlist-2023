@@ -1,0 +1,46 @@
+---
+version: '3.7'
+services:
+
+  app:
+    container_name: wishlist-test-webapp
+    image: wishlist-webapp-develop:local
+    environment:
+      - DJANGO_DEBUG
+      - HTTP_PROXY=${HTTP_PROXY-}
+      - HTTPS_PROXY=${HTTPS_PROXY-}
+    env_file:
+      - environments/testing/webapp.env
+    volumes:
+      - .:/webapp
+    networks:
+      - wishlist-webapp-test
+    depends_on:
+      - database
+      - datastore
+    restart: never
+
+  # Containers for persistence
+
+  database:
+    container_name: wishlist-test-database
+    env_file:
+      - environments/testing/postgres.env
+    volumes:
+      - ./environments/testing/postgres.conf:/etc/postgresql/postgresql.conf
+    networks:
+      - wishlist-webapp-test
+
+  datastore:
+    image: redis:6
+    container_name: wishlist-test-datastore
+    env_file:
+      - environments/testing/redis.env
+    networks:
+      - wishlist-webapp-test
+
+networks:
+  wishlist-webapp-test:
+    driver: bridge
+    driver_opts:
+      com.docker.network.driver.mtu: 1280

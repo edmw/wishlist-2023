@@ -1,0 +1,34 @@
+{% extends "page.html" %}
+
+{% load static %}
+{% load i18n %}
+{% load core %}
+
+{% block header %}
+    {% with title="Wishes" %}{{ block.super }}{% endwith %}
+{% endblock header %}
+{% block content %}
+    <div class="content">
+        <div>
+            {% blocktranslate with user_first_name=user.first_name wishlist_name=wishlist.name wishlist_owner=wishlist.owner %}Hello {{ user_first_name }}! This is the wish list <strong>{{ wishlist_name }}</strong> from <strong>{{ wishlist_owner }}</strong>.{% endblocktranslate %}
+        </div>
+        <div class="h2">
+            <h2>
+                {{ wishlist.name }}
+                {% if user == wishlist.owner %}
+                    <a class="btn btn-link d-flex float-right" href="{{ wishlist.get_absolute_items_url }}" title="{% translate 'Edit list' %}" aria-description="{% translate 'Edit this wish list.' %}"><span class="btn-label">{% translate "Edit" %}</span> {% icon "edit-2" %}</a>
+                {% endif %}
+            </h2>
+            {% if wishlist_is_favorite %}
+                <strong title="{% translate 'Favored list' %}" aria-description="{% translate 'This is a favored wish list.' %}">{% icon_large "star" %}</strong>
+            {% else %}
+                <a class="btn-xlg btn-link" href="{% linked_url 'favorite-create' user.id %}&{{ list_id_key }}={{ wishlist.id }}" title="Add to favorites" aria-description="{% translate 'Add this wish list to favorites.' %}">{% icon_large "star" %}</a>
+            {% endif %}
+        </div>
+        {% if wishes_count > 0 %}
+            {% include "wishlist/wishlist-cards.html" %}
+        {% else %}
+            {% include "wishlist/wishlist-none.html" %}
+        {% endif %}
+    </div>
+{% endblock content %}

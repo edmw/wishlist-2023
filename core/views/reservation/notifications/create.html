@@ -1,0 +1,9 @@
+{% load i18n %}
+{% if wishlist_masked %}
+{% blocktranslate %}<h1>A wish was reserved on wish list <strong>'{{ wishlist_name }}'</strong>.</h1>{% endblocktranslate %}
+{% else %}
+{% blocktranslate %}<h1>Wish <strong>'{{ wish_name }}'</strong> was reserved on wish list <strong>'{{ wishlist_name }}'</strong>.</h1>{% endblocktranslate %}
+{% endif %}
+
+<hr/>
+<p>{% translate "Please do not reply." %}</p>

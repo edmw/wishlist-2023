@@ -1,0 +1,5 @@
+{% load i18n %}
+{% if wishlist_masked %}{% blocktranslate %}A wish was reserved on wish list '{{ wishlist_name }}'.{% endblocktranslate %}{% else %}{% blocktranslate %}Wish '{{ wish_name }}' was reserved on wish list '{{ wishlist_name }}'.{% endblocktranslate %}{% endif %}
+
+--
+{% translate "Please do not reply." %}

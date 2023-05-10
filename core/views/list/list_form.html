@@ -1,0 +1,37 @@
+{% extends "page.html" %}
+
+{% load static %}
+{% load i18n %}
+{% load core %}
+
+{% block content %}
+    <div class="content">
+        {% include "form_errors.html" %}
+        <form method="post" class="wl-form wl-list">
+            {% csrf_token %}
+            <div class="mb-3">
+                {{ form.name_field }}
+                <small id="description_name_field" class="form-text text-muted">{% render_errors form.name_field.errors %}</small>
+            </div>
+            <div class="mb-3">
+                {{ form.visibility_field }}
+                <small id="description_visibility_field" class="form-text text-muted">{% render_errors form.visibility_field.errors %}</small>
+            </div>
+            <div class="mb-3">
+                {{ form.item_ordering_field }}
+                <small id="description_item_ordering_field" class="form-text text-muted">{% render_errors form.item_ordering_field.errors %}</small>
+            </div>
+            <div class="mb-3">
+                <h5>{% translate "Options for this List" %}</h5>
+            </div>
+            <div class="mb-4">
+                <div class="form-check">{{ form.mask_reservations }}</div>
+                <small id="description_mask_reservations" class="form-text text-muted">
+                    {% render_errors form.mask_reservations.errors %}
+                    {% blocktranslate %}The "Don't spoil my surprises" setting is off by default so all reservations on this wish list will be visible to you. If you want the reservations to remain secret check this option. This option affects the edit view of this wish list only. The presentation view will always show the current reservations.{% endblocktranslate %}
+                </small>
+            </div>
+            {% include "form_submit.html" with label=_("Save") %}
+        </form>
+    </div>
+{% endblock content %}

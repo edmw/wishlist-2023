@@ -1,0 +1,15 @@
+{% load static %}
+{% load i18n %}
+{% load core %}
+
+<h3>Move Wish</h3>
+{% if wish.movable %}
+    <form method="post" action="{% url_with_previous wish.get_absolute_move_url %}" class="wl-form wl-list mt-4">
+        {% csrf_token %}
+        {% include "item/item_move-form.html" with form=move_form %}
+        {% include "form_submit.html" with label=_("Move this wish") %}
+    </form>
+{% else %}
+    <p class="text-muted">{% blocktranslate %}This wish has already been reserved. A wish already reserved but not yet received cannot be moved to another list.{% endblocktranslate %}</p>
+    {% include 'form_submit.html' with label=_('Move this wish') disabled=True %}
+{% endif %}

@@ -1,0 +1,54 @@
+{% extends "page.html" %}
+
+{% load static %}
+{% load i18n %}
+{% load core %}
+
+{% block header %}
+    {% with title="Profile" %}{{ block.super }}{% endwith %}
+{% endblock header %}
+{% block content %}
+    <div class="content">
+        <h2>{{ object.first_name }}</h2>
+        <section>
+            <h3 class="clearfix">
+                {% translate "Your Data" %}
+                <a class="btn btn-link d-flex float-sm-end" href="{% make_linked_url user.get_absolute_edit_url %}" title="{% translate 'Edit Data' %}">
+                    <span class="btn-label">{% translate "Edit" %}</span>
+                    {% icon "edit-2" %}
+                </a>
+            </h3>
+            <div class="profile container-fluid keys-values">
+                <div class="row">
+                    <div class="col-sm-6 key">{% translate "Nickname" %}</div>
+                    <div class="col-sm-6 value">{{ object.username }}</div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6 key">{% translate "Firstname" %}</div>
+                    <div class="col-sm-6 value">{{ object.first_name }}</div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6 key">{% translate "Lastname" %}</div>
+                    <div class="col-sm-6 value">{{ object.last_name }}</div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6 key">{% translate "Email" %}</div>
+                    <div class="col-sm-6 value">{{ object.email }}</div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6 key">{% translate "Language" %}</div>
+                    <div class="col-sm-6 value">{{ object.language.display }}</div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6 key">{% translate "First login" %}</div>
+                    <div class="col-sm-6 value">{% render_datetime object.created_at %}</div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6 key">{% translate "Last login" %}</div>
+                    <div class="col-sm-6 value">{% render_datetime object.last_login %}</div>
+                </div>
+            </div>
+        </section>
+        {% include "../user_settings/user_settings-section.html" with object=object.settings %}
+    </div>
+{% endblock content %}

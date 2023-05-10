@@ -1,0 +1,868 @@
+/*
+     ######   #######  ##        #######  ########   ######
+    ##    ## ##     ## ##       ##     ## ##     ## ##    ##
+    ##       ##     ## ##       ##     ## ##     ## ##
+    ##       ##     ## ##       ##     ## ########   ######
+    ##       ##     ## ##       ##     ## ##   ##         ##
+    ##    ## ##     ## ##       ##     ## ##    ##  ##    ##
+     ######   #######  ########  #######  ##     ##  ######
+*/
+
+:root {
+    --bs-light-rgb: 248, 249, 250;
+    --bs-dark-rgb: 52, 58, 64;
+    --bs-gray-150: #F3F5F6;
+}
+
+/*
+    ########  #######  ##    ## ########  ######
+    ##       ##     ## ###   ##    ##    ##    ##
+    ##       ##     ## ####  ##    ##    ##
+    ######   ##     ## ## ## ##    ##     ######
+    ##       ##     ## ##  ####    ##          ##
+    ##       ##     ## ##   ###    ##    ##    ##
+    ##        #######  ##    ##    ##     ######
+*/
+
+@font-face {
+    font-family: 'Open Sans';
+    font-style: normal;
+    font-weight: 400;
+    src: local('Open Sans Regular'), local('OpenSans-Regular'), url(/static/core/fonts/OpenSans-Regular.ttf) format('truetype');
+}
+
+@font-face {
+    font-family: 'Open Sans';
+    font-style: normal;
+    font-weight: 800;
+    src: local('Open Sans ExtraBold'), local('OpenSans-ExtraBold'), url(/static/core/fonts/OpenSans-ExtraBold.ttf) format('truetype');
+}
+
+/*
+    ########   #######  ########  ##    ##
+    ##     ## ##     ## ##     ##  ##  ##
+    ##     ## ##     ## ##     ##   ####
+    ########  ##     ## ##     ##    ##
+    ##     ## ##     ## ##     ##    ##
+    ##     ## ##     ## ##     ##    ##
+    ########   #######  ########     ##
+*/
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/*
+    ##     ## ########    ###    ########  ######## ########
+    ##     ## ##         ## ##   ##     ## ##       ##     ##
+    ##     ## ##        ##   ##  ##     ## ##       ##     ##
+    ######### ######   ##     ## ##     ## ######   ########
+    ##     ## ##       ######### ##     ## ##       ##   ##
+    ##     ## ##       ##     ## ##     ## ##       ##    ##
+    ##     ## ######## ##     ## ########  ######## ##     ##
+*/
+
+header {
+    width: 100%;
+    overflow: hidden;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 1rem;
+    font-weight: 400;
+}
+
+header .content {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+@media (min-width: 768px) {
+    header {
+        position: fixed;
+        z-index: 100;
+        top: 0;
+        left: 0;
+    }
+
+    header .content {
+        height: 120px;
+        flex-direction: row;
+        flex-wrap: nowrap;
+    }
+}
+
+header #title {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    min-width: 0;
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+}
+
+header #title h1 {
+    overflow: hidden;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 3rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    white-space: nowrap;
+    margin: 0;
+    margin-left: -0.13em;
+    margin-bottom: -0.31em;
+    padding: 0;
+}
+
+header #title h1::first-letter {
+    font-size: 3.75rem;
+}
+
+@media (min-width: 768px) {
+    header #title {
+        order: 0;
+    }
+
+    header #title h1 {
+        font-size: 4.5rem;
+    }
+
+    header #title h1::first-letter {
+        font-size: 5.625rem;
+    }
+}
+
+header .content .nav {
+    margin: 0;
+    margin-top: 32px;
+    padding: 0;
+    align-self: center;
+    flex-wrap: nowrap;
+}
+
+@media (min-width: 768px) {
+    header .content .nav {
+        margin: 0;
+        margin-right: 20px;
+        order: 1;
+    }
+}
+
+header #banner {
+    position: fixed;
+    z-index: 101;
+    top: 0;
+    left: 0;
+    width: 100%;
+    overflow: hidden;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 1rem;
+    font-weight: 400;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+/*
+    ########  #######   #######  ######## ######## ########
+    ##       ##     ## ##     ##    ##    ##       ##     ##
+    ##       ##     ## ##     ##    ##    ##       ##     ##
+    ######   ##     ## ##     ##    ##    ######   ########
+    ##       ##     ## ##     ##    ##    ##       ##   ##
+    ##       ##     ## ##     ##    ##    ##       ##    ##
+    ##        #######   #######     ##    ######## ##     ##
+*/
+
+footer {
+    width: 100%;
+    overflow: hidden;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 1rem;
+    font-weight: 400;
+}
+
+@media (min-width: 768px) {
+    footer {
+        position: fixed;
+        z-index: 100;
+        bottom: 0;
+        left: 0;
+    }
+}
+
+/*
+    ##    ##    ###    ##     ## ####  ######      ###    ######## ####  #######  ##    ##
+    ###   ##   ## ##   ##     ##  ##  ##    ##    ## ##      ##     ##  ##     ## ###   ##
+    ####  ##  ##   ##  ##     ##  ##  ##         ##   ##     ##     ##  ##     ## ####  ##
+    ## ## ## ##     ## ##     ##  ##  ##   #### ##     ##    ##     ##  ##     ## ## ## ##
+    ##  #### #########  ##   ##   ##  ##    ##  #########    ##     ##  ##     ## ##  ####
+    ##   ### ##     ##   ## ##    ##  ##    ##  ##     ##    ##     ##  ##     ## ##   ###
+    ##    ## ##     ##    ###    ####  ######   ##     ##    ##    ####  #######  ##    ##
+*/
+
+.navbar .navbar-brand {
+    text-transform: uppercase;
+}
+
+.navbar .navbar-brand::first-letter {
+    font-size: 125%;
+}
+
+/*
+    ##     ##    ###    #### ##    ##
+    ###   ###   ## ##    ##  ###   ##
+    #### ####  ##   ##   ##  ####  ##
+    ## ### ## ##     ##  ##  ## ## ##
+    ##     ## #########  ##  ##  ####
+    ##     ## ##     ##  ##  ##   ###
+    ##     ## ##     ## #### ##    ##
+*/
+
+main {
+    flex: 1;
+    width: 100%;
+    margin: 0;
+    padding: 20px 0 40px 0;
+}
+
+@media (min-width: 768px) {
+    main {
+        position: absolute;
+        top: 0;
+        left: 0;
+        margin: 120px 0 50px 0;
+        padding: 20px 0 80px 0;
+    }
+}
+
+main .content {
+    font-family: 'Open Sans', sans-serif;
+    font-size: 1rem;
+    font-weight: 400;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+main .content>.h2 {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 0;
+}
+
+main .content>h2,
+main .content>.h2>h2 {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 1.8rem;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+main .content>h2::first-letter,
+main .content>.h2>h2::first-letter {
+    font-size: 2.25rem;
+}
+main .content h3 ~ h3 {
+    margin-top: 2.5rem;
+}
+
+main .content>h3,
+main .content>.h3>h3 {
+    font-size: 1.5rem;
+}
+
+@media (min-width: 768px) {
+
+    main .content>h2,
+    main .content>.h2>h2 {
+        font-size: 2.5rem;
+    }
+
+    main .content>h2::first-letter,
+    main .content>.h2>h2::first-letter {
+        font-size: 3.125rem;
+    }
+
+    main .content>h3 {
+        font-size: 1.75rem;
+    }
+}
+
+main .content section+section {
+    margin-top: 2em;
+}
+
+main .content-messages {
+    font-family: 'Open Sans', sans-serif;
+    font-size: 1rem;
+    font-weight: 400;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/*
+########    ###    ########  ##       ########  ######
+   ##      ## ##   ##     ## ##       ##       ##    ##
+   ##     ##   ##  ##     ## ##       ##       ##
+   ##    ##     ## ########  ##       ######    ######
+   ##    ######### ##     ## ##       ##             ##
+   ##    ##     ## ##     ## ##       ##       ##    ##
+   ##    ##     ## ########  ######## ########  ######
+*/
+
+table.wl-table col:nth-child(odd) {
+    background-color: var(--bs-gray-150);
+}
+
+table.wl-table col:nth-child(even) {
+    background-color: var(--bs-gray-200);
+}
+
+table.wl-table th {
+    text-align: left;
+    padding: 0.75rem;
+}
+
+table.wl-table td {
+    text-align: left;
+    padding: 0.75rem;
+}
+
+table.wl-table td:last-child {
+    text-align: right;
+}
+
+@media only screen and (max-width: 575px) {
+    table.wl-table {
+        display: table;
+        table-layout: auto !important;
+        width: 100%;
+    }
+
+    table.wl-table thead {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        clip: rect(0 0 0 0);
+        overflow: hidden;
+    }
+
+    table.wl-table tr {
+        display: block;
+        width: 100%;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    table.wl-table tr:nth-child(odd) {
+        background-color: var(--background-color-dark-1);
+    }
+
+    table.wl-table tr:nth-child(even) {
+        background-color: var(--background-color-dark-2);
+    }
+
+    table.wl-table td {
+        display: block;
+        width: 100%;
+        border: none;
+        text-align: right;
+        max-width: initial !important;
+        white-space: initial !important;
+    }
+
+    table.wl-table td:before {
+        content: attr(data-label);
+        float: left;
+        padding-right: 1rem;
+        font-weight: bold;
+    }
+
+    table.wl-table tr+tr {
+        padding-top: 1rem;
+    }
+}
+
+@media only screen and (max-width: 575px) {
+    table.wl-table td.wl-actions-left {
+        width: auto;
+        float: left;
+        text-align: left;
+    }
+
+    table.wl-table td.wl-actions-right {
+        display: block;
+        width: auto;
+        text-align: right;
+    }
+}
+
+table.wl-table a {
+    text-decoration: none;
+}
+
+/*
+    ########  #######  ########  ##     ##  ######
+    ##       ##     ## ##     ## ###   ### ##    ##
+    ##       ##     ## ##     ## #### #### ##
+    ######   ##     ## ########  ## ### ##  ######
+    ##       ##     ## ##   ##   ##     ##       ##
+    ##       ##     ## ##    ##  ##     ## ##    ##
+    ##        #######  ##     ## ##     ##  ######
+*/
+
+form.wl-form {
+    max-width: 720px;
+    margin-right: auto;
+}
+
+/*
+    ########  ##        #######   ######  ##    ##  ######
+    ##     ## ##       ##     ## ##    ## ##   ##  ##    ##
+    ##     ## ##       ##     ## ##       ##  ##   ##
+    ########  ##       ##     ## ##       #####     ######
+    ##     ## ##       ##     ## ##       ##  ##         ##
+    ##     ## ##       ##     ## ##    ## ##   ##  ##    ##
+    ########  ########  #######   ######  ##    ##  ######
+*/
+
+/* blocks: title */
+
+span.title {
+    display: inline-block;
+    text-transform: uppercase;
+}
+
+span.title::first-letter {
+    font-size: 125%;
+}
+
+/* blocks: signin */
+
+ul#signin {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    list-style: none;
+    margin: 40px 0;
+    padding: 0;
+}
+
+ul#signin li:not(:last-child) {
+    margin-right: 8px;
+}
+
+ul#signin button {
+    width: 100%;
+}
+
+button#google-signin {
+    color: white;
+    background-color: #4285f4;
+}
+
+button#signout {
+    color: white;
+    background-color: var(--bs-dark);
+}
+
+/*
+    ####  ######   #######  ##    ##  ######
+     ##  ##    ## ##     ## ###   ## ##    ##
+     ##  ##       ##     ## ####  ## ##
+     ##  ##       ##     ## ## ## ##  ######
+     ##  ##       ##     ## ##  ####       ##
+     ##  ##    ## ##     ## ##   ### ##    ##
+    ####  ######   #######  ##    ##  ######
+*/
+
+/* icons: feather */
+.feather {
+    width: 24px;
+    height: 24px;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    fill: none;
+}
+
+strong .feather {
+    fill: currentColor;
+}
+
+/* icons: feather */
+.feather-large {
+    width: 32px;
+    height: 32px;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    fill: none;
+}
+
+strong .feather-large {
+    fill: currentColor;
+}
+
+/* icons: feather-inline */
+.feather-inline {
+    width: 1.2em;
+    height: 1.2em;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    fill: none;
+}
+
+/*
+    ########   #######   #######  ########  ######  ######## ########     ###    ########
+    ##     ## ##     ## ##     ##    ##    ##    ##    ##    ##     ##   ## ##   ##     ##
+    ##     ## ##     ## ##     ##    ##    ##          ##    ##     ##  ##   ##  ##     ##
+    ########  ##     ## ##     ##    ##     ######     ##    ########  ##     ## ########
+    ##     ## ##     ## ##     ##    ##          ##    ##    ##   ##   ######### ##
+    ##     ## ##     ## ##     ##    ##    ##    ##    ##    ##    ##  ##     ## ##
+    ########   #######   #######     ##     ######     ##    ##     ## ##     ## ##
+*/
+
+h2,
+.h2,
+h3,
+.h3,
+h4 {
+    line-height: 1.5;
+}
+
+/* bootstrap: button */
+
+.btn {
+    border: none;
+    border-radius: 50vh;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 1.0rem;
+    font-weight: 400;
+    letter-spacing: 0.5px;
+    padding: 0.5rem 1rem;
+}
+
+.btn-sm {
+    padding: .25rem .75rem;
+    font-size: 0.875rem;
+}
+
+.btn-action {
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    color: var(--bs-link-color);
+    background-color: var(--bs-gray-300);
+    box-shadow: 0 0 0 4px var(--bs-gray-300);
+    border-radius: 50vh !important;
+}
+.btn-action:hover {
+    background-color: var(--bs-gray-300);
+}
+
+.btn-dismiss {
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    color: var(--text-color);
+    opacity: 25%;
+    background-color: var(--bs-gray-300);
+}
+
+.btn-link {
+    text-decoration: none;
+}
+
+.btn-link .btn-label {
+    font-size: 1.0rem;
+    font-weight: 400;
+    text-transform: initial;
+}
+
+.btn-link .btn-label+svg {
+    margin-left: 0.5ex;
+}
+
+.btn-link svg+.btn-label {
+    margin-left: 0.5ex;
+}
+
+/* bootstrap: grid */
+
+.container-fluid.keys-values .row {
+    border-top: 1px solid #dee2e6;
+}
+
+.container-fluid.keys-values .value {
+    padding: 0.75rem;
+    vertical-align: top;
+    font-weight: normal;
+}
+
+.container-fluid.keys-values .key {
+    padding: 0.75rem;
+    padding-bottom: 0;
+    vertical-align: top;
+    font-weight: bold;
+    text-align: left;
+}
+
+@media (min-width: 576px) {
+    .container-fluid.keys-values .key {
+        text-align: right;
+        padding-bottom: 0.75rem;
+    }
+}
+
+/* bootstrap: form */
+
+.form-label {
+    font-weight: bold;
+}
+
+.form-switch {
+    padding-left: 3em;
+}
+.form-switch .form-check-input {
+    width: 2.5em;
+    height: 1.25em;
+    margin-left: -3em;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='rgba%280, 0, 0, 0.25%29'/%3e%3c/svg%3e");
+    background-position: left center;
+    border-radius: 2em;
+    transition: background-position .15s ease-in-out;
+}
+
+/*
+    ##      ## ####  ######  ##     ## ##       ####  ######  ########  ######
+    ##  ##  ##  ##  ##    ## ##     ## ##        ##  ##    ##    ##    ##    ##
+    ##  ##  ##  ##  ##       ##     ## ##        ##  ##          ##    ##
+    ##  ##  ##  ##   ######  ######### ##        ##   ######     ##     ######
+    ##  ##  ##  ##        ## ##     ## ##        ##        ##    ##          ##
+    ##  ##  ##  ##  ##    ## ##     ## ##        ##  ##    ##    ##    ##    ##
+     ###  ###  ####  ######  ##     ## ######## ####  ######     ##     ######
+*/
+
+table.wl-lists {
+    table-layout: fixed;
+}
+
+table.wl-lists td.wl-visibility {
+    white-space: nowrap;
+}
+
+/*
+    ##      ## ####  ######  ##     ## ########  ######
+    ##  ##  ##  ##  ##    ## ##     ## ##       ##    ##
+    ##  ##  ##  ##  ##       ##     ## ##       ##
+    ##  ##  ##  ##   ######  ######### ######    ######
+    ##  ##  ##  ##        ## ##     ## ##             ##
+    ##  ##  ##  ##  ##    ## ##     ## ##       ##    ##
+     ###  ###  ####  ######  ##     ## ########  ######
+*/
+
+table.wl-items {
+    table-layout: auto;
+}
+
+table.wl-items td {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+table.wl-items td.wl-description {
+    width: 100%;
+    max-width: 0;
+}
+
+/* collection of items */
+
+div.wl-item {
+    position: relative;
+    margin: 0;
+    padding: 0;
+    perspective: 1000px;
+    -webkit-perspective: 1000px;
+}
+
+div.wl-item div.wl-item-card {
+    position: relative;
+    width: 100%;
+    background: transparent;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    transform-style: preserve-3d;
+    -webkit-transform-style: preserve-3d;
+    transition: all 600ms ease;
+    -webkit-transition: all 600ms ease;
+}
+
+div.wl-item>div.flipped {
+    transform: rotateY(180deg);
+    -webkit-transform: rotateY(180deg);
+}
+
+div.wl-item img {
+    width: 100%;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+}
+
+div.wl-item img.placeholder {
+    opacity: 0.1;
+}
+
+div.wl-item .inner {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1;
+    background-color: transparent;
+    background-size: cover;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+}
+
+div.wl-item .inner>* {
+    z-index: 2;
+}
+
+div.wl-item .overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 2;
+}
+
+div.wl-item .overlay .btn-group a {
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+}
+
+div.wl-item .back {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 3;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    transform: rotateY(180deg);
+    -webkit-transform: rotateY(180deg);
+}
+
+div.wl-item .back>* {
+    z-index: 4;
+}
+
+div.wl-item .back .text {
+    height: 100%;
+    overflow-x: hidden;
+    overflow-y: scroll;
+}
+
+div.wl-item .cover {
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 2;
+    opacity: 0.85;
+}
+
+div.wl-item .wl-label h5 {
+    overflow: hidden;
+    white-space: nowrap;
+    background-color: rgba(255, 255, 255, 0.75);
+    text-overflow: ellipsis;
+    padding: 0.25rem;
+}
+
+div.wl-item .wl-label .wl-hearts {
+    float: left;
+    color: #343a40;
+    background-color: rgba(255, 255, 255, 0.75);
+    font-size: 80%;
+}
+
+div.wl-item .btn-group {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+div.wl-item .btn-group a {
+    background-color: rgba(108, 117, 125, 0.75);
+    border-radius: 0;
+}
+
+@media (min-width: 576px) {
+    div.wl-items {
+        display: flex;
+        flex-flow: row;
+        flex-wrap: wrap;
+        justify-content: space-between;
+    }
+
+    div.wl-items::after {
+        content: "";
+        flex: auto;
+    }
+
+    div.wl-items div.wl-item {
+        width: 48%;
+    }
+}
+
+@media (min-width: 768px) {
+    div.wl-items {
+        display: flex;
+        flex-flow: row;
+        flex-wrap: wrap;
+        justify-content: space-between;
+    }
+
+    div.wl-items::after {
+        content: "";
+        flex: auto;
+    }
+
+    div.wl-items div.wl-item {
+        width: 32%;
+    }
+}
+
+@media (min-width: 992px) {
+    div.wl-items {
+        display: flex;
+        flex-flow: row;
+        flex-wrap: wrap;
+        justify-content: space-between;
+    }
+
+    div.wl-items::after {
+        content: "";
+        flex: auto;
+    }
+
+    div.wl-items div.wl-item {
+        width: 25%;
+    }
+}

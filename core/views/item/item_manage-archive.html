@@ -1,0 +1,27 @@
+{% load static %}
+{% load i18n %}
+{% load core %}
+
+{% if wish.archivable %}
+    <h3>Archive Wish</h3>
+    <p>{% blocktranslate %}Archived wishes no longer appear on the wish list, but can be restored from the archive at any time.{% endblocktranslate %}</p>
+    <form method="post" action="{% url_with_previous wish.get_absolute_archive_url %}" class="wl-form">
+        {% csrf_token %}
+        {% include "item/item_archive-form.html" with form=archive_form %}
+        {% include 'form_submit.html' with label=_('Archive this wish') %}
+    </form>
+{% else %}
+    {% if wish.archived %}
+        <h3>Unarchive Wish</h3>
+        <p>{% blocktranslate %}Unarchived wishes reappear on the wish list.{% endblocktranslate %}</p>
+        <form method="post" action="{% url_with_previous wish.get_absolute_unarchive_url %}" class="wl-form">
+            {% csrf_token %}
+            {% include "item/item_unarchive-form.html" with form=unarchive_form %}
+            {% include 'form_submit.html' with label=_('Unarchive this wish') %}
+        </form>
+    {% else %}
+        <h3>Archive Wish</h3>
+        <p class="text-muted">{% blocktranslate %}This wish has already been reserved. A wish already reserved but not yet received cannot be archived.{% endblocktranslate %}</p>
+        {% include 'form_submit.html' with label=_('Archive this wish') disabled=True %}
+    {% endif %}
+{% endif %}

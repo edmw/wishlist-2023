@@ -1,0 +1,39 @@
+{% extends "page.html" %}
+
+{% load static %}
+{% load i18n %}
+{% load core %}
+
+{% block header %}
+    {% with title="Edit Data" %}
+        {{ block.super }}
+    {% endwith %}
+{% endblock header %}
+{% block content %}
+    <div class="content">
+        {% include "form_errors.html" %}
+        <form method="post" class="wl-form wl-profile">
+            {% csrf_token %}
+            <div class="mb-3">
+                {{ form.username }}
+                <small id="description_username" class="form-text text-muted">
+                    {% render_errors form.username.errors %}
+                    {% translate "The maximum length of a short name is 150 characters. For a short name you can use only letters, numbers and @/./+/-/_. Your short name will be visible to other users." %}
+                </small>
+            </div>
+            <div class="mb-3">
+                {{ form.language_field }}
+                <small id="description_language_field" class="form-text text-muted">
+                    {% render_errors form.language_field.errors %}
+                    {% translate "Texts are displayed in the selected language. If no language is selected, the preferred language is determined by the setting of your browser." %}
+                </small>
+            </div>
+            <div class="container pt-3">
+                <div class="row row-cols-auto gap-3 align-items-center">
+                    {% button_to_save _("Save") %}
+                    {% link_to_previous _("Cancel") %}
+                </div>
+            </div>
+        </form>
+    </div>
+{% endblock content %}

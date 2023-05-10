@@ -1,0 +1,29 @@
+{% extends "page.html" %}
+
+{% load static %}
+{% load i18n %}
+{% load core %}
+
+{% block header %}
+    {% with title="Legal notice" %}{{ block.super }}{% endwith %}
+{% endblock header %}
+{% block content %}
+    <div class="content">
+        <p>
+            <span class="title">Wishlist</span> is an easy to use web-based application that will help you to collect, organize and keep track of things you want. It also makes it easy to share your wishes with friends and family.
+        </p>
+        <h3>Contact us</h3>
+        <p>If you have any questions, comments or suggestions, you're more than welcome to contact us, we appreciate all kinds of feedback.</p>
+        <h6>{{ core.contact_name }}</h6>
+        <p>
+            {{ core.contact_address }}
+            <br />
+            {% icon "mail" %}
+            {{ core.contact_email }}
+            <br />
+            {% icon "phone" %}
+            {{ core.contact_phone }}
+            <br />
+        </p>
+    </div>
+{% endblock content %}

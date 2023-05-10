@@ -1,0 +1,5 @@
+---
+services:
+  datastore:
+    image: redis:6
+    command: redis-server --loglevel warning

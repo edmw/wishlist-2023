@@ -1,0 +1,15 @@
+{% extends "page.html" %}
+
+{% load i18n %}
+
+{% block header %}
+    {% with title="400 BAD REQUEST" %}{{ block.super }}{% endwith %}
+{% endblock header %}
+{% block content %}
+    <div class="content">
+        <h2>{% translate "Sorry!" %}</h2>
+        <p>{% translate "We are unable to respond to the request you have made." %}</p>
+        <p>{% translate "Here are some useful links instead:" %}</p>
+        {% include "error_links.html" %}
+    </div>
+{% endblock content %}

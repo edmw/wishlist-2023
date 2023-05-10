@@ -1,0 +1,31 @@
+{
+    "files.associations": {
+        "*.html": "django-html"
+    },
+    "editor.rulers": [
+        80,108
+    ],
+    "[python]": {
+        "editor.formatOnSave": true,
+        "editor.codeActionsOnSave": {
+            "source.organizeImports": true
+        }
+    },
+    "python.formatting.provider": "black",
+    "black-formatter.importStrategy": "useBundled",
+    "black-formatter.args": [
+        "--line-length=108"
+    ],
+    "isort.args": [
+        "--profile",
+        "black"
+    ],
+    "python.linting.banditArgs": [
+        "-c pyproject.yaml"
+    ],
+    "python.analysis.autoSearchPaths": false,
+    "python.analysis.diagnosticMode": "workspace",
+    "python.analysis.ignore": [
+        "~/.pyenv/**"
+    ]
+}

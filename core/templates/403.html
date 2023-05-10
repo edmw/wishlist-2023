@@ -1,0 +1,24 @@
+{% extends "page.html" %}
+
+{% load i18n %}
+
+{% block header %}
+    {% with title="403 FORBIDDEN" %}{{ block.super }}{% endwith %}
+{% endblock header %}
+{% block content %}
+    <div class="content">
+        <h2>{% translate "Sorry!" %}</h2>
+        <p>{% translate "It seems that you’re not authorized to see this page." %}</p>
+        {% if user.is_authenticated %}
+        <p>
+            {% blocktranslate %}Maybe you want to check the request you just tried ...{% endblocktranslate %}
+        </p>
+        {% else %}
+        <p>
+            {% url 'account_login' as login_url %}{% blocktranslate with url=login_url %}Maybe you want to try to <a href="{{ url }}">authenticate yourself</a> ...{% endblocktranslate %}
+        </p>
+        {% endif %}
+        <p>{% translate "... or visit some useful links instead:" %}</p>
+        {% include "error_links.html" %}
+    </div>
+{% endblock content %}

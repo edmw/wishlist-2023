@@ -1,0 +1,14 @@
+{% load static %}
+{% load i18n %}
+{% load core %}
+
+<section>
+    <h3>
+        {% translate 'Archived Wishes' %}
+    </h3>
+    {% if wishes_archived_count == 0 %}
+        {% include "items/items-none.html" %}
+    {% else %}
+        {% include "items/items-table.html" with wishes=wishes_archived mask_reservations=False %}
+    {% endif %}
+</section>

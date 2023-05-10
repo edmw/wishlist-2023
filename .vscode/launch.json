@@ -1,0 +1,50 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "webapp",
+            "type": "python",
+            "request": "attach",
+            "django": true,
+            "pathMappings": [
+                {
+                    "localRoot": "${workspaceFolder}",
+                    "remoteRoot": "/webapp"
+                }
+            ],
+            "port": 13132,
+            "host": "localhost",
+            "justMyCode": false
+        },
+        {
+            "name": "webapp (worker)",
+            "type": "python",
+            "request": "attach",
+            "django": true,
+            "pathMappings": [
+                {
+                    "localRoot": "${workspaceFolder}",
+                    "remoteRoot": "/webapp"
+                }
+            ],
+            "port": 13133,
+            "host": "localhost",
+            "justMyCode": false
+        },
+        {
+            "name": "tests",
+            "type": "python",
+            "request": "attach",
+            "django": true,
+            "pathMappings": [
+                {
+                    "localRoot": "${workspaceFolder}",
+                    "remoteRoot": "/webapp"
+                }
+            ],
+            "port": 13134,
+            "host": "localhost",
+            "justMyCode": false
+        }
+    ]
+}

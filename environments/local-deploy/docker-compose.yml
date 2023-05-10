@@ -1,0 +1,149 @@
+---
+version: '3.7'
+services:
+
+  web:
+    # Container for the loadbalancer which dispatches requests to the
+    # webapp and the files server.
+    image: nginx
+    container_name: wishlist-web
+    environment:
+      - NGINX_ENTRYPOINT_QUIET_LOGS=1
+    volumes:
+      - ./environments/local-deploy/nginx.conf:/etc/nginx/nginx.conf:ro
+    ports:
+      - 127.0.0.1:13131:80
+    networks:
+      - wishlist-webapp
+    depends_on:
+      - app
+    restart: on-failure
+
+
+  # Containers for Django.
+
+  app:
+    # Container for the webapp.
+    container_name: wishlist-webapp
+    image: wishlist-webapp-deploy:local
+    environment:
+      - WEBAPP_KEY
+      - HTTP_PROXY=${HTTP_PROXY-}
+      - HTTPS_PROXY=${HTTPS_PROXY-}
+    env_file:
+      - environments/local-deploy/webapp.env
+      - environments/local-deploy/secrets/webapp.env
+    networks:
+      - wishlist-webapp
+    depends_on:
+      - database
+      - datastore
+    restart: on-failure
+
+  # Containers for Django Celery.
+  # Celery is a distributed task queue with support for task scheduling.
+
+  worker:
+    # Container for a celery worker, performs all the hard work in the
+    # background. Locally, just one worker, in real life there can be many.
+    image: wishlist-webapp-deploy:local
+    container_name: wishlist-worker
+    entrypoint: >-
+      python -W ignore::DeprecationWarning manage.py
+        celery_run_worker --log-level=WARNING
+    environment:
+      - WEBAPP_KEY
+      - HTTP_PROXY=${HTTP_PROXY-}
+      - HTTPS_PROXY=${HTTPS_PROXY-}
+    env_file:
+      - environments/local-deploy/webapp.env
+      - environments/local-deploy/secrets/webapp.env
+    volumes:
+      - .:/webapp
+    networks:
+      - wishlist-webapp
+    depends_on:
+      - app
+      - database
+      - datastore
+    restart: on-failure:2
+
+  beat:
+    # Container for a celery component which controls all the celery workers.
+    # Just one is needed.
+    image: wishlist-webapp-deploy:local
+    container_name: wishlist-beat
+    entrypoint: >-
+      python -W ignore::DeprecationWarning manage.py
+        celery_run_beat --log-level=WARNING
+    environment:
+      - WEBAPP_KEY
+      - HTTP_PROXY=${HTTP_PROXY-}
+      - HTTPS_PROXY=${HTTPS_PROXY-}
+    env_file:
+      - environments/local-deploy/webapp.env
+      - environments/local-deploy/secrets/webapp.env
+    volumes:
+      - .:/webapp
+    networks:
+      - wishlist-webapp
+    depends_on:
+      - app
+      - database
+      - datastore
+    restart: on-failure:2
+
+  # Containers for persistence
+
+  database:
+    # Container for the database.
+    container_name: wishlist-database
+    image: postgres:14
+    env_file:
+      - environments/local-deploy/postgres.env
+    volumes:
+      - ./environments/local-deploy/postgres.conf:/etc/postgresql/postgresql.conf
+      - data:/var/lib/postgresql/data
+    networks:
+      - wishlist-webapp
+
+  datastore:
+    # Container for the datastore.
+    container_name: wishlist-datastore
+    image: redis:6
+    command: redis-server --loglevel warning
+    env_file:
+      - environments/local-deploy/redis.env
+    networks:
+      - wishlist-webapp
+
+  # Containers for files
+
+  files:
+    container_name: wishlist-files
+    image: quay.io/minio/minio
+    command: ["server", "--console-address", ":9001", "/files"]
+    env_file:
+      - environments/local-deploy/minio.env
+    volumes:
+      - ./webapp-files:/files
+    ports:
+      - 127.0.0.1:13138:9000
+      - 127.0.0.1:13139:9001
+    networks:
+      - wishlist-webapp
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+
+volumes:
+  data:
+    driver: local
+
+networks:
+  wishlist-webapp:
+    driver: bridge
+    driver_opts:
+      com.docker.network.driver.mtu: 1280

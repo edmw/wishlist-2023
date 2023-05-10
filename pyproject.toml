@@ -1,0 +1,157 @@
+[project]
+name = "wishlist"
+description = "Wishlist"
+version = "0.0.0"
+authors = [
+  {email = "mib@yamanote.de"},
+  {name = "Michael Baumgärtner"}
+]
+license = {file = "LICENSE"}
+requires-python = ">=3.11"
+
+dependencies = [
+  "django == 4.2.*",
+  "django-allauth == 0.54.*",
+  "django-csp == 3.7.*",
+  "django-cleanup == 7.0.*",
+  "django-probes == 1.7.*",
+  "django-storages == 1.13.*",
+  "django_celery_beat == 2.5.*",
+  "django_celery_results == 2.5.*",
+  "django-debug-toolbar == 4.0.*",
+  "djangorestframework == 3.14.*",
+  "djangorestframework-dataclasses == 1.2.*",
+  "drf-spectacular == 0.26.*",
+  "humanize == 4.6.*",
+  "requests == 2.30.*",
+  "boto3 == 1.26.*",
+  "pillow == 9.5.*",
+  "pyyaml == 6.0.*",
+  "celery[redis] == 5.2.*",
+  "redis[hiredis] == 4.5.*",
+  "psycopg[binary,pool] == 3.1.*",
+  "mysql-connector-python == 8.0.*",
+  "python-json-logger == 2.0.*",
+  "structlog == 23.1.*",
+  "environs == 9.5.*",
+  "whitenoise == 6.4.*",
+  "gunicorn == 20.1.*",
+  "cryptography == 40.0.*",
+]
+
+[project.optional-dependencies]
+build = [
+  "semver",
+]
+test = [
+  "pytest",
+  "pytest-mock",
+  "pytest-django",
+  "pytest-cov",
+  "coverage[toml]",
+]
+check = [
+  "ruff",
+  "bandit[toml]",
+  "django-types",
+  "types-requests",
+  "types-Pillow",
+  "codespell",
+]
+tool = [
+  "black",
+  "isort",
+]
+support = [
+  "debugpy",
+  "polib",
+  "rich",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.black]
+line-length = 108
+
+[tool.isort]
+profile = "black"
+
+[tool.pytest.ini_options]
+addopts = "-ra --no-header --strict-markers --disable-pytest-warnings --ds=webapp.settings"
+testpaths = "webapp core core_health"
+python_files = ["tests.py", "test_*.py"]
+python_classes = ["Test"]
+python_functions = ["test"]
+cache_dir = ".cache/pytest"
+norecursedirs = ".git .vscode .cache"
+
+[tool.ruff]
+select = [
+  "F",    # pyflakes
+  "E",    # pycodestyle
+  "W",    # pycodestyle
+  "N",    # naming
+  "C",    # mccabe
+  "I",    # isort
+  "B",    # bugbear
+  "Q",    # quotes
+  "ANN",  # annotations
+  "DJ",   # django
+  "PT",   # pytest
+]
+ignore = ["ANN101", "ANN102", "ANN401", "D205", "D400", "D401"]
+fixable = []
+line-length = 108
+cache-dir = ".cache/ruff"
+
+[tool.ruff.per-file-ignores]
+"__init__.py" = ["F401"]
+"apps.py" = ["F401"]
+"core/templates_tags/*" = ["PT"]
+"core/migrations/*" = ["E501"]
+"webapp/services/*" = ["PT"]
+"**/tests.py" = ["D"]
+"**/test_*.py" = ["D"]
+"**/tests/**.py" = ["D"]
+
+[tool.ruff.flake8-annotations]
+allow-star-arg-any = true
+mypy-init-return = true
+
+[tool.ruff.pydocstyle]
+convention = "pep257"
+
+[tool.pyright]
+exclude = ["core/migrations/*"]
+
+[tool.bandit]
+skips = ["B404"]
+
+[tool.bandit.assert_used]
+skips = ["**/tests.py", "**/test_*.py", "**/tests/**.py"]
+
+[tool.coverage.run]
+branch = true
+data_file = ".cache/coverage"
+
+[tool.coverage.report]
+skip_empty = true
+skip_covered = true
+precision = 2
+
+[tool.coverage.html]
+directory = "reports/coverage/html"
+show_contexts = true
+skip_covered = false
+
+[tool.djlint]
+ignore = "T002"
+blank_line_after_tag = "load,extends"
+max_line_length = 999
+max_attribute_length = 999
+
+[tool.codespell]
+skip = "*.po,*.sql,.git,./core/views/privacy_policy.de.html,./core/views/legal_notice.de.html"
+ignore-words-list = "discreet"

@@ -1,0 +1,29 @@
+{% extends "page.html" %}
+
+{% load static %}
+{% load i18n %}
+{% load core %}
+
+{% block header %}
+    {% with title="Legal notice" %}{{ block.super }}{% endwith %}
+{% endblock header %}
+{% block content %}
+    <div class="content">
+        <p>
+            <span class="title">Wunschzettel</span> ist eine einfach zu benutzende web-bassierte Anwendung, die dir helfen kann deine Wünsche zu sammeln, zu organisieren und den Überblick darüber zu behalten. Die Anwendung erlaubt es diese Wünsche einfach mit Freunden und Familie zu teilen.
+        </p>
+        <h3>Kontakt</h3>
+        <p>Wenn du Fragen, Anmerkungen oder Vorschläge hast, bist du eingeladen uns diese mitzuteilen. Jede Art von Rückmeldung ist uns willkommen.</p>
+        <h6>{{ core.contact_name }}</h6>
+        <p>
+            {{ core.contact_address }}
+            <br />
+            {% icon "mail" %}
+            {{ core.contact_email }}
+            <br />
+            {% icon "phone" %}
+            {{ core.contact_phone }}
+            <br />
+        </p>
+    </div>
+{% endblock content %}

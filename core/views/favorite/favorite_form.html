@@ -1,0 +1,24 @@
+{% extends "page.html" %}
+
+{% load static %}
+{% load i18n %}
+{% load core %}
+
+{% block content %}
+    <div class="content">
+        {% include "form_errors.html" %}
+        <form method="post" class="wl-form wl-list">
+            {% csrf_token %}
+            <div class="mb-3">
+                <h5>{% translate "Options for this Favorite" %}</h5>
+            </div>
+            <div class="mb-4">
+                <div class="form-check">{{ form.notify_on_item_create }}</div>
+                <small id="description_notify_on_item_create" class="form-text text-muted">
+                    {% render_errors form.notify_on_item_create.errors %}
+                </small>
+            </div>
+            {% include "form_submit.html" with label=_("Save") %}
+        </form>
+    </div>
+{% endblock content %}

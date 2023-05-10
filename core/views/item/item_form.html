@@ -1,0 +1,45 @@
+{% extends "page.html" %}
+
+{% load static %}
+{% load i18n %}
+{% load core %}
+
+{% block content %}
+    <div class="content">
+        {% include "form_errors.html" %}
+        <form method="post" class="wl-form wl-list">
+            {% csrf_token %}
+            <div class="mb-3">
+                {{ form.name_field }}
+                <small id="description_name_field" class="form-text text-muted">{% render_errors form.name_field.errors %}</small>
+            </div>
+            <div class="mb-3">
+                {{ form.description_field }}
+                <small id="description_description_field" class="form-text text-muted">{% render_errors form.description_field.errors %}</small>
+            </div>
+            <div class="mb-3">
+                {{ form.preference_field }}
+                <small id="description_preference_field" class="form-text text-muted">{% render_errors form.preference_field.errors %}</small>
+            </div>
+            <div class="mb-3">
+                {{ form.reference_field }}
+                <small id="description_reference_field" class="form-text text-muted">
+                    {% render_errors form.reference_field.errors %}
+                    {% blocktranslate %}Optional external URL for this wish.{% endblocktranslate %}
+                </small>
+            </div>
+            <div class="mb-3">
+                {{ form.reference_photo_field }}
+                <small id="description_reference_photo_field" class="form-text text-muted">
+                    {% render_errors form.reference_photo_field.errors %}
+                    {% blocktranslate %}Optional external URL for this wish’s photo.{% endblocktranslate %}
+                </small>
+                <div class="form-group form-row mt-4">
+                    <button type="submit" class="btn btn-primary">{% translate "Save" %}</button>
+                    {% link_to_previous _("Cancel") %}
+                </div>
+            </div>
+            {% include 'item/note-reserved.html' %}
+        </form>
+    </div>
+{% endblock content %}

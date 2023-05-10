@@ -1,0 +1,7 @@
+{% extends "page_simple_confirmation.html" %}
+
+{% load i18n %}
+
+{% block what %}
+    {% blocktranslate with item_name=object.wish.name list_name=object.wish.wishlist.name %}... you want to <span class="text-danger">undo</span> the reservation for the wish named <strong>{{ item_name }}</strong> from list <strong>{{ list_name }}</strong>?{% endblocktranslate %}
+{% endblock what %}
