@@ -20,6 +20,9 @@ def allauth_user_logged_in_callback(sender: Any, **kwargs: Any) -> None:
     # Update soft language to the language set by the middleware.
     # Because this request was initially done by the anonymous user,
     # this will be the language set by the browser.
+    # The soft language is determined and persisted here so that it is possible
+    # to know the desired language in background tasks without having a request
+    # context.
     if user := kwargs.get("user"):
         user = cast(User, user)
         language = Language(LanguageService.get_language_code())

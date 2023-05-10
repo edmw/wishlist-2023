@@ -246,6 +246,15 @@ class User(IDMixin[UserID], AbstractUser):
         return self.modified_at.replace(microsecond=0) > self.created_at.replace(microsecond=0)
 
     def get_language(self) -> Language:
+        """Returns the language for this user.
+
+        Takes into account an explicitly set language as well as a language that
+        may have been implicitly determined. The language english is taken as
+        the default as the last resort.
+
+        Returns:
+            Language
+        """
         if self.language:
             return self.language
         if self.language_soft:
