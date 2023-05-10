@@ -1,0 +1,7 @@
+{% extends "403.html" %}
+
+{% block header %}
+    {% with title="403 FORBIDDEN (CSRF)" %}
+        {{ block.super }}
+    {% endwith %}
+{% endblock header %}

@@ -1,0 +1,51 @@
+{% extends "page.html" %}
+
+{% load static %}
+{% load i18n %}
+{% load core %}
+
+{% block header %}
+  {% with title="Edit Settings" %}
+    {{ block.super }}
+  {% endwith %}
+{% endblock header %}
+{% block content %}
+  <div class="content">
+    {% if form.non_field_errors %}
+      <ul>
+        {% for error in form.non_field_errors %}<li>{{ error }}</li>{% endfor %}
+      </ul>
+    {% endif %}
+    <form method="post" class="wl-form wl-settings">
+      {% csrf_token %}
+      <div class="mb-1">
+        <h3>{% translate "Notification Services" %}</h3>
+      </div>
+      <div class="mb-3">
+        <div class="form-check">{{ form.email_enabled_field }}</div>
+        <small id="description_email_enabled_field" class="form-text text-muted">
+          {% render_errors form.mask_reservations_field.errors %}
+          {% translate "Email notifications will be sent to your profile’s email address." %}
+        </small>
+      </div>
+      <div class="mb-3">
+        <div class="row">
+          <div class="col-md-4 my-auto">
+            <div class="form-check">{{ form.pushover_enabled_field }}</div>
+          </div>
+          <div class="col-md-8 my-auto pt-2 pl-4 pt-md-0 pl-md-0">{{ form.pushover_key_field }}</div>
+        </div>
+        <small id="description_pushover_enabled_field" class="form-text text-muted">
+          {% render_errors form.mask_reservations_field.errors %}
+          {% translate "Pushover is a service to receive instant push notifications on your phone or tablet. After creating a Pushover account and registering a device with the Pushover service enter your User Key to start receiving notifications." %}
+        </small>
+      </div>
+      <div class="container pt-3">
+        <div class="row row-cols-auto gap-3 align-items-center">
+          {% button_to_save _("Save") %}
+          {% link_to_previous _("Cancel") %}
+        </div>
+      </div>
+    </form>
+  </div>
+{% endblock content %}

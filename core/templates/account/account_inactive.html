@@ -1,0 +1,18 @@
+{% extends "page.html" %}
+
+{% load i18n %}
+
+{% block header %}
+    {% with title="Account inactive" %}
+        {{ block.super }}
+    {% endwith %}
+{% endblock header %}
+{% block content %}
+    <div class="content">
+        <p>
+            {% filter upper %}
+                {% translate "Account inactive" %}
+            {% endfilter %}
+        </p>
+    </div>
+{% endblock content %}

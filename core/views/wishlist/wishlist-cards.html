@@ -1,0 +1,53 @@
+{% load static %}
+{% load i18n %}
+{% load core %}
+
+<div class="wl-items">
+    {% for wish in wishes %}
+        <div id="wl-item-{{ wish.id }}" class="wl-item p-2">
+            <div id="wl-item-card-{{ wish.id }}" class="wl-item-card">
+                {% wish_image wish %}
+                <div class="inner p-2">
+                    <div class="wl-label m-0">
+                        <h5 class="m-0 px-1">{{ wish.name }}</h5>
+                        <div class="wl-hearts m-0 px-1">{% wish_preference wish %}</div>
+                    </div>
+                </div>
+                {% if wish.is_reserved %}
+                <div class="cover p-2 bg-light d-flex">
+                    <div class="my-auto text-center"><strong>{% translate "This wish has already been reserved." %}</strong></div>
+                </div>
+                {% endif %}
+                <div class="overlay p-2">
+                    <div class="btn-group" role="group">
+                        {% if wish.reference %}
+                            <a class="btn text-light" href="{{ wish.reference }}" title="{% translate 'Open link to wish' %}">{% icon "external-link" %}</a>
+                        {% endif %}
+                        <a class="wl-item-btn-flip btn text-light" title="{% translate 'Show details for wish' %}">{% icon "book-open" %}</a>
+                    </div>
+                </div>
+                <div class="back bg-dark p-2">
+                    <div class="text pb-5">
+                        <h5 class="wl-label text-light m-0 px-1">{{ wish.name }}</h5>
+                        <p class="text-light m-0 px-1">
+                            <small><em>{{ wish.preference.display }}</em></small>
+                        </p>
+                        <p class="text-light mt-2">{{ wish.description }}</p>
+                    </div>
+                    <div class="btn-group justify-content-end" role="group">
+                        <a class="wl-item-btn-flip btn text-light">{% icon "book" %}</a>
+                    </div>
+                </div>
+            </div>
+            <div class="wl-item-footer text-center mb-4">
+                {% if wish.is_reserved %}
+                    {% if wish.reservation.holder == user and wish.reservation.undoable %}
+                        <a class="btn btn-link" href="{% linked_url 'reservation-undo' user.id wish.reservation.id %}">{% translate "Undo reservation" %}</a>
+                    {% endif %}
+                {% else %}
+                    <a class="btn btn-link" href="{% linked_url 'reservation-create' user.id %}&{{ item_id_key }}={{ wish.id }}">{% translate "Reserve this wish" %}</a>
+                {% endif %}
+            </div>
+        </div>
+    {% endfor %}
+</div>

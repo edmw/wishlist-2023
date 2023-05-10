@@ -1,0 +1,16 @@
+{% extends "page_simple_question.html" %}
+
+{% load i18n %}
+{% load core %}
+
+{% block what %}
+    {% blocktranslate with item_name=object.wish.name list_name=object.wish.wishlist.name %}... to mark the wish named <strong>{{ item_name }}</strong> from wish list <strong>{{ list_name }}</strong> as received?{% endblocktranslate %}
+{% endblock what %}
+{% block form_extra %}
+{{ form.completed.as_hidden }}
+{% endblock form_extra %}
+{% block note %}
+<div class="mt-4 alert alert-warning" role="alert">
+    {% blocktranslate %}<strong>Please note:</strong> The user who reserved this wish will <strong>not</strong> be able to delete the reservation anymore!{% endblocktranslate %}
+</div>
+{% endblock note %}

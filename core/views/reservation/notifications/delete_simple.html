@@ -1,0 +1,5 @@
+{% load i18n %}
+{% if wishlist_masked %}{% blocktranslate %}A wish was released on wish list <b>'{{ wishlist_name }}'</b>.{% endblocktranslate %}{% else %}{% blocktranslate %}Wish <b>'{{ wish_name }}'</b> was released on wish list <b>'{{ wishlist_name }}'</b>.{% endblocktranslate %}{% endif %}
+
+--
+{% translate "Please do not reply." %}

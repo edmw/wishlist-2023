@@ -1,0 +1,18 @@
+{% extends "page.html" %}
+
+{% load static %}
+{% load i18n %}
+{% load core %}
+
+{% block header %}
+    {% with title="Wishlists" %}
+        {{ block.super }}
+    {% endwith %}
+{% endblock header %}
+{% block content %}
+    <div class="content">
+        <h2>{{ user.first_name }}</h2>
+        {% include "lists/lists-section.html" with wishlists=your_wishlists wishlists_count=your_wishlists_count %}
+        {% link_to_previous _("Back") %}
+    </div>
+{% endblock content %}

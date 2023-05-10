@@ -1,0 +1,4 @@
+---
+services:
+  files:
+    image: quay.io/minio/minio

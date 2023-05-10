@@ -1,0 +1,18 @@
+{
+    "name": "wishlist",
+    "description": "Wishlist",
+    "version": "0.0.0",
+    "author": "Michael Baumgärtner",
+    "license": "@LICENSE",
+    "scripts": {
+        "dist-prepare": "mkdir -p ./dist/styles && mkdir -p ./dist/scripts",
+        "dist-build-bootstrap": "cp ./node_modules/bootstrap/dist/css/bootstrap.min.css ./node_modules/bootstrap/dist/css/bootstrap.min.css.map ./dist/styles/ && cp ./node_modules/bootstrap/dist/js/bootstrap.min.js ./node_modules/bootstrap/dist/js/bootstrap.min.js.map ./dist/scripts/",
+        "dist-build-htmx": "cp ./node_modules/htmx.org/dist/htmx.min.js ./dist/scripts",
+        "dist-build": "npm run dist-build-bootstrap && npm run dist-build-htmx",
+        "build": "npm ci && npm run dist-prepare && npm run dist-build"
+    },
+    "dependencies": {
+        "bootstrap": "^5.2.3",
+        "htmx.org": "^1.8.4"
+    }
+}

@@ -1,0 +1,13 @@
+{% extends "page_simple_confirmation.html" %}
+
+{% load i18n %}
+{% load core %}
+
+{% block what %}
+    {% blocktranslate with item_name=object.wish.name list_name=object.wish.wishlist.name %}... you want to <span class="text-danger">delete</span> the reservation for the wish named <strong>{{ item_name }}</strong> from wish list <strong>{{ list_name }}</strong>?{% endblocktranslate %}
+{% endblock what %}
+{% block note %}
+<div class="mt-4 alert alert-warning" role="alert">
+    {% blocktranslate %}<strong>Please note:</strong> The user who reserved this wish will <strong>not</strong> be notified if you'll decide to delete the reservation!{% endblocktranslate %}
+</div>
+{% endblock note %}

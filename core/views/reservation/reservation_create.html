@@ -1,0 +1,10 @@
+{% extends "page_simple_question.html" %}
+
+{% load i18n %}
+
+{% block what %}
+    {% blocktranslate with item_name=wish.name list_name=wish.wishlist.name %}... to reserve the wish named <strong>{{ item_name }}</strong> from list <strong>{{ list_name }}</strong>?{% endblocktranslate %}
+{% endblock what %}
+{% block form_extra %}
+    <input type="hidden" name="wish" id="id_wish" value="{{ wish.id_field }}" />
+{% endblock form_extra %}

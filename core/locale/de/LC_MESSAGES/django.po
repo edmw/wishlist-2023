@@ -1,0 +1,1045 @@
+# Translation of Wishlist into German.
+# This file is distributed under the same license as the Wishlist package.
+# Michael Baumgärtner <mib@yamanote.de>, 2022, 2023.
+msgid ""
+msgstr ""
+"Project-Id-Version: wishlist\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2001-01-01 00:00+0000\n"
+"PO-Revision-Date: 2001-01-01 00:00+0000\n"
+"Last-Translator: Michael Baumgärtner <mib@yamanote.de>\n"
+"Language-Team: German <mib@yamanote.de>\n"
+"Language: German\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#, python-brace-format
+msgid ""
+"<strong>Something went wrong during authentication.</strong> <p>This is not "
+"your fault, and unfortunately there's not much you can do about it except "
+"maybe try again later.</p>If you want to let us know about this failure, "
+"please add this code <strong>{request_id}</strong> to your message."
+msgstr ""
+"<strong>Während der Authentifizierung ist etwas schief gelaufen.</strong> "
+"<p>Das ist nicht deine Schuld, und leider kannst du nicht viel dagegen tun, "
+"außer es vielleicht später noch einmal zu versuchen.</p>Wenn du uns über "
+"diesen Fehler informieren möchtest, füge bitte diesen Code "
+"<strong>{request_id}</strong> zu deiner Nachricht hinzu."
+
+msgid "Name (ascending)"
+msgstr "Name (aufsteigend)"
+
+msgid "Name (descending)"
+msgstr "Name (absteigend)"
+
+msgid "Preference (ascending)"
+msgstr "Präferenz (aufsteigend)"
+
+msgid "Preference (descending)"
+msgstr "Präferenz (absteigend)"
+
+msgid "Added at (ascending)"
+msgstr "Hinzugefügt am (aufsteigend)"
+
+msgid "Added at (descending)"
+msgstr "Hinzugefügt am (absteigend)"
+
+msgid "Modified at (ascending)"
+msgstr "Geändert am (aufsteigend)"
+
+msgid "Modified at (descending)"
+msgstr "Geändert am (absteigend)"
+
+msgid "Not so important"
+msgstr "Nicht so wichtig"
+
+msgid "Not so sure"
+msgstr "Bin mir nicht sicher"
+
+msgid "Would be happy"
+msgstr "Würde mich sehr freuen"
+
+msgid "Would love to have"
+msgstr "Hätte ich sehr gerne"
+
+msgid "Must have"
+msgstr "Muss ich haben"
+
+msgid "Only you"
+msgstr "nur Du"
+
+msgid "All users"
+msgstr "alle Nutzer"
+
+msgid "Public"
+msgstr "Öffentlich"
+
+msgid "just now"
+msgstr "gerade eben"
+
+msgid "one minute ago"
+msgstr "vor einer Minute"
+
+msgid "one hour ago"
+msgstr "vor einer Stunde"
+
+msgid "{} ago"
+msgstr "vor {}"
+
+msgid "Wish added"
+msgstr "Wunsch hinzugefügt"
+
+msgid "Wish reserved"
+msgstr "Wunsch reserviert"
+
+msgid "Wish released"
+msgstr "Wunsch freigegeben"
+
+msgid "Sorry!"
+msgstr "Sorry!"
+
+msgid "We are unable to respond to the request you have made."
+msgstr "Wir können die von dir gestellte Anfrage nicht bearbeiten."
+
+msgid "Here are some useful links instead:"
+msgstr "Hier sind stattdessen einige nützliche Links:"
+
+msgid "It seems that you’re not authorized to see this page."
+msgstr "Es scheint, dass Du nicht berechtigt bist, diese Seite zu sehen."
+
+msgid "Maybe you want to check the request you just tried ..."
+msgstr ""
+"Vielleicht möchtest du die Anfrage überprüfen, die du gerade versucht hast "
+"..."
+
+#, python-format
+msgid "Maybe you want to try to <a href=\"%(url)s\">authenticate yourself</a> ..."
+msgstr ""
+"Vielleicht möchtest du versuchen, dich <a href=\"%(url)s\">anzumelden</a> "
+"..."
+
+msgid "... or visit some useful links instead:"
+msgstr "... oder stattdessen einige nützliche Links besuchen:"
+
+msgid "Oops!"
+msgstr "HOPPLA!"
+
+msgid "We can’t seem to find the page you’re looking for."
+msgstr "Wir können die von dir gesuchte Seite nicht finden."
+
+msgid "Account inactive"
+msgstr "Konto inaktiv"
+
+msgid "Are you sure you want to sign out?"
+msgstr "Bist du sicher, daß du dich abmelden möchtest?"
+
+msgid "Sign out"
+msgstr "Abmelden"
+
+msgid "Home"
+msgstr "Startseite"
+
+msgid "Use this to start over ..."
+msgstr "Verwende dies, um von vorne zu beginnen ..."
+
+msgid "Contact"
+msgstr "Kontakt"
+
+msgid "Use this if you want to tell someone about your misery ..."
+msgstr ""
+"Verwende dies, wenn du jemandem von deinem Elend erzählen möchtest ..."
+
+msgid "Wishlist"
+msgstr "Wunschzettel"
+
+msgid "Privacy policy"
+msgstr "Datenschutzerklärung"
+
+msgid "Legal notice"
+msgstr "Impressum"
+
+msgid "Cancel"
+msgstr "Abbrechen"
+
+msgid "Profile"
+msgstr "Profil"
+
+msgid "Sign in"
+msgstr "Anmelden"
+
+msgid "Close"
+msgstr "Schliessen"
+
+msgid "Are you sure ..."
+msgstr "Bist du sicher..."
+
+msgid "Confirm"
+msgstr "Bestätigen"
+
+msgid "Do you want ..."
+msgstr "Möchtest du ..."
+
+msgid "Yes"
+msgstr "Ja"
+
+msgid ""
+"Regrettably our service is restricted to returning users at the moment. If "
+"you are a not a returning user, but interested in using our service we "
+"kindly ask you to come back at a later time."
+msgstr ""
+"Leider ist unser Dienst zur Zeit nur für bereits registrierte Nutzer "
+"verfügbar. Wenn du kein wiederkehrender Nutzer bist, aber diesen Dienst "
+"nutzen möchtest, komme bitte zu einem späteren Zeitpunkt wieder."
+
+msgid ""
+"Unfortunately we are unable to perform any sign ins at the moment. This is "
+"an unexpected condition and we try to restore the service into its normal "
+"state as soon as possible."
+msgstr ""
+"Leider können wir derzeit keine Anmeldungen zu unserem Dienst zulassen. Dies"
+" ist ein unerwarteter Zustand, und wir versuchen, den Dienst so schnell wie "
+"möglich wieder in den Normalzustand zu versetzen."
+
+msgid "Sign in using Google"
+msgstr "Mit Google anmelden"
+
+msgid "received"
+msgstr "erhalten"
+
+msgid "reserved"
+msgstr "reserviert"
+
+msgid "wanted"
+msgstr "gewünscht"
+
+#, python-format
+msgid ""
+"... to add the wish list named <strong>%(list_name)s</strong> to your "
+"favorites?"
+msgstr ""
+"... den Wunschzettel <strong>%(list_name)s</strong> zu deinen Favoriten "
+"hinzufügen?"
+
+msgid "Add a Favorite"
+msgstr "Favorit hinzufügen"
+
+msgid "Add Favorite"
+msgstr "Favorit hinzufügen"
+
+msgid "The wish list has been successfully added to your favorites."
+msgstr "Der Wunschzettel wurde erfolgreich zu deinen Favoriten hinzugefügt."
+
+msgid ""
+"You already have too many wish lists in your favorites. Please remove some "
+"favorites before adding new ones."
+msgstr ""
+"Du hast bereits zu viele Wunschlisten in deinen Favoriten. Bitte entferne "
+"einige Favoriten, bevor du neue erstellst."
+
+msgid "You already have this wish list in your favorites."
+msgstr "Dieser Wunschzettel ist bereits in deinen Favoriten."
+
+#, python-format
+msgid ""
+"... you want to <span class=\"text-danger\">remove</span> the wish list "
+"named <strong>%(list_name)s</strong> from your favorites?"
+msgstr ""
+"... daß du den Wunschzettel <strong>%(list_name)s</strong> von deinen "
+"Favoriten <span class=\"text-danger\">entfernen</span> möchtest?"
+
+msgid "Remove a Favorite"
+msgstr "Favorit entfernen"
+
+msgid "Remove Favorite"
+msgstr "Favorit entfernen"
+
+msgid "The wish list has been successfully removed from your favorites."
+msgstr "Der Wunschzettel wurde erfolgreich von deinen Favoriten entfernt."
+
+msgid "Options for this Favorite"
+msgstr "Einstellungen für diesen Favoriten"
+
+msgid "Save"
+msgstr "Speichern"
+
+msgid "Notify on wish create"
+msgstr "Benachrichtige, wenn ein Wunsch hinzugefügt wird."
+
+msgid "Update your Favorite"
+msgstr "Favorit bearbeiten"
+
+msgid "Update Favorite"
+msgstr "Favorit bearbeiten"
+
+msgid "Your updated favorite has been successfully saved."
+msgstr "Dein aktualisierter Favorit wurde erfolgreich gespeichert."
+
+msgid "Your Favorites"
+msgstr "Deine Favoriten"
+
+msgid "You don't have a favorite wish list yet."
+msgstr "Du hast noch keine favorisierten Wunschzettel."
+
+msgid "Name"
+msgstr "Name"
+
+msgid "Wishes"
+msgstr "Wünsche"
+
+msgid "Owner"
+msgstr "Besitzer"
+
+msgid "Disable notifications"
+msgstr "Benachrichtigungen unterbinden"
+
+msgid "Enable notifications"
+msgstr "Benachrichtigungen freigeben"
+
+msgid "Remove list from favorites"
+msgstr "Zettel von den Favoriten entfernen"
+
+msgid "Back"
+msgstr "Zurück"
+
+msgid "Favorites"
+msgstr "Favoriten"
+
+#, python-format
+msgid ""
+"... to archive the wish named <strong>%(item_name)s</strong> on wish list "
+"<strong>%(list_name)s</strong>?"
+msgstr ""
+"... daß du den Wunsch <strong>%(item_name)s</strong> auf dem Wunschzettel "
+"<strong>%(list_name)s</strong> archivieren möchtest?"
+
+msgid "This wish can not be archived."
+msgstr "Dieser Wunsch kann nicht archiviert werden."
+
+msgid "Archive your Wish"
+msgstr "Wunsch archivieren"
+
+msgid "Archive Wish"
+msgstr "Wunsch archivieren"
+
+msgid "Your wish has been successfully archived."
+msgstr "Dein Wunsch wurde erfolgreich archiviert."
+
+#, python-format
+msgid ""
+"... you want to <span class=\"text-danger\">delete</span> the wish named "
+"<strong>%(item_name)s</strong> from list <strong>%(list_name)s</strong>?"
+msgstr ""
+"... daß du den Wunsch <strong>%(item_name)s</strong> vom Wunschzettel "
+"<strong>%(list_name)s</strong> <span class=\"text-danger\">löschen</span> "
+"möchtest?"
+
+msgid "Delete a Wish"
+msgstr "Wunsch löschen"
+
+msgid "Delete Wish"
+msgstr "Wunsch löschen"
+
+msgid "Your wish has been successfully deleted."
+msgstr "Dein Wunsch wurde erfolgreich gelöscht."
+
+msgid "Optional external URL for this wish."
+msgstr "Optionale, externe URL für diesen Wunsch."
+
+msgid "Optional external URL for this wish’s photo."
+msgstr "Optionale, externe URL für ein Foto diesen Wunsches."
+
+msgid "Enter wish’s name"
+msgstr "Name des Wunsches eingeben"
+
+msgid "Description"
+msgstr "Beschreibung"
+
+msgid "Enter wish’s description"
+msgstr "Beschreibung des Wunsches eingeben"
+
+msgid "Preference"
+msgstr "Präferenz"
+
+msgid "URL"
+msgstr "URL"
+
+msgid "Enter URL (optional)"
+msgstr "URL eingeben (optional)"
+
+msgid "Photo URL"
+msgstr "Foto URL"
+
+msgid "Enter photo URL (optional)"
+msgstr "Foto URL eingeben (optional)"
+
+msgid "Add a Wish"
+msgstr "Wunsch hinzufügen"
+
+msgid "Add Wish"
+msgstr "Wunsch hinzufügen"
+
+msgid "Your new wish has been successfully added."
+msgstr "Dein neuer Wunsch wurde erfolgreich hinzugefügt."
+
+msgid ""
+"You already have too many wishes on this wish list. Please delete some "
+"wishes before you add new ones."
+msgstr ""
+"Du hast bereits zu viele Wünsche auf diesem Wunschzettel. Bitte lösche "
+"einige Wünsche, bevor du neue erstellst."
+
+msgid "Update your Wish"
+msgstr "Wunsch bearbeiten"
+
+msgid "Update Wish"
+msgstr "Wunsch bearbeiten"
+
+msgid "Your updated wish has been successfully saved."
+msgstr "Dein aktualisierter Wunsch wurde erfolgreich gespeichert."
+
+msgid ""
+"Archived wishes no longer appear on the wish list, but can be restored from "
+"the archive at any time."
+msgstr ""
+"Archivierte Wünsche erscheinen nicht mehr länger auf dem Wunschzettel. Sie "
+"können aber jederzeit aus dem Archiv wiederhergestellt werden."
+
+msgid "Archive this wish"
+msgstr "Wunsch archivieren"
+
+msgid "Unarchived wishes reappear on the wish list."
+msgstr "Wiederhergestellte Wünsche erscheinen wieder auf dem Wunschzettel."
+
+msgid "Unarchive this wish"
+msgstr "Wunsch wiederherstellen"
+
+msgid ""
+"This wish has already been reserved. A wish already reserved but not yet "
+"received cannot be archived."
+msgstr ""
+"Dieser Wunsch wurde bereits reserviert. Ein bereits reservierter, aber noch "
+"nicht erhaltener Wunsch kann nicht archiviert werden."
+
+msgid ""
+"If you delete this wish, all data for that wish will be deleted. A wish "
+"already reserved but not yet received cannot be deleted."
+msgstr ""
+"Wenn du diesen Wunsch löscht, werden auch alle Daten zu diesem Wunsch "
+"gelöscht. Ein bereits reservierter, aber noch nicht erhaltener Wunsch kann "
+"nicht gelöscht werden."
+
+msgid "Caution! Deleted wishes cannot be restored."
+msgstr "Achtung! Gelöschte Wünsche können nicht wiederhergestellt werden."
+
+msgid "Delete this wish permanently"
+msgstr "Diesen Wunsch permanent löschen"
+
+msgid ""
+"This wish has already been reserved. A wish already reserved but not yet "
+"received cannot be deleted. It must first be released to be able to delete "
+"it."
+msgstr ""
+"Dieser Wunsch ist bereits reserviert. Ein bereits reservierter, aber noch "
+"nicht erhaltener Wunsch kann nicht gelöscht werden. Er muss erst freigegeben"
+" werden, um ihn löschen zu können."
+
+msgid "Move this wish"
+msgstr "Wunsch verschieben"
+
+msgid ""
+"This wish has already been reserved. A wish already reserved but not yet "
+"received cannot be moved to another list."
+msgstr ""
+"Dieser Wunsch wurde bereits reserviert. Ein bereits reservierter, aber noch "
+"nicht erhaltener Wunsch kann nicht auf eine andere Liste verschoben werden."
+
+msgid ""
+"When you release a wish, the reservation for that wish is deleted. The user "
+"who reserved this wish will not be notified that his reservation has been "
+"deleted. Therefore, you should only release a wish if you are sure. "
+"Otherwise, you may receive multiple gifts for your wish."
+msgstr ""
+"Wenn du einen Wunsch freigibst, wird die Reservierung für diesen Wunsch "
+"gelöscht. Der Benutzer, der diesen Wunsch reserviert hat, wird nicht darüber"
+" informiert, dass seine Reservierung gelöscht wurde. Daher solltest du einen"
+" Wunsch nur freigeben, wenn du dir sicher bist. Andernfalls erhälst du "
+"möglicherweise mehrere Geschenke für deinen Wunsch."
+
+msgid "Release this wish"
+msgstr "Wunsch freigeben"
+
+msgid "This wish has not yet been reserved and can therefore not be released."
+msgstr ""
+"Dieser Wunsch wurde noch nicht reserviert und kann daher nicht freigegeben "
+"werden."
+
+msgid "Manage your Wish"
+msgstr "Deinen Wunsch bearbeiten"
+
+#, python-format
+msgid ""
+"... to move the wish named <strong>%(item_name)s</strong> from list "
+"<strong>%(list_name)s</strong> to another list?"
+msgstr ""
+"... den Wunsch <strong>%(item_name)s</strong> von Wunschzettel "
+"<strong>%(list_name)s</strong> auf einen anderen Wunschzettel verschieben?"
+
+msgid "Select a list to move your wish to"
+msgstr "Wähle eine Liste auf die dein Wunsch verschoben werden soll"
+
+msgid "This wish can not be moved."
+msgstr "Dieser Wunsch kann nicht verschoben werden."
+
+msgid "Move your Wish"
+msgstr "Wunsch verschieben"
+
+msgid "Move Wish"
+msgstr "Wunsch verschieben"
+
+msgid "Your wish has been successfully moved."
+msgstr "Dein Wunsch wurde erfolgreich verschoben."
+
+#, python-format
+msgid ""
+"... to mark the wish named <strong>%(item_name)s</strong> from wish list "
+"<strong>%(list_name)s</strong> as received?"
+msgstr ""
+"... den Wunsch <strong>%(item_name)s</strong> vom Wunschzettel "
+"<strong>%(list_name)s</strong> als erhalten markieren?"
+
+msgid ""
+"<strong>Please note:</strong> The user who reserved this wish will "
+"<strong>not</strong> be able to delete the reservation anymore!"
+msgstr ""
+"<strong>Bitte beachte:</strong> Der Nutzer, der diesen Wunsch reserviert "
+"hat, wird die Reservierung <strong>nicht</strong> mehr freigeben können."
+
+msgid "This wish can not be received."
+msgstr "Dieser Wunsch kann nicht als erhalten markiert werden."
+
+msgid "Receive your Wish"
+msgstr "Wunsch erhalten"
+
+msgid "Receive Wish"
+msgstr "Wunsch erhalten"
+
+msgid "The wish has been successfully marked as received."
+msgstr "Der Wunsch wurde erfolgreich als erhalten markiert."
+
+#, python-format
+msgid ""
+"... you want to <span class=\"text-danger\">delete</span> the reservation "
+"for the wish named <strong>%(item_name)s</strong> from wish list "
+"<strong>%(list_name)s</strong>?"
+msgstr ""
+"... daß du die Reservierung für den Wunsch <strong>%(item_name)s</strong> "
+"vom Wunschzettel <strong>%(list_name)s</strong> <span class=\"text-"
+"danger\">löschen</span> möchtest?"
+
+msgid ""
+"<strong>Please note:</strong> The user who reserved this wish will "
+"<strong>not</strong> be notified if you'll decide to delete the reservation!"
+msgstr ""
+"<strong>Bitte beachte:</strong> Der Nutzer, der diesen Wunsch reserviert "
+"hat, wird <strong>nicht</strong> benachrichtigt, wenn du dich entscheidest "
+"diese Reservierung zu löschen!"
+
+msgid "Delete a Reservation"
+msgstr "Reservierung löschen"
+
+msgid "Delete Reservation"
+msgstr "Reservierung löschen"
+
+msgid "The reservation for the wish has been successfully deleted."
+msgstr "Die Reservierung für den Wunsch wurde erfolgreich gelöscht."
+
+#, python-format
+msgid ""
+"... to unarchive the wish named <strong>%(item_name)s</strong> on list "
+"<strong>%(list_name)s</strong>?"
+msgstr ""
+"... den Wunsch <strong>%(item_name)s</strong> vom Wunschzettel "
+"<strong>%(list_name)s</strong> wiederherstellen?"
+
+msgid "This wish can not be unarchived."
+msgstr "Dieser Wunsch kann nicht wiederhergestellt werden."
+
+msgid "Unarchive your Wish"
+msgstr "Wunsch wiederherstellen"
+
+msgid "Unarchive Wish"
+msgstr "Wunsch wiederherstellen"
+
+msgid "Your wish has been successfully unarchived."
+msgstr "Dein Wunsch wurde erfolgreich widerhergestellt."
+
+msgid ""
+"<strong>Please note:</strong> This wish has been <strong>reserved</strong> "
+"already. The user who reserved this wish will <strong>not</strong> be "
+"notified about any change you'll decide to make here!"
+msgstr ""
+"<strong>Bitte beachte:</strong> Dieser Wunsch wurde bereits reserviert. Der "
+"Benutzer, der diesen Wunsch reserviert hat, wird nicht über eine Änderung "
+"benachrichtigt, die du hier vornimmst!"
+
+#, python-format
+msgid ""
+"<h1>A new wish has been added to the wish list "
+"<strong>'%(wishlist_name)s'</strong>.</h1>"
+msgstr ""
+"<h1>Ein neuer Wunsch wurde zum Wunschzettel "
+"<strong>'%(wishlist_name)s'</strong> hinzugefügt.</h1>"
+
+msgid "Please do not reply."
+msgstr "Bitte nicht antworten."
+
+#, python-format
+msgid "A new wish has been added to the wish list '%(wishlist_name)s'."
+msgstr ""
+"Ein neuer Wunsch wurde zum Wunschzettel '%(wishlist_name)s' hinzugefügt."
+
+#, python-format
+msgid "A new wish has been added to the wish list <b>'%(wishlist_name)s'</b>."
+msgstr ""
+"Ein neuer Wunsch wurde zum Wunschzettel <b>'%(wishlist_name)s'</b> "
+"hinzugefügt."
+
+msgid "None"
+msgstr "Keine"
+
+msgid "Archived Wishes"
+msgstr "Archivierte Wünsche"
+
+msgid "Your Wishes"
+msgstr "Deine Wünsche"
+
+msgid "Add a wish"
+msgstr "Wunsch hinzufügen"
+
+msgid "Status"
+msgstr "Status"
+
+msgid "Open external item URL"
+msgstr "Link für diesen Wunsch öffnen"
+
+msgid "Mark item as received"
+msgstr "Wunsch als erhalten markieren"
+
+msgid "Edit item"
+msgstr "Wunsch bearbeiten"
+
+msgid "Manage item"
+msgstr "Wunsch verwalten"
+
+msgid "View list"
+msgstr "Zettel anzeigen"
+
+msgid "View"
+msgstr "Anzeigen"
+
+#, python-format
+msgid ""
+"... you want to <span class=\"text-danger\">delete</span> the wish list "
+"named <strong>%(list_name)s</strong>?"
+msgstr ""
+"... daß du den Wunschzettel <strong>%(list_name)s</strong> <span "
+"class=\"text-danger\">löschen</span> möchtest?"
+
+#, python-format
+msgid "There is still one wish on your wish list."
+msgid_plural "There are still %(counter)s wishes on your wish list."
+msgstr[0] "Es gibt noch einen Wunsch auf deinem Zettel."
+msgstr[1] "Es stehen noch %(counter)s Wünsche auf deinem Zettel."
+
+msgid ""
+"If you proceed to delete the list, all the wishes on it will also be "
+"deleted."
+msgstr ""
+"Wenn du mit dem Löschen des Wunschzettels fortfährst, werden auch alle "
+"darauf befindlichen Wünsche gelöscht."
+
+msgid ""
+"If you really want to do this, please confirm by entering the name of the "
+"list again:"
+msgstr ""
+"Wenn du dies wirklich möchtest, bestätige bitte, indem du den Namen der "
+"Liste erneut eingibst:"
+
+msgid "Enter wish list’s name"
+msgstr "Name des Wunschzettels eingeben"
+
+msgid "The name entered does not match the name of the list to delete."
+msgstr ""
+"Der eingegeben Name entspricht nicht dem Namen des Wunschzettels der "
+"gelöscht werden soll."
+
+msgid "Delete your List"
+msgstr "Wunschzettel löschen"
+
+msgid "Delete List"
+msgstr "Wunschzettel löschen"
+
+msgid "Your wish list has been successfully deleted."
+msgstr "Dein Wunschzettel wurde erfolgreich gelöscht."
+
+msgid "Options for this List"
+msgstr "Einstellungen des Wunschzettels"
+
+msgid ""
+"The \"Don't spoil my surprises\" setting is off by default so all "
+"reservations on this wish list will be visible to you. If you want the "
+"reservations to remain secret check this option. This option affects the "
+"edit view of this wish list only. The presentation view will always show the"
+" current reservations."
+msgstr ""
+"Die Einstellung \"Verderbe nicht meine Überraschung\" ist in der "
+"Voreinstellung nicht ausgewählt. Damit werden Dir alle Reservierungen von "
+"diesem Wunschzettel angezeigt. Wenn du die Reservierungen für Dich geheim "
+"halten möchtest, wähle diese Einstellung. Diese Einstellung betrifft nur die"
+" Ansicht zum Bearbeiten des Wunschzettels. In der Präsentationsansicht "
+"werden die aktuellen Reservierungen immer angezeigt."
+
+msgid "Visibility"
+msgstr "Sichtbarkeit"
+
+msgid "Display order of wishes"
+msgstr "Anzeigereihenfolge der Wünsche"
+
+msgid "Don't spoil my surprises"
+msgstr "Verderbe nicht meine Überraschung"
+
+msgid "Create new Wish List"
+msgstr "Wunschzettel erstellen"
+
+msgid "Create Wish List"
+msgstr "Wunschzettel erstellen"
+
+msgid "Your new wish list has been successfully created."
+msgstr "Dein neuer Wunschzettel wurde erfolgreich erstellt."
+
+msgid ""
+"You already have too many wish lists. Please delete some wish lists before "
+"you create new ones."
+msgstr ""
+"Du hast bereits zu viele Wunschlisten. Bitte lösche einige Wunschlisten, "
+"bevor du neue erstellst."
+
+msgid "Update your Wish List"
+msgstr "Wunschzettel bearbeiten"
+
+msgid "Update Wish List"
+msgstr "Wunschzettel bearbeiten"
+
+msgid "Your updated wish list has been successfully saved."
+msgstr "Dein aktualisierter Wunschzettel wurden erfolgreich gespeichert."
+
+msgid "Your Lists"
+msgstr "Deine Wunschzettel"
+
+#, python-format
+msgid ""
+"You don't have a wish list yet. Start collecting your wishes on a <a "
+"href=\"%(url)s\">new wish list</a> right now."
+msgstr ""
+"Du hast noch keinen Wunschzettel. Beginne jetzt dein Wünsche auf einem <a "
+"href=\"%(url)s\">neuen Wunschzettel</a> zu sammeln."
+
+msgid "Edit items"
+msgstr "Wünsche bearbeiten"
+
+msgid "Export list"
+msgstr "Wunschzettel exportieren"
+
+msgid "Edit list"
+msgstr "Wunschzettel bearbeiten"
+
+msgid "Delete list"
+msgstr "Wunschzettel löschen"
+
+msgid "Create new List"
+msgstr "Neuen Wunschzettel erstellen"
+
+msgid "Import list"
+msgstr "Wunschzettel importieren"
+
+msgid "Wishlists"
+msgstr "Wunschzettel"
+
+#, python-format
+msgid ""
+"<h1>A wish was reserved on wish list "
+"<strong>'%(wishlist_name)s'</strong>.</h1>"
+msgstr ""
+"<h1>Ein Wunsch auf dem Wunschzettel <strong>'%(wishlist_name)s'</strong> "
+"wurde reserviert.</h1>"
+
+#, python-format
+msgid ""
+"<h1>Wish <strong>'%(wish_name)s'</strong> was reserved on wish list "
+"<strong>'%(wishlist_name)s'</strong>.</h1>"
+msgstr ""
+"<h1>Wunsch <strong>'%(wish_name)s'</strong> auf dem Wunschzettel "
+"<strong>'%(wishlist_name)s'</strong> wurde reserviert.</h1>"
+
+#, python-format
+msgid "A wish was reserved on wish list '%(wishlist_name)s'."
+msgstr "Ein Wunsch auf dem Wunschzettel '%(wishlist_name)s' wurde reserviert."
+
+#, python-format
+msgid "Wish '%(wish_name)s' was reserved on wish list '%(wishlist_name)s'."
+msgstr ""
+"Wunsch '%(wish_name)s' auf dem Wunschzettel '%(wishlist_name)s' wurde "
+"reserviert."
+
+#, python-format
+msgid "A wish was reserved on wish list <b>'%(wishlist_name)s'</b>."
+msgstr ""
+"Ein Wunsch auf dem Wunschzettel <b>'%(wishlist_name)s'</b> wurde reserviert."
+
+#, python-format
+msgid ""
+"Wish <b>'%(wish_name)s'</b> was reserved on wish list "
+"<b>'%(wishlist_name)s'</b>."
+msgstr ""
+"Wunsch <b>'%(wish_name)s'</b> auf dem Wunschzettel "
+"<b>'%(wishlist_name)s'</b> wurde reserviert."
+
+#, python-format
+msgid ""
+"<h1>A wish was released on wish list "
+"<strong>'%(wishlist_name)s'</strong>.</h1>"
+msgstr ""
+"<h1>Ein Wunsch auf dem Wunschzettel <strong>'%(wishlist_name)s'</strong> "
+"wurde freigegeben.</h1>"
+
+#, python-format
+msgid ""
+"<h1>Wish <strong>'%(wish_name)s'</strong> was released on wish list "
+"<strong>'%(wishlist_name)s'</strong>.</h1>"
+msgstr ""
+"<h1>Wunsch <strong>'%(wish_name)s'</strong> auf dem Wunschzettel "
+"<strong>'%(wishlist_name)s'</strong> wurde freigegeben.</h1>"
+
+#, python-format
+msgid "A wish was released on wish list '%(wishlist_name)s'."
+msgstr ""
+"Ein Wunsch auf dem Wunschzettel '%(wishlist_name)s' wurde freigegeben."
+
+#, python-format
+msgid "A wish was released on wish list <b>'%(wishlist_name)s'</b>."
+msgstr ""
+"Ein Wunsch auf dem Wunschzettel <b>'%(wishlist_name)s'</b> wurde "
+"freigegeben."
+
+#, python-format
+msgid ""
+"Wish <b>'%(wish_name)s'</b> was released on wish list "
+"<b>'%(wishlist_name)s'</b>."
+msgstr ""
+"Wunsch <b>'%(wish_name)s'</b> auf dem Wunschzettel "
+"<b>'%(wishlist_name)s'</b> wurde freigegeben."
+
+#, python-format
+msgid ""
+"... to reserve the wish named <strong>%(item_name)s</strong> from list "
+"<strong>%(list_name)s</strong>?"
+msgstr ""
+"... den WUnsch <strong>%(item_name)s</strong> vom Wunschzettel "
+"<strong>%(list_name)s</strong> reservieren?"
+
+msgid "Reserve a Wish"
+msgstr "Wunsch reservieren"
+
+msgid "Reserve Wish"
+msgstr "Wunsch reservieren"
+
+msgid "The wish has been successfully reserved for you."
+msgstr "Der Wunsch wurde erfolgreich für dich reserviert."
+
+msgid "This wish has already been reserved."
+msgstr "Dieser Wunsch wurde bereits reserviert."
+
+#, python-format
+msgid ""
+"... you want to <span class=\"text-danger\">undo</span> the reservation for "
+"the wish named <strong>%(item_name)s</strong> from list "
+"<strong>%(list_name)s</strong>?"
+msgstr ""
+"... daß du die Reservierung für den Wunsch  <strong>%(item_name)s</strong> "
+"vom Wunschzettel <strong>%(list_name)s</strong> <span class=\"text-"
+"danger\">zurücknehmen</span> möchtest?"
+
+msgid "Undo a Reservation"
+msgstr "Reservierung zurücknehmen"
+
+msgid "Undo Reservation"
+msgstr "Reservierung zurücknehmen"
+
+msgid "The reservation for the wish has been successfully undone."
+msgstr "Die Reservierung für den Wunsch wurde erfolgreich zurückgenommen."
+
+msgid "Wish lists made easy."
+msgstr "Wunschzettel einfach gemacht!"
+
+msgid ""
+"It's easy and fun to create your personal wish list and share it with your "
+"loved ones."
+msgstr ""
+"Erstelle einfach und mit Spaß einen Wunschzettel und teile ihn mit Freunden,"
+" Bekannten und Verwandten."
+
+msgid "Your Data"
+msgstr "Deine Daten"
+
+msgid "Edit Data"
+msgstr "Daten bearbeiten"
+
+msgid "Edit"
+msgstr "Bearbeiten"
+
+msgid "Nickname"
+msgstr "Kurzname"
+
+msgid "Firstname"
+msgstr "Vorname"
+
+msgid "Lastname"
+msgstr "Nachname"
+
+msgid "Email"
+msgstr "E-Mail"
+
+msgid "Language"
+msgstr "Sprache"
+
+msgid "First login"
+msgstr "Erste Anmeldung"
+
+msgid "Last login"
+msgstr "Letzte Anmeldung"
+
+msgid ""
+"The maximum length of a short name is 150 characters. For a short name you "
+"can use only letters, numbers and @/./+/-/_. Your short name will be visible"
+" to other users."
+msgstr ""
+"Die maximale Länge eines Kurznamens sind 150 Zeichen. Für einen Kurznamen "
+"kannst du nur Buchstaben, Ziffern und @/./+/-/_ verwenden. Dein Kurzname "
+"wird für andere Nutzer sichtbar sein."
+
+msgid ""
+"Texts are displayed in the selected language. If no language is selected, "
+"the preferred language is determined by the setting of your browser."
+msgstr ""
+"Texte werden in der ausgewählten Sprache angezeigt. Wenn keine Sprache "
+"ausgewählt ist, wird die bevorzugte Sprache durch die Einstellung deines "
+"Browsers ermittelt."
+
+msgid "Enter nickname"
+msgstr "Kurzname eingeben"
+
+msgid "This nickname is already in use by another user."
+msgstr "Dieser Kurzname wird bereits von einem anderen Benutzer verwendet."
+
+msgid "Edit your Data"
+msgstr "Deine Daten bearbeiten"
+
+msgid "Your updated data has been successfully saved."
+msgstr "Deine aktualisierten Daten wurden erfolgreich gespeichert."
+
+#, python-format
+msgid ""
+"This is a test message sent from Wishlist web application for "
+"%(user_full_name)s."
+msgstr ""
+"Dies ist eine Test-Nachricht für %(user_full_name)s gesendet von der "
+"Wunschzettel-Webapplikation."
+
+msgid "Your Settings"
+msgstr "Deine Einstellungen"
+
+msgid "Edit Settings"
+msgstr "Einstellungen bearbeiten"
+
+msgid "Notification Services"
+msgstr "Benachrichtigungsdienste"
+
+msgid "Pushover"
+msgstr "Pushover"
+
+msgid "Test Notifications"
+msgstr "Benachrichtigungen testen"
+
+msgid "A message was sent to these Notification Services:"
+msgstr "Eine Nachricht wurde an diese Benachrichtigungsdienste gesendet:"
+
+msgid "Notification"
+msgstr "Benachrichtigungen"
+
+msgid "Email notifications will be sent to your profile’s email address."
+msgstr ""
+"E-Mail-Benachrichtigungen werden an die in deinem Profil angegebene E-Mail-"
+"Adresse gesendet."
+
+msgid ""
+"Pushover is a service to receive instant push notifications on your phone or"
+" tablet. After creating a Pushover account and registering a device with the"
+" Pushover service enter your User Key to start receiving notifications."
+msgstr ""
+"Pushover ist ein Dienst mit dessen Hilfe du Push-Mitteilungen auf deinem "
+"Handy oder Tablet empfangen kannst. Nachdem du ein Benutzerkonto bei "
+"Pushover angelegt und ein Gerät bei dem Dienst registriert hast, kannst du "
+"hier deinen Benutzerschlüssel eintragen um Benachrichtigungen zu empfangen."
+
+msgid "Enable Email"
+msgstr "E-Mail aktivieren"
+
+msgid "Enable Pushover"
+msgstr "Pushover aktivieren"
+
+msgid "Enter your User key for Pushover Service"
+msgstr "Gibt deinen Benutzerschlüssel für den Pushover-Dienst ein"
+
+msgid "Edit your Settings"
+msgstr "Deine Einstellungen bearbeiten"
+
+msgid "Your updated settings have been successfully saved."
+msgstr "Deine aktualisierten Einstellungen wurden erfolgreich gespeichert."
+
+msgid "Open link to wish"
+msgstr "Link zum Wunsch öffnen"
+
+msgid "Show details for wish"
+msgstr "Details zum Wunsch anzeigen"
+
+msgid "Undo reservation"
+msgstr "Reservierung zurücknehmen"
+
+msgid "Reserve this wish"
+msgstr "Wunsch reservieren"
+
+msgid "No wishes have been entered on this wish list yet."
+msgstr ""
+"Auf diesem Wunschzettel wurden bis jetzt noch keine Wünsche eingetragen."
+
+#, python-format
+msgid ""
+"Hello %(user_first_name)s! This is the wish list "
+"<strong>%(wishlist_name)s</strong> from <strong>%(wishlist_owner)s</strong>."
+msgstr ""
+"Hallo %(user_first_name)s! Dies ist der Wunschzettel "
+"<strong>%(wishlist_name)s</strong> von <strong>%(wishlist_owner)s</strong>."
+
+msgid "Edit this wish list."
+msgstr "Wunschzettel bearbeiten"
+
+msgid "Favored list"
+msgstr "Favorisierter Wunschzettel"
+
+msgid "This is a favored wish list."
+msgstr "Dies ist ein favorisierter Wunschzettel."
+
+msgid "Add this wish list to favorites."
+msgstr "Füge diesen Wunschzettel zu den Favoriten hinzu."

@@ -1,0 +1,7 @@
+{% extends "page_simple_confirmation.html" %}
+
+{% load i18n %}
+
+{% block what %}
+    {% blocktranslate with list_name=object.wishlist.name %}... you want to <span class="text-danger">remove</span> the wish list named <strong>{{ list_name }}</strong> from your favorites?{% endblocktranslate %}
+{% endblock what %}

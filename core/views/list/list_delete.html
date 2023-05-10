@@ -1,0 +1,25 @@
+{% extends "page_simple_confirmation.html" %}
+
+{% load i18n %}
+{% load core %}
+
+{% block what %}
+    {% blocktranslate with list_name=object.name %}... you want to <span class="text-danger">delete</span> the wish list named <strong>{{ list_name }}</strong>?{% endblocktranslate %}
+{% endblock what %}
+
+{% block content_extra %}
+    {% with object.wishes_count as wishes_count %}
+        {% if wishes_count > 0 %}
+            <p>{% blocktranslate count counter=wishes_count %}There is still one wish on your wish list.{% plural %}There are still {{ counter }} wishes on your wish list.{% endblocktranslate %} {% blocktranslate %}If you proceed to delete the list, all the wishes on it will also be deleted.{% endblocktranslate %} {% blocktranslate %}If you really want to do this, please confirm by entering the name of the list again:{% endblocktranslate %}</p>
+        {% endif %}
+    {% endwith %}
+{% endblock content_extra %}
+
+{% block form_extra %}
+    {% if object.wishes_count > 0 %}
+        <div class="mb-3">
+            {{ form.name_confirmation }}
+            <small id="description_name_confirmation" class="form-text text-muted">{% render_errors form.name_confirmation.errors %}</small>
+        </div>
+    {% endif %}
+{% endblock form_extra %}

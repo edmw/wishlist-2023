@@ -1,0 +1,10 @@
+{% load i18n %}
+
+<ul>
+    <li>
+        <a href="{% url 'start' %}">{% translate "Home" %}</a> — {% translate "Use this to start over ..." %}
+    </li>
+    <li>
+        <a href="{% url 'legal-notice' %}">{% translate "Contact" %}</a> — {% translate "Use this if you want to tell someone about your misery ..." %}
+    </li>
+</ul>

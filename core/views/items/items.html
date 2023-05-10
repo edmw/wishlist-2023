@@ -1,0 +1,21 @@
+{% extends "page.html" %}
+
+{% load static %}
+{% load i18n %}
+{% load core %}
+
+{% block header %}
+    {% with title="Wishes" %}{{ block.super }}{% endwith %}
+{% endblock header %}
+{% block content %}
+    <div class="content">
+        <div class="h2">
+            <h2>
+                {{ wishlist.name }}
+                <a class="btn btn-link d-flex float-right" href="{{ wishlist.get_absolute_url }}" title="{% translate 'View list' %}"><span class="btn-label">{% translate "View" %}</span> {% icon "eye" %}</a>
+            </h2>
+        </div>
+        {% include "items/items-section.html" %}
+        {% include "items/items-section-archived.html" %}
+    </div>
+{% endblock content %}

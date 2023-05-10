@@ -1,0 +1,8 @@
+{% load static %}
+{% load i18n %}
+{% load core %}
+
+<div class="form-group form-row justify-content-center justify-content-md-start">
+    <button type="submit" class="btn {% if danger %}btn-danger{% else %}btn-primary{% endif %}"{% if disabled %} disabled{% endif %}>{{ label }}</button>
+    {% link_to_previous _("Cancel") %}
+</div>

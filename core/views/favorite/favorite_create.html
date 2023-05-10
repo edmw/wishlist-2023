@@ -1,0 +1,10 @@
+{% extends "page_simple_question.html" %}
+
+{% load i18n %}
+
+{% block what %}
+    {% blocktranslate with list_name=wishlist.name %}... to add the wish list named <strong>{{ list_name }}</strong> to your favorites?{% endblocktranslate %}
+{% endblock what %}
+{% block form_extra %}
+    <input type="hidden" name="wishlist" id="id_wishlist" value="{{ wishlist.id_field }}" />
+{% endblock form_extra %}

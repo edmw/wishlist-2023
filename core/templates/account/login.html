@@ -1,0 +1,10 @@
+{% extends "page.html" %}
+
+{% block header %}
+    {% with title="Sign in" %}
+        {{ block.super }}
+    {% endwith %}
+{% endblock header %}
+{% block content %}
+    <div class="content">{% include "signin.html" %}</div>
+{% endblock content %}

@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% load static %}
+{% load i18n %}
+{% load core %}
+
+{% block title %}
+<title>{% if page_title %}{% translate page_title %} - {% endif %}{% translate "Wishlist" %}</title>
+{% endblock title %}
+{% block body %}
+    <body class="bg-light text-dark preload" data-viewname="{{ request.resolver_match.url_name }}">
+        {% block header %}
+            {% include "header.html" %}
+        {% endblock header %}
+        <main class="bg-light">
+            {% if messages %}
+                <div class="content-messages">
+                    {% for message in messages %}
+                        <div class="{% message_style message %}" role="alert">
+                            <button type="button" class="btn btn-dismiss float-end" data-bs-dismiss="alert" aria-label="{% translate 'Close' %}">{% icon "x-circle" %}</button>
+                            {% message_text message %}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+            {% block content %}
+            {% endblock content %}
+        </main>
+        {% include "footer.html" %}
+    </body>
+{% endblock body %}

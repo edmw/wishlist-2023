@@ -1,0 +1,22 @@
+{% extends "page.html" %}
+
+{% load i18n %}
+
+{% block header %}
+    {% with title="Sign out" %}
+        {{ block.super }}
+    {% endwith %}
+{% endblock header %}
+{% block content %}
+    <div class="content">
+        <p>{% trans 'Are you sure you want to sign out?' %}</p>
+        <ul id="signin" class="justify-content-md-start">
+            <li>
+                <form action="{% url 'account_logout' %}" method="post">
+                    {% csrf_token %}
+                    <button id="signout" class="btn btn-light px-4 mb-4" type="submit">{% translate "Sign out" %}</button>
+                </form>
+            </li>
+        </ul>
+    </div>
+{% endblock content %}

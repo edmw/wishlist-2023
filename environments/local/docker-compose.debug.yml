@@ -1,0 +1,14 @@
+---
+services:
+  app:
+    entrypoint: >-
+      python -Xfrozen_modules=off
+        manage.py webapp_run --debug
+    ports:
+      - 127.0.0.1:13132:3000
+  worker:
+    entrypoint: >-
+      python -Xfrozen_modules=off -W ignore::DeprecationWarning
+        manage.py celery_run_worker --debug --log-level=INFO
+    ports:
+      - 127.0.0.1:13133:3000

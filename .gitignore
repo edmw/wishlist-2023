@@ -1,0 +1,20 @@
+webapp-files/*
+!webapp-files/.gitkeep
+webapp-frontend/node_modules
+
+# general
+.cache
+
+# python
+.python-version
+__pycache__
+
+# build
+*.dump.sql
+*.dump.yaml
+
+# osx
+.DS_Store
+
+# private
+private

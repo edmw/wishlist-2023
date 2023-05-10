@@ -1,0 +1,13 @@
+{% extends "page_simple_question.html" %}
+
+{% load i18n %}
+{% load core %}
+
+{% block what %}
+    {% blocktranslate with item_name=form.instance.name list_name=form.instance.wishlist.name %}... to unarchive the wish named <strong>{{ item_name }}</strong> on list <strong>{{ list_name }}</strong>?{% endblocktranslate %}
+{% endblock what %}
+{% block content_extra %}
+{% endblock content_extra %}
+{% block form_extra %}
+{% include "item/item_archive-form.html" %}
+{% endblock form_extra %}

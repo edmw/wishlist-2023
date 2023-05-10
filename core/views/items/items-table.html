@@ -1,0 +1,58 @@
+{% load static %}
+{% load i18n %}
+{% load core %}
+
+<div class="table-responsive">
+    <table class="table wl-table wl-items">
+        <colgroup>
+            <col span="2" />
+            <col />
+            <col />
+            <col span="2" />
+            <col />
+        </colgroup>
+        <thead>
+            <tr>
+                <th>{% translate "Name" %}</th>
+                <th></th>
+                <th>{% translate "Description" %}</th>
+                <th>{% translate "Preference" %}</th>
+                <th>{% translate "Status" %}</th>
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for wish in wishes %}
+                <tr>
+                    <td class="wl-title" data-label="{% translate 'Name' %}">{{ wish.name }}</td>
+                    <td class="wl-actions wl-actions-right" data-label="">
+                        <div class="btn-group" role="group">
+                            {% if wish.reference %}
+                                <a href="{{ wish.reference }}" title="{% translate 'Open external item URL' %}" class="btn btn-action">{% icon "external-link" %}</a>
+                            {% endif %}
+                        </div>
+                    </td>
+                    <td class="wl-description" data-label="{% translate 'Description' %}">{{ wish.description }}</td>
+                    <td data-label="{% translate 'Preference' %}">{{ wish.preference.display }}</td>
+                    <td data-label="{% translate 'Status' %}">{% wish_status wish mask_reservations %}</td>
+                    <td class="wl-actions wl-actions-right" data-label="">
+                        {% if not mask_reservations %}
+                            {% if wish.is_reserved and not wish.is_received %}
+                                <div class="btn-group" role="group">
+                                    <a href="{% make_linked_url wish.get_absolute_receive_url %}" title="{% translate 'Mark item as received' %}" class="btn btn-action ms-3">{% icon "gift" %}</a>
+                                </div>
+                            {% endif %}
+                        {% endif %}
+                    </td>
+                    <td class="wl-actions wl-actions-right" data-label="">
+                        <div class="btn-group" role="group">
+                            <a href="{% make_linked_url wish.get_absolute_edit_url %}" title="{% translate 'Edit item' %}" class="btn btn-action ms-3">{% icon "edit" %}</a>
+                            <a href="{% make_linked_url wish.get_absolute_manage_url %}" title="{% translate 'Manage item' %}" class="btn btn-action ms-3">{% icon "more-vertical" %}</a>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
