@@ -156,8 +156,7 @@ test: build-develop test-ci ;
 
 .PHONY: debugtest
 debugtest: build-develop --test-banner.Testing_Local_Server
-	$(TEST_DOCKER_DEBUG) $(TEST_DOCKER_RUN_TEST) $(TEST_SPEC)
-	@ make test-down
+	$(TEST_DOCKER_DEBUG) $(TEST_DOCKER_RUN_TEST) --debug $(TEST_SPEC); exit_code=$$?; make test-down; exit $$exit_code
 
 .PHONY: test-coverage-ci
 test-coverage-ci: --test-banner.Testing_Server_with_Coverage

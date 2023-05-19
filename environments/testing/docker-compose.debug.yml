@@ -1,6 +1,5 @@
 ---
 services:
   app:
-    entrypoint: python manage.py webapp_test --debug
     ports:
       - 127.0.0.1:13134:3000
