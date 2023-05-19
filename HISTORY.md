@@ -2,6 +2,7 @@
 
 ## [x.x.x]
 
+🪛 fix CI cleanup action
 🪛 fix debugtest make target
 
 ## [1.0.0]
