@@ -45,7 +45,9 @@ ENV INSTALL_HOME=/
 WORKDIR $INSTALL_HOME
 # Install Python dependencies for development.
 COPY requirements-development.txt ./
-RUN python -m pip install --upgrade pip && python -m pip install --upgrade -r requirements-development.txt
+RUN --mount=type=cache,target=/root/.cache \
+    python -m pip install --upgrade pip \
+    && python -m pip install --upgrade -r requirements-development.txt
 
 
 # Development Image
