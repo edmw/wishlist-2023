@@ -3,6 +3,7 @@
 ## [x.x.x]
 
 🛠️ enable docker buildkit caching for pip install
+🪛 disable CI automatic runs
 🪛 fix CI cleanup action
 🪛 fix debugtest make target
 
