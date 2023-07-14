@@ -2,6 +2,7 @@
 
 ## [x.x.x]
 
+* 🛠️ add region marker to settings
 * 🖊️ fix history
 * 🪛 disable CI automatic runs
 * 🛠️ enable docker buildkit caching for pip install
