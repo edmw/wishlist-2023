@@ -2,6 +2,7 @@
 
 ## [x.x.x]
 
+🛠️ add region marker to settings
 🛠️ enable docker buildkit caching for pip install
 🪛 fix CI cleanup action
 🪛 fix debugtest make target
