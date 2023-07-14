@@ -27,6 +27,7 @@ env = environs.Env()
 BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
 
 
+# region VERSION
 ###########################################################################################################
 #
 #  ##     ## ######## ########   ######  ####  #######  ##    ##
@@ -44,6 +45,9 @@ if version_file.is_file():
 else:
     VERSION = "development"
 
+# endregion VERSION
+
+# region ENVIRONMENT
 ###########################################################################################################
 #
 #  ######## ##    ## ##     ## #### ########   #######  ##    ## ##     ## ######## ##    ## ########
@@ -98,6 +102,21 @@ def env_decrpyt(key: str, default: str | None, fernet: Fernet | None) -> str | N
     return default
 
 
+# endregion ENVIRONMENT
+
+# region WISHLIST
+###########################################################################################################
+#  ##      ## ####  ######  ##     ## ##       ####  ######  ########
+#  ##  ##  ##  ##  ##    ## ##     ## ##        ##  ##    ##    ##
+#  ##  ##  ##  ##  ##       ##     ## ##        ##  ##          ##
+#  ##  ##  ##  ##   ######  ######### ##        ##   ######     ##
+#  ##  ##  ##  ##        ## ##     ## ##        ##        ##    ##
+#  ##  ##  ##  ##  ##    ## ##     ## ##        ##  ##    ##    ##
+#   ###  ###  ####  ######  ##     ## ######## ####  ######     ##
+
+# endregion WISHLIST
+
+# region DJANGO
 ###########################################################################################################
 #
 #  ########        ##    ###    ##    ##  ######    #######
@@ -165,7 +184,9 @@ STORAGES = {
     },
 }
 
+# endregion DJANGO
 
+# region DJANGO ADMIN
 ###########################################################################################################
 #
 #  ########        ##    ###    ##    ##  ######    #######        ###    ########  ##     ## #### ##    ##
@@ -209,7 +230,9 @@ if ADMIN_SITE_ENABLED:
 if ADMIN_SITE_ENABLED:
     INSTALLED_APPS.append("webapp.admin.WebappAdminConfig")
 
+# endregion DJANGO ADMIN
 
+# region DJANGO API
 #####################################################################################################
 #
 #  ########        ##    ###    ##    ##  ######    #######        ###    ########  ####
@@ -236,7 +259,9 @@ REST_FRAMEWORK = {
     "EXCEPTION_HANDLER": "webapp.api.exception_handler",
 }
 
+# endregion DJANGO API
 
+# region SECURITY
 ###########################################################################################################
 #
 #   ######  ########  ######  ##     ## ########  #### ######## ##    ##
@@ -285,7 +310,9 @@ CSP_IMG_SRC = (
 )
 CSP_INCLUDE_NONCE_IN = ["script-src", "style-src"]
 
+# endregion SECURITY
 
+# region AUTH
 ###########################################################################################################
 #
 #     ###    ##     ## ######## ##     ##
@@ -357,7 +384,9 @@ if not ENVIRONMENT_IS_BUILDING:
 
 SOCIALACCOUNT_AUTO_SIGNUP = CoreConfig.access == CoreAccess.PUBLIC
 
+# endregion AUTH
 
+# region STATIC
 #################################################################################################
 #
 #   ######  ########    ###    ######## ####  ######
@@ -395,6 +424,9 @@ if (
 
 WHITENOISE_ROOT = BASE_DIR / "webapp" / "frontend" / "root"
 
+# endregion STATIC
+
+# region MEDIA
 ###########################################################################################################
 #
 #  ##     ## ######## ########  ####    ###
@@ -423,7 +455,9 @@ AWS_SECRET_ACCESS_KEY = webapp_env_decrypt("STORAGE_SECRET_KEY", None)
 
 CSP_IMG_SRC = (*CSP_IMG_SRC, WEBAPP_MEDIA_LOCATION)
 
+# endregion MEDIA
 
+# region I18N
 #####################################################################################################
 #
 #  ####    ##    #######  ##    ##
@@ -464,6 +498,9 @@ USE_TZ = True
 
 TIME_ZONE = "Europe/Berlin"
 
+# endregion I18N
+
+# region TEMPLATES
 #################################################################################################
 #
 #  ######## ######## ##     ## ########  ##          ###    ######## ########  ######
@@ -496,7 +533,9 @@ TEMPLATES = [
     },
 ]
 
+# endregion TEMPLATES
 
+# region SERVICES
 ###########################################################################################################
 #
 #   ######  ######## ########  ##     ## ####  ######  ########  ######
@@ -514,7 +553,9 @@ with env.prefixed("PUSHOVER_"):
 
 PUSHOVER_APPLICATION_TOKEN = webapp_env_decrypt("PUSHOVER_APPLICATION_TOKEN", None)
 
+# endregion SERVICES
 
+# region DATABASE
 ###########################################################################################################
 #
 #  ########     ###    ########    ###    ########     ###     ######  ########
@@ -540,7 +581,9 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 CONN_MAX_AGE = 600 if not ENVIRONMENT_IS_DEVELOPMENT else 0
 
+# endregion DATABASE
 
+# region CACHING
 #####################################################################################################
 #
 #   ######     ###     ######  ##     ## #### ##    ##  ######
@@ -570,7 +613,9 @@ if ENVIRONMENT_IS_TESTING:
     # see WAFFLE settings above
     CACHES["dummy"] = {"BACKEND": "django.core.cache.backends.dummy.DummyCache"}
 
+# endregion CACHING
 
+# region TASKING
 #####################################################################################################
 #
 #  ########    ###     ######  ##    ## #### ##    ##  ######
@@ -620,7 +665,9 @@ CELERY_BEAT_SCHEDULE = {
 CELERYD_LOG_COLOR = False
 CELERYD_REDIRECT_STDOUTS = False
 
+# endregion TASKING
 
+# region EMAIL
 ###########################################################################################################
 #
 #  ######## ##     ##    ###    #### ##
@@ -646,7 +693,9 @@ EMAIL_HOST_PASSWORD = webapp_env_decrypt("EMAIL_SMTP_PASSWORD", "")
 
 EMAIL_SUBJECT_PREFIX = f"[{EMAIL_SENDER_NAME}] "
 
+# endregion MAIL
 
+# region LOGGING
 #####################################################################################################
 #
 #  ##        #######   ######    ######   #### ##    ##  ######
@@ -892,7 +941,9 @@ LOGGING = {
     },
 }
 
+# endregion LOGGING
 
+# region DEBUGGING
 #####################################################################################################
 #
 #  ########  ######## ########  ##     ##  ######    ######   #### ##    ##  ######
@@ -936,3 +987,5 @@ if ENVIRONMENT_IS_DEVELOPMENT or ENVIRONMENT_IS_STAGING:
         return (key in request.GET and request.GET[key] == "true") or "__debug__" in request.path
 
     DEBUG_TOOLBAR_CONFIG = {"SHOW_TOOLBAR_CALLBACK": debug_toolbar_show}
+
+# endregion DEBUGGING
