@@ -114,6 +114,8 @@ def env_decrpyt(key: str, default: str | None, fernet: Fernet | None) -> str | N
 #  ##  ##  ##  ##  ##    ## ##     ## ##        ##  ##    ##    ##
 #   ###  ###  ####  ######  ##     ## ######## ####  ######     ##
 
+WISHLIST_INVITATION_EXPIRES_AFTER = 10 * 24 * 3600  # ten days in seconds
+
 # endregion WISHLIST
 
 # region DJANGO

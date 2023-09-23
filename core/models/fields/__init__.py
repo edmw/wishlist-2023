@@ -3,6 +3,7 @@ from .description import DescriptionField
 from .email_enabled import EmailEnabledField
 from .favorite_id import FavoriteIDField
 from .fullname import FullnameField
+from .invitation_id import InvitationIDField
 from .item_ordering import ItemOrderingField
 from .language import LanguageField
 from .name import NameField

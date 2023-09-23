@@ -3,6 +3,7 @@
 from .description import Description
 from .favorite_id import FavoriteID
 from .fullname import Fullname
+from .invitation_id import InvitationID
 from .item_ordering import ItemOrdering
 from .language import Language
 from .name import Name
