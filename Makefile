@@ -288,12 +288,14 @@ dependencies-pin-all: dependencies-pin-deployment dependencies-pin-development
 .PHONY: dependencies-update-deployment
 dependencies-update-deployment: --dependencies-banner.Updating_Deployment environment-upgrade
 	$(MAKE_PYTHON) -m piptools compile --quiet --resolver backtracking --upgrade \
+		--annotation-style line --strip-extras \
 		-o requirements.txt \
 		pyproject.toml
 
 .PHONY: dependencies-update-development
 dependencies-update-development: --dependencies-banner.Updating_Deployment environment-upgrade
 	$(MAKE_PYTHON) -m piptools compile --quiet --resolver backtracking --upgrade \
+		--annotation-style line --strip-extras \
 		--extra build \
 		--extra test \
 		--extra check \
