@@ -320,6 +320,9 @@ msgstr ""
 msgid "Your wish has been successfully deleted."
 msgstr ""
 
+msgid "Description can be formatted using <strong>markdown</strong>."
+msgstr ""
+
 msgid "Optional external URL for this wish."
 msgstr ""
 

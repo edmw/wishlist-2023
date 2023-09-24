@@ -15,7 +15,10 @@
             </div>
             <div class="mb-3">
                 {{ form.description_field }}
-                <small id="description_description_field" class="form-text text-muted">{% render_errors form.description_field.errors %}</small>
+                <small id="description_description_field" class="form-text text-muted">
+                    {% render_errors form.description_field.errors %}
+                    {% blocktranslate %}Description can be formatted using <strong>markdown</strong>.{% endblocktranslate %}
+                </small>
             </div>
             <div class="mb-3">
                 {{ form.preference_field }}

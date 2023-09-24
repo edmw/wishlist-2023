@@ -27,12 +27,12 @@
                     </div>
                 </div>
                 <div class="back bg-dark p-2">
-                    <div class="text pb-5">
-                        <h5 class="wl-label text-light m-0 px-1">{{ wish.name }}</h5>
-                        <p class="text-light m-0 px-1">
+                    <div class="text text-light pb-5">
+                        <h5 class="wl-label m-0 px-1">{{ wish.name }}</h5>
+                        <p class="m-0 px-1">
                             <small><em>{{ wish.preference.display }}</em></small>
                         </p>
-                        <p class="text-light mt-2">{{ wish.description }}</p>
+                        <div class="mt-2">{% render_markdown wish.description %}</div>
                     </div>
                     <div class="btn-group justify-content-end" role="group">
                         <a class="wl-item-btn-flip btn text-light">{% icon "book" %}</a>

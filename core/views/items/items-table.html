@@ -33,7 +33,7 @@
                             {% endif %}
                         </div>
                     </td>
-                    <td class="wl-description" data-label="{% translate 'Description' %}">{{ wish.description }}</td>
+                    <td class="wl-description" data-label="{% translate 'Description' %}">{% render_markdown_to_text wish.description %}</td>
                     <td data-label="{% translate 'Preference' %}">{{ wish.preference.display }}</td>
                     <td data-label="{% translate 'Status' %}">{% wish_status wish mask_reservations %}</td>
                     <td class="wl-actions wl-actions-right" data-label="">
