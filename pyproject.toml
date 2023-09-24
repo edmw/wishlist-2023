@@ -22,6 +22,8 @@ dependencies = [
   "djangorestframework == 3.14.*",
   "djangorestframework-dataclasses == 1.2.*",
   "drf-spectacular == 0.26.*",
+  "markdown-it-py[linkify] == 3.0.*",
+  "beautifulsoup4 == 4.12.*",
   "humanize == 4.8.*",
   "requests == 2.31.*",
   "boto3 == 1.28.*",
