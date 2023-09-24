@@ -7,6 +7,9 @@ from bs4 import BeautifulSoup
 from django.utils.html import escape
 from django.utils.safestring import SafeText, mark_safe
 from markdown_it import MarkdownIt
+from markdown_it.renderer import RendererHTML
+from markdown_it.token import Token
+from markdown_it.utils import EnvType, OptionsDict
 
 from core.services import FormattingService
 from webapp.services import LanguageService
@@ -22,6 +25,15 @@ class RenderService:
 
     @staticmethod
     def render_datetime(*, value: datetime) -> SafeText:
+        """Renders the specified `datetime` to its safe text representation.
+
+        Arguments:
+            value: `datetime`object to render.
+
+        Returns:
+            A safe text string containing the representation of the date and
+            time.
+        """
         language_code = LanguageService.get_language_code()
         format_datetime = FormattingService.format_datetime(value=value, language_code=language_code)
         natural_datetime = FormattingService.natural_datetime(value=value, language_code=language_code)
@@ -37,22 +49,55 @@ class RenderService:
 
     @staticmethod
     def render_markdown(*, value: str) -> SafeText:
+        """Renders the specified markdown text to its safe text representation
+        using HTML elements for formatting.
+
+        Arguments:
+            value: `markdown` text to render.
+
+        Returns:
+            A safe text string containing the representation of the markdown
+            text formatted using HTML elements.
+        """
         html = markdown_it().render(value)
         # SECURITY: Generated HTML is safe (HTML in markdown is disabled).
         return mark_safe(html)  # nosec
 
     @staticmethod
     def render_markdown_to_text(*, value: str) -> SafeText:
+        """Renders the specified markdown text to its safe text representation
+        without formatting.
+
+        Arguments:
+            value: `markdown` text to render.
+
+        Returns:
+            A safe text string containing the representation of the markdown
+            text without formatting.
+        """
+        # Render to HTML.
         html = markdown_it().render(value)
+        # Remove all HTML.
         text = BeautifulSoup(html, "html.parser").get_text()
         # SECURITY: Text is escaped after stripping HTML elements.
         return mark_safe(escape(text))  # nosec
 
 
-def markdown_it():
-    def render_link(self, tokens, idx, options, env):
+def markdown_it() -> MarkdownIt:
+    """Returns an instance of a fully configured `MarkdownIt` markdown renderer
+    creating it only once per thread.
+    """
+
+    def render_link(
+        renderer: RendererHTML,
+        tokens: list[Token],
+        idx: int,
+        options: OptionsDict,
+        env: EnvType,
+    ) -> str:
+        """Additional render rule to add a specific class to all links."""
         tokens[idx].attrSet("class", "text-light")
-        return self.renderToken(tokens, idx, options, env)
+        return renderer.renderToken(tokens, idx, options, env)
 
     global _markdown_it
     if _markdown_it is None:
