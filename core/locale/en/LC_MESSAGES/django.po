@@ -384,6 +384,9 @@ msgstr ""
 msgid "Archive this wish"
 msgstr ""
 
+msgid "Unarchive Wish"
+msgstr ""
+
 msgid "Unarchived wishes reappear on the wish list."
 msgstr ""
 
@@ -412,12 +415,18 @@ msgid ""
 "it."
 msgstr ""
 
+msgid "Move Wish"
+msgstr ""
+
 msgid "Move this wish"
 msgstr ""
 
 msgid ""
 "This wish has already been reserved. A wish already reserved but not yet "
 "received cannot be moved to another list."
+msgstr ""
+
+msgid "Release Wish"
 msgstr ""
 
 msgid ""
@@ -449,9 +458,6 @@ msgid "This wish can not be moved."
 msgstr ""
 
 msgid "Move your Wish"
-msgstr ""
-
-msgid "Move Wish"
 msgstr ""
 
 msgid "Your wish has been successfully moved."
@@ -511,9 +517,6 @@ msgid "This wish can not be unarchived."
 msgstr ""
 
 msgid "Unarchive your Wish"
-msgstr ""
-
-msgid "Unarchive Wish"
 msgstr ""
 
 msgid "Your wish has been successfully unarchived."

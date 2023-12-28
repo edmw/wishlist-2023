@@ -15,14 +15,14 @@ import core.models._base
 import core.models.concerns.captionable
 import core.models.concerns.previewable
 import core.models.fields
-import core.models.reservation.on_delete_notify
-import core.models.reservation.on_save_notify
-import core.models.wish._types
-import core.models.wish._urls
-import core.models.wish.on_save_generate_image
-import core.models.wish.on_save_notify
-import core.models.wishlist._types
-import core.models.wishlist._url
+import core.models.reservation_on_delete_notify
+import core.models.reservation_on_save_notify
+import core.models.wish_on_save_generate_image
+import core.models.wish_on_save_notify
+import core.models.wish_types
+import core.models.wish_urls
+import core.models.wishlist_types
+import core.models.wishlist_urls
 
 
 class Migration(migrations.Migration):
@@ -247,8 +247,8 @@ class Migration(migrations.Migration):
             },
             bases=(
                 core.models._base.IDMixin,
-                core.models.wishlist._types.TypesMixin,
-                core.models.wishlist._url.URLMixin,
+                core.models.wishlist_types.TypesMixin,
+                core.models.wishlist_urls.URLMixin,
                 core.models.concerns.previewable.Previewable,
                 core.models.concerns.captionable.Captionable,
                 models.Model,
@@ -357,10 +357,10 @@ class Migration(migrations.Migration):
             },
             bases=(
                 core.models._base.IDMixin,
-                core.models.wish._types.WishTypesMixin,
-                core.models.wish._urls.WishURLsMixin,
-                core.models.wish.on_save_generate_image.OnSaveGenerateImageMixin,
-                core.models.wish.on_save_notify.OnSaveNotifyMixin,
+                core.models.wish_types.WishTypesMixin,
+                core.models.wish_urls.WishURLsMixin,
+                core.models.wish_on_save_generate_image.OnSaveGenerateImageMixin,
+                core.models.wish_on_save_notify.OnSaveNotifyMixin,
                 core.models.concerns.previewable.Previewable,
                 models.Model,
             ),
@@ -472,8 +472,8 @@ class Migration(migrations.Migration):
             },
             bases=(
                 core.models._base.IDMixin,
-                core.models.reservation.on_save_notify.OnSaveNotifyMixin,
-                core.models.reservation.on_delete_notify.OnDeleteNotifyMixin,
+                core.models.reservation_on_save_notify.OnSaveNotifyMixin,
+                core.models.reservation_on_delete_notify.OnDeleteNotifyMixin,
                 models.Model,
             ),
         ),

@@ -28,10 +28,10 @@ from core.models import (
     Wishlist,
     WishlistID,
 )
-from core.models.favorite.factory import FavoriteFactory
-from core.models.reservation.factory import ReservationFactory
-from core.models.wish.factory import WishFactory
-from core.models.wishlist.factory import WishlistFactory
+from core.models.favorite_factory import FavoriteFactory
+from core.models.reservation_factory import ReservationFactory
+from core.models.wish_factory import WishFactory
+from core.models.wishlist_factory import WishlistFactory
 from core.services import (
     FavoriteService,
     ReservationService,

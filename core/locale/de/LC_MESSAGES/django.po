@@ -412,6 +412,9 @@ msgstr ""
 msgid "Archive this wish"
 msgstr "Wunsch archivieren"
 
+msgid "Unarchive Wish"
+msgstr "Wunsch wiederherstellen"
+
 msgid "Unarchived wishes reappear on the wish list."
 msgstr "Wiederhergestellte Wünsche erscheinen wieder auf dem Wunschzettel."
 
@@ -448,6 +451,9 @@ msgstr ""
 "nicht erhaltener Wunsch kann nicht gelöscht werden. Er muss erst freigegeben"
 " werden, um ihn löschen zu können."
 
+msgid "Move Wish"
+msgstr "Wunsch verschieben"
+
 msgid "Move this wish"
 msgstr "Wunsch verschieben"
 
@@ -457,6 +463,9 @@ msgid ""
 msgstr ""
 "Dieser Wunsch wurde bereits reserviert. Ein bereits reservierter, aber noch "
 "nicht erhaltener Wunsch kann nicht auf eine andere Liste verschoben werden."
+
+msgid "Release Wish"
+msgstr "Wunsch freigeben"
 
 msgid ""
 "When you release a wish, the reservation for that wish is deleted. The user "
@@ -496,9 +505,6 @@ msgid "This wish can not be moved."
 msgstr "Dieser Wunsch kann nicht verschoben werden."
 
 msgid "Move your Wish"
-msgstr "Wunsch verschieben"
-
-msgid "Move Wish"
 msgstr "Wunsch verschieben"
 
 msgid "Your wish has been successfully moved."
@@ -572,11 +578,8 @@ msgstr "Dieser Wunsch kann nicht wiederhergestellt werden."
 msgid "Unarchive your Wish"
 msgstr "Wunsch wiederherstellen"
 
-msgid "Unarchive Wish"
-msgstr "Wunsch wiederherstellen"
-
 msgid "Your wish has been successfully unarchived."
-msgstr "Dein Wunsch wurde erfolgreich widerhergestellt."
+msgstr "Dein Wunsch wurde erfolgreich wiederhergestellt."
 
 msgid ""
 "<strong>Please note:</strong> This wish has been <strong>reserved</strong> "
@@ -849,7 +852,7 @@ msgid ""
 "... to reserve the wish named <strong>%(item_name)s</strong> from list "
 "<strong>%(list_name)s</strong>?"
 msgstr ""
-"... den WUnsch <strong>%(item_name)s</strong> vom Wunschzettel "
+"... den Wunsch <strong>%(item_name)s</strong> vom Wunschzettel "
 "<strong>%(list_name)s</strong> reservieren?"
 
 msgid "Reserve a Wish"

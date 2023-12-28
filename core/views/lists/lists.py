@@ -3,7 +3,7 @@ from typing import Any
 
 from django.utils.translation import gettext_noop
 
-from core.models.wishlist.lens import WishlistLens
+from core.models.wishlist_lens import WishlistLens
 from core.services import WishlistService
 from core.views._base import ListView, LoginRequiredMixin, WishlistModelMixin
 

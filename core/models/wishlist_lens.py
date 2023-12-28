@@ -6,7 +6,7 @@ from django.db.models import Count
 
 from core.models._base import LensBase, LensHasOrderMixin
 from core.models.user import User
-from core.models.wishlist.wishlist import Wishlist
+from core.models.wishlist import Wishlist
 
 
 class WishlistLens(LensHasOrderMixin, LensBase[Wishlist]):
