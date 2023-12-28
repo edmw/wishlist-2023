@@ -3,9 +3,8 @@ from celery.exceptions import MaxRetriesExceededError
 from celery.utils.log import get_task_logger
 from django.utils.translation import gettext as _
 
-from core.models import WishID
+from core.models import FavoriteLens, WishID
 from core.services import (
-    FavoriteService,
     ImageRetrieveTimeoutError,
     ImageService,
     NotificationService,
@@ -33,7 +32,7 @@ def notify_on_create(self: Task, wish_id: WishID) -> bool:
     wish = WishService.get_wish(id=wish_id)
     wishlist = wish.wishlist
 
-    for favorite in FavoriteService.query_favorites_for_wishlist(wishlist=wishlist):
+    for favorite in FavoriteLens.view().by_wishlist(wishlist=wishlist).for_iterating().queryset.all():
         if favorite.notify_on_item_create:
             user = favorite.user
             with LanguageService.activated(language_code=user.get_language().get_code()):

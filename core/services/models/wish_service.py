@@ -2,11 +2,9 @@
 
 import logging
 
-from django.db.models import QuerySet
 from django.utils import timezone
 
-from core.models import Wish, WishID, Wishlist
-from core.models.types import ItemOrdering
+from core.models import Wish, WishID, WishLens
 
 logger = logging.getLogger(__name__)
 
@@ -42,54 +40,19 @@ class WishService:
         Raises:
             Wish.DoesNotExist
         """
-        return Wish.objects.get(id_field=id)
-
-    @staticmethod
-    def query_wishes_for_wishlist(
-        *,
-        wishlist: Wishlist,
-        archived: bool | None = None,
-    ) -> QuerySet[Wish]:
-        """Returns a lazy collection of wishes contained in the specified
-        wish list.
-
-        The collection of wishes is ordered by the wishlist’s setting.
-
-        Arguments:
-            wishlist: Wish list for the wishes to query for.
-            archived: Designate to include or exclude archived wishes.
-
-        Returns:
-            Lazy collection of wishes.
-        """
-        queryset = Wish.objects.filter(wishlist=wishlist)
-        if archived is not None:
-            queryset = queryset.filter(archived=archived)
-        queryset = queryset.select_related(Wish.Fields.WISHLIST)
-
-        # ordering
-        match wishlist.item_ordering:
-            case ItemOrdering.NAME_ASCENDING:
-                queryset = queryset.order_by(Wish.Fields.NAME)
-            case ItemOrdering.NAME_DESCENDING:
-                queryset = queryset.order_by(f"-{Wish.Fields.NAME}")
-            case ItemOrdering.PREFERENCE_ASCENDING:
-                queryset = queryset.order_by(Wish.Fields.PREFERENCE)
-            case ItemOrdering.PREFERENCE_DESCENDING:
-                queryset = queryset.order_by(f"-{Wish.Fields.PREFERENCE}")
-            case ItemOrdering.CREATED_AT_ASCENDING:
-                queryset = queryset.order_by(Wish.Fields.CREATED_AT)
-            case ItemOrdering.CREATED_AT_DESCENDING:
-                queryset = queryset.order_by(f"-{Wish.Fields.CREATED_AT}")
-            case ItemOrdering.MODIFIED_AT_ASCENDING:
-                queryset = queryset.order_by(Wish.Fields.MODIFIED_AT)
-            case ItemOrdering.MODIFIED_AT_DESCENDING:
-                queryset = queryset.order_by(f"-{Wish.Fields.MODIFIED_AT}")
-
-        return queryset
+        return WishLens.view().queryset.get(id_field=id)
 
     @staticmethod
     def archive(*, wish: Wish, save: bool = True) -> None:
+        """Archives the specified wish.
+
+        Arguments:
+            wish: Wish to archive.
+            save: Flag, if the archived wish should be saved.
+
+        Raises:
+            WishNotArchivableError: If the specified wish can not be archived.
+        """
         if wish.archivable:
             wish.archived = True
             wish.archived_at = timezone.now()
@@ -100,6 +63,16 @@ class WishService:
 
     @staticmethod
     def unarchive(*, wish: Wish, save: bool = True) -> None:
+        """Unarchives the specified wish.
+
+        Arguments:
+            wish: Wish to unarchive.
+            save: Flag, if the unarchived wish should be saved.
+
+        Raises:
+            WishNotUnarchivableError: If the specified wish can not be
+                unarchived.
+        """
         if wish.archived:
             wish.archived = False
             wish.archived_at = None

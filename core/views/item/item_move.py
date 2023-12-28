@@ -7,7 +7,7 @@ from django.utils.translation import gettext as _
 from django.utils.translation import gettext_noop
 
 from core.models import Wish
-from core.services.models.wishlist_service import WishlistService
+from core.models.wishlist.lens import WishlistLens
 from core.views._base import LoginRequiredMixin, UpdateView, WishModelMixin
 from core.views._forms import (
     AriaDescribedByMixin,
@@ -36,8 +36,12 @@ class ItemMoveForm(ModelForm):
         user = kwargs.pop("user")
         instance = kwargs["instance"]
         wishlist_field = cast(ModelChoiceField, self.base_fields[Wish.Fields.WISHLIST])
-        wishlist_field.queryset = WishlistService.query_wishlists_for_user(
-            user=user, exclude=[instance.wishlist]
+        wishlist_field.queryset = (
+            WishlistLens.view()
+            .by_owner(user=user)
+            .without_lists(lists=[instance.wishlist])
+            .for_listing()
+            .queryset.all()
         )
         wishlist_field.empty_label = None
         super().__init__(*args, **kwargs)
