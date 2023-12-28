@@ -2,7 +2,7 @@
 {% load i18n %}
 {% load core %}
 
-<h3>Move Wish</h3>
+<h3>{% blocktranslate %}Move Wish{% endblocktranslate %}</h3>
 {% if wish.movable %}
     <form method="post" action="{% url_with_previous wish.get_absolute_move_url %}" class="wl-form wl-list mt-4">
         {% csrf_token %}
