@@ -849,7 +849,7 @@ msgid ""
 "... to reserve the wish named <strong>%(item_name)s</strong> from list "
 "<strong>%(list_name)s</strong>?"
 msgstr ""
-"... den WUnsch <strong>%(item_name)s</strong> vom Wunschzettel "
+"... den Wunsch <strong>%(item_name)s</strong> vom Wunschzettel "
 "<strong>%(list_name)s</strong> reservieren?"
 
 msgid "Reserve a Wish"
