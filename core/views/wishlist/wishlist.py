@@ -6,8 +6,8 @@ from django.http import HttpRequest, HttpResponse
 from django.utils.translation import gettext_noop
 from django.views.generic.detail import SingleObjectMixin
 
-from core.models import Wish
-from core.services import FavoriteService, PermissionService, WishService
+from core.models import Wish, WishLens
+from core.services import FavoriteService, PermissionService
 from core.views._base import ListView, LoginRequiredMixin, WishlistMixin
 from core.views._typing import (
     DoesViewDispatching,
@@ -60,10 +60,7 @@ class WishlistView(
 
     def get_queryset(self) -> django.db.models.QuerySet[Wish]:
         wishlist = self.try_wishlist()
-        return WishService.query_wishes_for_wishlist(
-            wishlist=wishlist,
-            archived=False,
-        )
+        return WishLens.view().by_wishlist(list=wishlist).without_archived().for_listing().queryset.all()
 
     def get_context_data(self: IsWishlistView, **kwargs: Any) -> dict[str, Any]:
         context = {}

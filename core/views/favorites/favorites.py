@@ -3,6 +3,7 @@ from typing import Any
 
 from django.utils.translation import gettext_noop
 
+from core.models import FavoriteLens
 from core.services import FavoriteService
 from core.views._base import FavoriteModelMixin, ListView, LoginRequiredMixin
 from core.views.favorites._base import HasPermissionForFavoritesViewMixin
@@ -26,6 +27,6 @@ class FavoritesView(
 
         user = self.try_user()
         context["your_favorites_count"] = FavoriteService.count_favorites_for_user(user=user)
-        context["your_favorites"] = FavoriteService.query_favorites_for_user(user=user)
+        context["your_favorites"] = FavoriteLens.view().by_user(user=user).for_listing().queryset.all()
 
         return context

@@ -3,6 +3,7 @@ from typing import Any
 
 from django.utils.translation import gettext_noop
 
+from core.models.wishlist.lens import WishlistLens
 from core.services import WishlistService
 from core.views._base import ListView, LoginRequiredMixin, WishlistModelMixin
 
@@ -27,6 +28,6 @@ class ListsView(
 
         user = self.try_user()
         context["your_wishlists_count"] = WishlistService.count_wishlists_for_user(user=user)
-        context["your_wishlists"] = WishlistService.query_wishlists_for_user(user=user)
+        context["your_wishlists"] = WishlistLens.view().by_owner(user=user).for_listing().queryset.all()
 
         return context

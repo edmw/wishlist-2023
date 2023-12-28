@@ -8,7 +8,7 @@ from django.utils.translation import gettext as _
 from django.utils.translation import gettext_noop
 
 from core.models import Name, Wishlist
-from core.services import WishlistService
+from core.models.wishlist.lens import WishlistLens
 from core.views._base import DeleteView, LoginRequiredMixin, WishlistModelMixin
 from core.views._forms import (
     AriaDescribedByMixin,
@@ -74,7 +74,7 @@ class ListDeleteView(
 
     def get_queryset(self) -> QuerySet[Wishlist]:
         user = self.try_user()
-        return WishlistService.query_wishlists_for_user(user=user)
+        return WishlistLens.view().by_owner(user=user).for_listing().queryset.all()
 
     def get_form_kwargs(self) -> dict[str, Any]:
         kwargs = super().get_form_kwargs()

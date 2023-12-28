@@ -2,6 +2,8 @@
 
 ## [x.x.x]
 
+* 🛠️ add lenses for querying models
+
 ## [1.1.0]
 
 * 🖼️ add markdown for description
