@@ -15,14 +15,20 @@ from django.shortcuts import redirect
 from django.utils.translation import gettext as _
 
 from core import constants
-from core.models import Favorite, Reservation, User, Wish, WishID, Wishlist, WishlistID
-from core.services import (
-    FavoriteService,
-    ReservationService,
-    URLService,
-    WishlistService,
-    WishService,
+from core.models import (
+    Favorite,
+    FavoriteLens,
+    Reservation,
+    ReservationLens,
+    User,
+    Wish,
+    WishID,
+    WishLens,
+    Wishlist,
+    WishlistID,
+    WishlistLens,
 )
+from core.services import URLService, WishlistService, WishService
 from webapp.services import LanguageService
 from webapp.views import AddNeverCacheMixin
 
@@ -51,7 +57,7 @@ class WishlistModelMixin(UserMixin):
 
     def get_queryset(self) -> django.db.models.QuerySet[Wishlist]:
         user = self.try_user()
-        return WishlistService.query_wishlists_for_user(user=user)
+        return WishlistLens.view().by_owner(user=user).for_listing().queryset.all()
 
 
 class WishlistMixin(SupportsViewSetup):
@@ -84,7 +90,7 @@ class WishModelMixin(WishlistMixin):
 
     def get_queryset(self) -> django.db.models.QuerySet[Wish]:
         wishlist = self.try_wishlist()
-        return WishService.query_wishes_for_wishlist(wishlist=wishlist)
+        return WishLens.view().by_wishlist(list=wishlist).for_listing().queryset.all()
 
 
 class WishMixin(SupportsViewSetup):
@@ -118,7 +124,7 @@ class FavoriteModelMixin(UserMixin):
 
     def get_queryset(self) -> django.db.models.QuerySet[Favorite]:
         user = self.try_user()
-        return FavoriteService.query_favorites_for_user(user=user)
+        return FavoriteLens.view().by_user(user=user).queryset.all()
 
 
 class ReservationModelMixin(UserMixin):
@@ -127,7 +133,7 @@ class ReservationModelMixin(UserMixin):
 
     def get_queryset(self) -> django.db.models.QuerySet[Reservation]:
         user = self.try_user()
-        return ReservationService.query_reservations_for_user(user=user)
+        return ReservationLens.view().by_holder(user=user).queryset.all()
 
 
 class LoginRequiredMixin(django.contrib.auth.mixins.LoginRequiredMixin, UserMixin):

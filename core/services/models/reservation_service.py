@@ -2,10 +2,10 @@
 
 import logging
 
-from django.db.models import QuerySet
 from django.utils import timezone
 
-from core.models import Reservation, ReservationID, User
+from core.models import Reservation, ReservationID
+from core.models.reservation.lens import ReservationLens
 
 logger = logging.getLogger(__name__)
 
@@ -39,23 +39,20 @@ class ReservationService:
         Raises:
             Reservation.DoesNotExist
         """
-        return Reservation.objects.get(id_field=id)
-
-    @staticmethod
-    def query_reservations_for_user(*, user: User) -> QuerySet[Reservation]:
-        """Returns a lazy collection of reservations whose user is the specified
-        user.
-
-        Arguments:
-            user: User of the reservations to query for.
-
-        Returns:
-            Lazy collection of reservations.
-        """
-        return Reservation.objects.filter(holder=user)
+        return ReservationLens.view().queryset.get(id_field=id)
 
     @staticmethod
     def complete(*, reservation: Reservation, save: bool = True) -> None:
+        """Completes the specified reservation.
+
+        Arguments:
+            reservation: Reservation to complete.
+            save: Flag, if the completed reservation should be saved.
+
+        Raises:
+            ReservationNotCompletableError: If the specified reservation can
+                not be completed.
+        """
         if not reservation.completed:
             reservation.completed = True
             reservation.completed_at = timezone.now()
