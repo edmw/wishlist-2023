@@ -1,7 +1,7 @@
 """The core’s models, model fields and model field types."""
 
 from .favorite import Favorite
-from .favorite.lens import FavoriteLens
+from .favorite_lens import FavoriteLens
 from .fields import (
     DescriptionField,
     EmailEnabledField,
@@ -19,7 +19,7 @@ from .fields import (
     WishlistIDField,
 )
 from .reservation import Reservation
-from .reservation.lens import ReservationLens
+from .reservation_lens import ReservationLens
 from .types import (
     Description,
     FavoriteID,
@@ -41,8 +41,8 @@ from .types import (
 from .user import User
 from .user_settings import UserSettings
 from .wish import Wish
-from .wish.lens import WishLens
-from .wish.serializer import WishSerializer
+from .wish_lens import WishLens
+from .wish_serializer import WishSerializer
 from .wishlist import Wishlist
-from .wishlist.lens import WishlistLens
-from .wishlist.serializer import WishlistSerializer
+from .wishlist_lens import WishlistLens
+from .wishlist_serializer import WishlistSerializer

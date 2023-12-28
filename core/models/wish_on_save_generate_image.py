@@ -16,7 +16,7 @@ class OnSaveGenerateImageMixin(IsSaveable):
         update_fields: Iterable[str] | None = None,
         **kwargs: Any,
     ) -> None:
-        from . import Wish
+        from .wish import Wish
 
         wish = cast(Wish, self)
         created = self._state.adding

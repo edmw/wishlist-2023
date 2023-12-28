@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from core.models._base import LensBase, LensHasOrderMixin
-from core.models.reservation.reservation import Reservation
+from core.models.reservation import Reservation
 from core.models.user import User
 
 

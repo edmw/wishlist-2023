@@ -16,7 +16,7 @@ class OnSaveNotifyMixin(IsSaveable):
         update_fields: Iterable[str] | None = None,
         **kwargs: Any,
     ) -> None:
-        from . import Wish
+        from .reservation import Reservation
 
         notify_enabled = kwargs.pop("notify", True)
 
@@ -29,12 +29,12 @@ class OnSaveNotifyMixin(IsSaveable):
             **kwargs,
         )
 
-        wish = cast(Wish, self)
+        reservation = cast(Reservation, self)
         if created and notify_enabled:
-            from core.tasks.wish import notify_on_create
+            from core.tasks.wish import notify_on_reservation_create
 
-            notify_on_create.apply_async(
+            notify_on_reservation_create.apply_async(
                 kwargs={
-                    "wish_id": wish.id,
+                    "wish_id": reservation.wish_id,
                 },
             )  # type:ignore

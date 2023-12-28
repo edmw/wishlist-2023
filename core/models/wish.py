@@ -11,10 +11,10 @@ from django.db import models
 from core.models import Reservation, concerns, fields, types
 from core.models._base import IDMixin
 
-from ._types import WishTypesMixin
-from ._urls import WishURLsMixin
-from .on_save_generate_image import OnSaveGenerateImageMixin
-from .on_save_notify import OnSaveNotifyMixin
+from .wish_on_save_generate_image import OnSaveGenerateImageMixin
+from .wish_on_save_notify import OnSaveNotifyMixin
+from .wish_types import WishTypesMixin
+from .wish_urls import WishURLsMixin
 
 
 class Wish(

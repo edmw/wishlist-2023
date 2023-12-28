@@ -9,8 +9,8 @@ from django.db import models
 from core.models import fields, types
 from core.models._base import IDMixin
 
-from .on_delete_notify import OnDeleteNotifyMixin
-from .on_save_notify import OnSaveNotifyMixin
+from .reservation_on_delete_notify import OnDeleteNotifyMixin
+from .reservation_on_save_notify import OnSaveNotifyMixin
 
 logger = logging.getLogger(__name__)
 

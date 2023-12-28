@@ -7,7 +7,7 @@ from django.utils.translation import gettext as _
 from django.utils.translation import gettext_noop
 
 from core.models import Wish
-from core.models.wishlist.lens import WishlistLens
+from core.models.wishlist_lens import WishlistLens
 from core.views._base import LoginRequiredMixin, UpdateView, WishModelMixin
 from core.views._forms import (
     AriaDescribedByMixin,

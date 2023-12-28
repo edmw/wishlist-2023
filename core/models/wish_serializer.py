@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from . import Wish
+from .wish import Wish
 
 
 class WishSerializer(serializers.ModelSerializer):
