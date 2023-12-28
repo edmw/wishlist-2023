@@ -2,7 +2,7 @@
 {% load i18n %}
 {% load core %}
 
-<h3>Release Wish</h3>
+<h3>{% blocktranslate %}Release Wish{% endblocktranslate %}</h3>
 {% if wish.is_reserved %}
     <p>{% blocktranslate %}When you release a wish, the reservation for that wish is deleted. The user who reserved this wish will not be notified that his reservation has been deleted. Therefore, you should only release a wish if you are sure. Otherwise, you may receive multiple gifts for your wish.{% endblocktranslate %}</p>
     <form method="get" action="{{ wish.get_absolute_release_url }}" class="wl-form">
