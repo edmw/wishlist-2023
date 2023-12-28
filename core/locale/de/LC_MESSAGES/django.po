@@ -579,7 +579,7 @@ msgid "Unarchive your Wish"
 msgstr "Wunsch wiederherstellen"
 
 msgid "Your wish has been successfully unarchived."
-msgstr "Dein Wunsch wurde erfolgreich widerhergestellt."
+msgstr "Dein Wunsch wurde erfolgreich wiederhergestellt."
 
 msgid ""
 "<strong>Please note:</strong> This wish has been <strong>reserved</strong> "
