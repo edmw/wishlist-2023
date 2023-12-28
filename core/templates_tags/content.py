@@ -11,7 +11,7 @@ from django.utils.html import escape
 from django.utils.safestring import SafeText, mark_safe
 from django.utils.translation import gettext as _
 
-from core.services import FormattingService, URLService
+from core.services import FormattingService, RenderService, URLService
 from webapp.services import LanguageService
 
 register = template.Library()
@@ -62,6 +62,39 @@ def progress_meter(current: int, total: int) -> SafeText:
     return mark_safe(f'<small class="text-muted">({current:d}/{total:d})</small>')  # nosec
 
 
+#  ##     ##    ###    ########  ##    ## ########   #######  ##      ## ##    ##
+#  ###   ###   ## ##   ##     ## ##   ##  ##     ## ##     ## ##  ##  ## ###   ##
+#  #### ####  ##   ##  ##     ## ##  ##   ##     ## ##     ## ##  ##  ## ####  ##
+#  ## ### ## ##     ## ########  #####    ##     ## ##     ## ##  ##  ## ## ## ##
+#  ##     ## ######### ##   ##   ##  ##   ##     ## ##     ## ##  ##  ## ##  ####
+#  ##     ## ##     ## ##    ##  ##   ##  ##     ## ##     ## ##  ##  ## ##   ###
+#  ##     ## ##     ## ##     ## ##    ## ########   #######   ###  ###  ##    ##
+
+
+@register.simple_tag(takes_context=True)
+def render_markdown(context: template.Context, value: str) -> SafeText:
+    if value in (None, ""):
+        # SECURITY: Empty string is safe.
+        return mark_safe("")  # nosec
+
+    # This is a sanity check while developing which can be safely removed in production.
+    assert isinstance(value, str)  # nosec
+
+    return RenderService.render_markdown(value=value)
+
+
+@register.simple_tag(takes_context=True)
+def render_markdown_to_text(context: template.Context, value: str) -> SafeText:
+    if value in (None, ""):
+        # SECURITY: Empty string is safe.
+        return mark_safe("")  # nosec
+
+    # This is a sanity check while developing which can be safely removed in production.
+    assert isinstance(value, str)  # nosec
+
+    return RenderService.render_markdown_to_text(value=value)
+
+
 #  ########     ###    ######## ######## ######## #### ##     ## ########
 #  ##     ##   ## ##      ##    ##          ##     ##  ###   ### ##
 #  ##     ##  ##   ##     ##    ##          ##     ##  #### #### ##
@@ -80,18 +113,7 @@ def render_datetime(context: template.Context, value: datetime, *args: Any, **kw
     # This is a sanity check while developing which can be safely removed in production.
     assert isinstance(value, datetime)  # nosec
 
-    language_code = LanguageService.get_language_code()
-    format_datetime = FormattingService.format_datetime(value=value, language_code=language_code)
-    natural_datetime = FormattingService.natural_datetime(value=value, language_code=language_code)
-    # SECURITY: Iso format of value is safe.
-    # SECURITY: `format_datetime` is escaped.
-    # SECURITY: `natural_datetime` is escaped.
-    return mark_safe(  # nosec
-        f"<time"
-        f' datetime="{value.isoformat()}"'
-        f' title="{escape(format_datetime)}'
-        f'">{escape(natural_datetime)}</time>'
-    )
+    return RenderService.render_datetime(value=value)
 
 
 @register.filter(expects_localtime=True)

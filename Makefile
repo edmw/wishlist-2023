@@ -6,7 +6,7 @@ MAKE_DOCKER_PYTHON := python -W ignore::DeprecationWarning
 MAKE_PATH := $(abspath $(lastword $(MAKEFILE_LIST)))
 MAKE_DIR := $(dir $(MAKE_PATH))
 
-BUILD_PLATFORM ?= "linux/amd64"
+BUILD_PLATFORM ?= "linux/arm64"
 BUILD_IMAGE_NAME := wishlist-webapp
 
 .DEFAULT_GOAL := run

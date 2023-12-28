@@ -28,9 +28,13 @@ class CoreFixture:
     list_alice_empty: Wishlist
     list_bob: Wishlist
     item_alice: Wish
-    item_alice_reserved: Wish
+    item_alice_reserved_by_alice: Wish
+    item_alice_reserved_by_bob: Wish
+    item_bob_archived: Wish
     favorite_alice: Favorite
+    favorite_bob: Favorite
     reservation_alice: Reservation
+    reservation_bob: Reservation
 
 
 @pytest.fixture(scope="session")
@@ -49,7 +53,11 @@ def core(django_db_setup, django_db_blocker):  # noqa
             list_alice_empty=Wishlist.objects.get(pk=constants.LIST_ID_ALICE_EMPTY),
             list_bob=Wishlist.objects.get(pk=constants.LIST_ID_BOB),
             item_alice=Wish.objects.get(pk=constants.ITEM_ID_ALICE),
-            item_alice_reserved=Wish.objects.get(pk=constants.ITEM_ID_ALICE_RESERVED),
+            item_alice_reserved_by_alice=Wish.objects.get(pk=constants.ITEM_ID_ALICE_RESERVED_BY_ALICE),
+            item_alice_reserved_by_bob=Wish.objects.get(pk=constants.ITEM_ID_ALICE_RESERVED_BY_BOB),
+            item_bob_archived=Wish.objects.get(pk=constants.ITEM_ID_BOB_ARCHIVED),
             favorite_alice=Favorite.objects.get(pk=constants.FAVORITE_ID_ALICE),
+            favorite_bob=Favorite.objects.get(pk=constants.FAVORITE_ID_BOB),
             reservation_alice=Reservation.objects.get(pk=constants.RESERVATION_ID_ALICE),
+            reservation_bob=Reservation.objects.get(pk=constants.RESERVATION_ID_BOB),
         )
