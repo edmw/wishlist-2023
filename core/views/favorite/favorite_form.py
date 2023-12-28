@@ -3,7 +3,7 @@ import logging
 from django.forms import CheckboxInput, ModelForm
 from django.utils.translation import gettext_noop
 
-from core.models.favorite import Favorite
+from core.models import Favorite
 from core.views._base import FavoriteModelMixin, LoginRequiredMixin, UpdateView
 from core.views._forms import CheckboxStylesMixin, LabelAfterMixin
 

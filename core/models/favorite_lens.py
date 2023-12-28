@@ -3,10 +3,10 @@ from __future__ import annotations
 from django.db.models import Prefetch
 
 from core.models._base import LensBase, LensHasOrderMixin
-from core.models.favorite.favorite import Favorite
+from core.models.favorite import Favorite
 from core.models.user import User
-from core.models.wishlist.lens import WishlistLens
-from core.models.wishlist.wishlist import Wishlist
+from core.models.wishlist import Wishlist
+from core.models.wishlist_lens import WishlistLens
 
 
 class FavoriteLens(LensHasOrderMixin, LensBase[Favorite]):

@@ -5,7 +5,7 @@ from core.models._typing import HasPrimaryKey, IsDeletable
 
 class OnDeleteNotifyMixin(IsDeletable):
     def delete(self: HasPrimaryKey, *args: Any, **kwargs: Any) -> Any:
-        from . import Reservation
+        from .reservation import Reservation
 
         super().delete(*args, **kwargs)
 

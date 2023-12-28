@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from . import Wishlist
+from .wishlist import Wishlist
 
 
 class WishlistSerializer(serializers.ModelSerializer):

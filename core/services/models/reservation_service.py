@@ -5,7 +5,7 @@ import logging
 from django.utils import timezone
 
 from core.models import Reservation, ReservationID
-from core.models.reservation.lens import ReservationLens
+from core.models.reservation_lens import ReservationLens
 
 logger = logging.getLogger(__name__)
 

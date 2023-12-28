@@ -3,6 +3,7 @@
 ## [x.x.x]
 
 * 🛠️ add lenses for querying models
+* 🛠️ refactor models
 
 ## [1.1.0]
 

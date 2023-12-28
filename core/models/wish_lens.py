@@ -4,8 +4,8 @@ from typing import Self
 
 from core.models._base import LensBase, LensHasOrderMixin
 from core.models.types import ItemOrdering
-from core.models.wish.wish import Wish
-from core.models.wishlist.wishlist import Wishlist
+from core.models.wish import Wish
+from core.models.wishlist import Wishlist
 
 
 class WishLens(LensHasOrderMixin, LensBase[Wish]):

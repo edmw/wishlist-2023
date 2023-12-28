@@ -14,8 +14,8 @@ from django.db import models
 from core.models import concerns, fields, types
 from core.models._base import IDMixin
 
-from ._types import TypesMixin
-from ._url import URLMixin
+from .wishlist_types import TypesMixin
+from .wishlist_urls import URLMixin
 
 logger = logging.getLogger(__name__)
 
