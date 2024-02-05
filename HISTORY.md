@@ -4,6 +4,7 @@
 
 * 🛠️ add lenses for querying models
 * 🛠️ refactor models
+* 🛠️ update vscode launch settings
 
 ## [1.1.0]
 

@@ -3,7 +3,7 @@
     "configurations": [
         {
             "name": "webapp",
-            "type": "python",
+            "type": "debugpy",
             "request": "attach",
             "django": true,
             "pathMappings": [
@@ -12,13 +12,15 @@
                     "remoteRoot": "/webapp"
                 }
             ],
-            "port": 13132,
-            "host": "localhost",
+            "connect": {
+                "port": 13132,
+                "host": "localhost"
+            },
             "justMyCode": false
         },
         {
             "name": "webapp (worker)",
-            "type": "python",
+            "type": "debugpy",
             "request": "attach",
             "django": true,
             "pathMappings": [
@@ -27,13 +29,15 @@
                     "remoteRoot": "/webapp"
                 }
             ],
-            "port": 13133,
-            "host": "localhost",
+            "connect": {
+                "port": 13133,
+                "host": "localhost"
+            },
             "justMyCode": false
         },
         {
             "name": "tests",
-            "type": "python",
+            "type": "debugpy",
             "request": "attach",
             "django": true,
             "pathMappings": [
@@ -42,8 +46,10 @@
                     "remoteRoot": "/webapp"
                 }
             ],
-            "port": 13134,
-            "host": "localhost",
+            "connect": {
+                "port": 13134,
+                "host": "localhost"
+            },
             "justMyCode": false
         }
     ]
