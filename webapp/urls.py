@@ -66,8 +66,8 @@ urlpatterns = [
         ),
     ),
     # ALLAUTH
-    # Include only selected patterns, because only the login via a social
-    # accounts from allauth is used .
+    # Include only selected patterns, because only the login via social
+    # accounts from allauth is used.
     path(
         "accounts/",
         include(

@@ -15,7 +15,13 @@ from .item import (
 )
 from .items import ItemsView
 from .legal_notice import LegalNoticeView
-from .list import ListCreateView, ListDeleteView, ListExportView, ListUpdateView
+from .list import (
+    ListCreateView,
+    ListDeleteView,
+    ListExportView,
+    ListShareView,
+    ListUpdateView,
+)
 from .lists import ListsView
 from .privacy_policy import PrivacyPolicyView
 from .reservation import ReservationCreateView, ReservationUndoView

@@ -48,6 +48,7 @@ VIEWS_LISTS = [
     (constants.VIEW_LIST_UPDATE, HTTPMethod.POST, KWARGS_LIST, None),
     (constants.VIEW_LIST_DELETE, HTTPMethod.GET, KWARGS_LIST, None),
     (constants.VIEW_LIST_DELETE, HTTPMethod.POST, KWARGS_LIST, None),
+    (constants.VIEW_LIST_SHARE, HTTPMethod.GET, KWARGS_LIST, None),
     (constants.VIEW_LIST_EXPORT, HTTPMethod.GET, KWARGS_LIST, None),
 ]
 VIEWS_ITEMS = [

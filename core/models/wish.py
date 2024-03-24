@@ -8,8 +8,10 @@ from __future__ import annotations
 
 from django.db import models
 
-from core.models import Reservation, concerns, fields, types
+from core.models import concerns, fields, types
 from core.models._base import IDMixin
+from core.models.reservation import Reservation
+from core.models.wishlist import Wishlist
 
 from .wish_on_save_generate_image import OnSaveGenerateImageMixin
 from .wish_on_save_notify import OnSaveNotifyMixin
@@ -47,7 +49,7 @@ class Wish(
     # Relations
 
     wishlist = models.ForeignKey(
-        "Wishlist", on_delete=models.CASCADE, blank=False, null=False, related_name="wishes"
+        Wishlist, on_delete=models.CASCADE, blank=False, null=False, related_name="wishes"
     )
     wishlist_id: types.WishlistID | None
 

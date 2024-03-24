@@ -24,9 +24,13 @@ class Invitation(
     id_field = fields.InvitationIDField()
 
     inviter = models.ForeignKey(
-        django_settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name="invitations"
+        django_settings.AUTH_USER_MODEL,
+        on_delete=models.PROTECT,
+        related_name="%(class)ss",
     )
     inviter_id: types.UserID
+
+    code_field = fields.InvitationCodeField()
 
     # Lifecycle
 
@@ -35,18 +39,14 @@ class Invitation(
     sent = models.BooleanField(
         default=False,
         verbose_name="sent",
-        help_text=(
-            "Indicates whether this invitation has been sent to the invitee."
-        ),
+        help_text=("Indicates whether this invitation has been sent to the invitee."),
     )
     sent_at = models.DateTimeField(blank=True, null=True)
 
     accepted = models.BooleanField(
         default=False,
         verbose_name="accepted",
-        help_text=(
-            "Indicates whether this invitation has been accepted by the invitee."
-        ),
+        help_text=("Indicates whether this invitation has been accepted by the invitee."),
     )
     accepted_at = models.DateTimeField(blank=True, null=True)
 
@@ -86,6 +86,29 @@ class Invitation(
             Reputation text.
         """
         return f"<{self.__class__.__name__}[{str(self.id)}]: inviter={self.inviter_id};>"
+
+    # Properties
+
+    @property
+    def code(self) -> types.InvitationCode:
+        """The code for the invitation. This computed property returns the
+        correctly typed value instead of an indeterminate string.
+
+        Returns:
+            The invitation code.
+        """
+        return types.InvitationCode(self.code_field)
+
+    @code.setter
+    def code(self, code: types.InvitationCode) -> None:
+        """The setter for the invitation code. This custom setter
+        accepts a correctly typed value, only, instead of an indeterminate
+        string.
+
+        Arguments:
+            code: The invitation code.
+        """
+        self.code_field = code
 
     # Custom properties
 

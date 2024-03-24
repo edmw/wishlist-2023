@@ -18,6 +18,7 @@ from .fields import (
     WishIDField,
     WishlistIDField,
 )
+from .invitation_wishlist import WishlistInvitation
 from .reservation import Reservation
 from .reservation_lens import ReservationLens
 from .types import (

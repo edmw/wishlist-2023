@@ -33,7 +33,7 @@
                     {% for wishlist in wishlists %}
                         <tr>
                             <td class="wl-title" data-label="{% translate 'Name' %}">
-                                <a href="{{ wishlist.get_absolute_url }}">{{ wishlist.name }}</a>
+                                <a href="{% make_linked_url wishlist.get_absolute_share_url %}" title="{% translate 'Share list' %}" class="btn btn-action me-3">{% icon "share-2" %}</a><a href="{{ wishlist.get_absolute_url }}">{{ wishlist.name }}</a>
                             </td>
                             <td class="wl-items wl-actions wl-actions-left" data-label="{% translate 'Wishes' %}">
                                 <a href="{{ wishlist.get_absolute_items_url }}" title="{% translate 'Edit items' %}" class="btn btn-action me-3">{% icon "edit-2" %}</a>{{ wishlist.wishes_count }}

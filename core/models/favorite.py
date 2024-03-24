@@ -1,4 +1,5 @@
 """Model class representing a favorite wish lists."""
+
 from __future__ import annotations
 
 import logging
@@ -10,6 +11,7 @@ from django.urls import reverse
 from core import constants
 from core.models import fields, types
 from core.models._base import IDMixin
+from core.models.wishlist import Wishlist
 
 logger = logging.getLogger(__name__)
 
@@ -22,12 +24,14 @@ class Favorite(IDMixin[types.FavoriteID], models.Model):
     id_type = types.FavoriteID
     id_field = fields.FavoriteIDField()
 
+    # Relations
+
     user = models.ForeignKey(
         django_settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name="favorites"
     )
     user_id: types.UserID
 
-    wishlist = models.ForeignKey("Wishlist", on_delete=models.CASCADE, related_name="favorites")
+    wishlist = models.ForeignKey(Wishlist, on_delete=models.CASCADE, related_name="favorites")
     wishlist_id: types.WishlistID
 
     notify_on_item_create = models.BooleanField(default=False)

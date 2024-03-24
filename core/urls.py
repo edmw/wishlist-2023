@@ -26,6 +26,7 @@ from core.views import (
     ListCreateView,
     ListDeleteView,
     ListExportView,
+    ListShareView,
     ListsView,
     ListUpdateView,
     PrivacyPolicyView,
@@ -87,6 +88,11 @@ pages_user_lists: list[URLPattern] = [
         f"user/<b62uuid:{constants.USER_ID_KEY}>/lists/<b62uuid:{constants.LIST_ID_KEY}>/delete",
         ListDeleteView.as_view(),
         name=constants.VIEW_LIST_DELETE,
+    ),
+    path(
+        f"user/<b62uuid:{constants.USER_ID_KEY}>/lists/<b62uuid:{constants.LIST_ID_KEY}>/share",
+        ListShareView.as_view(),
+        name=constants.VIEW_LIST_SHARE,
     ),
     path(
         f"user/<b62uuid:{constants.USER_ID_KEY}>/lists/<b62uuid:{constants.LIST_ID_KEY}>/export",

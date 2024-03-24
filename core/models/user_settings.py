@@ -131,7 +131,7 @@ class UserSettings(IDMixin[UserSettingsID], models.Model):
         Arguments:
             pushover_key: The pushover key.
         """
-        self.pushover_key = pushover_key
+        self.pushover_key_field = pushover_key
 
     # Custom properties
 

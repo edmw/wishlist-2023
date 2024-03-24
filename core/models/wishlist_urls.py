@@ -65,6 +65,20 @@ class URLMixin:
             },
         )
 
+    def get_absolute_share_url(self: HasOwner) -> str:
+        """Returns the URL for the page to share this wish list.
+
+        Returns:
+            URL
+        """
+        return reverse(
+            constants.VIEW_LIST_SHARE,
+            kwargs={
+                constants.USER_ID_KEY: self.owner_id,
+                constants.LIST_ID_KEY: self.pk,
+            },
+        )
+
     def get_absolute_export_url(self: HasOwner) -> str:
         """Returns the URL for the page to export this wish list.
 
