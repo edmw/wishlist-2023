@@ -92,13 +92,17 @@ $ make check-down
 ```
 $ make build-develop
 $ make build-deploy
-$ make build-release
+$ make build-release.patch
+$ make build-release.minor
+$ make build-release.major
 ```
 
 ### Releasing
 
 ```
-$ make release
+$ make release.patch
+$ make release.minor
+$ make release.major
 $ make release-push
 ```
 
