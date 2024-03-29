@@ -17,6 +17,7 @@ services:
       - wishlist-webapp
     depends_on:
       - app
+      - files
     restart: on-failure
 
 
