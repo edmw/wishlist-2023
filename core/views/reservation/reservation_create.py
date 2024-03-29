@@ -37,9 +37,11 @@ class ReservationCreateView(
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
+
         wish_id = WishID(self.request.GET[constants.ITEM_ID_KEY])
         wish = WishService.get_wish(id=wish_id)
         context["wish"] = wish
+
         return context
 
     def form_valid(self, form: ModelForm) -> HttpResponse:

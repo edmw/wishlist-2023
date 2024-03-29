@@ -23,7 +23,7 @@ class FavoritesView(
     template_name = "favorites/favorites.html"
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
-        context = {}
+        context = super().get_context_data(**kwargs)
 
         user = self.try_user()
         context["your_favorites_count"] = FavoriteService.count_favorites_for_user(user=user)

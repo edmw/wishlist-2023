@@ -37,9 +37,11 @@ class ItemManageView(
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
+
         user = self.try_user()
         item = self.get_object()
         context["move_form"] = ItemMoveForm(user=user, instance=item)
         context["archive_form"] = ItemArchiveForm(instance=item)
         context["unarchive_form"] = ItemUnarchiveForm(instance=item)
+
         return context
