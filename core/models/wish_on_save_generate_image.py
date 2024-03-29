@@ -1,6 +1,9 @@
+import logging
 from typing import Any, Iterable, Protocol, cast
 
 from core.models._typing import HasModelState, HasPrimaryKey, IsSaveable
+
+logger = logging.Logger(__name__)
 
 
 class ModelSupportsSave(HasPrimaryKey, HasModelState, Protocol):

@@ -4,7 +4,6 @@ from typing import Any, Protocol
 import django.db.models
 from django.http import HttpRequest, HttpResponse
 from django.utils.translation import gettext_noop
-from django.views.generic.detail import SingleObjectMixin
 
 from core.models import Wish, WishLens
 from core.services import FavoriteService, PermissionService
@@ -20,11 +19,10 @@ from core.views._typing import (
 logger = logging.getLogger(__name__)
 
 
-class IsWishlistView(HasUser, HasWishlist, HasModel, HasObjectList, Protocol):
-    ...
+class IsWishlistView(HasUser, HasWishlist, HasModel, HasObjectList, Protocol): ...
 
 
-class HasPermissionForWishlistViewMixin(DoesViewDispatching, SingleObjectMixin):
+class HasPermissionForWishlistViewMixin(DoesViewDispatching):
     """Verifies the requesting user is allowed to access the wish list."""
 
     request: HttpRequest
@@ -57,20 +55,19 @@ class WishlistView(
     model = Wish
     page_title = gettext_noop("Wishes")
     template_name = "wishlist/wishlist.html"
+    context_object_name = "wishes"
 
     def get_queryset(self) -> django.db.models.QuerySet[Wish]:
         wishlist = self.try_wishlist()
         return WishLens.view().by_wishlist(list=wishlist).without_archived().for_listing().queryset.all()
 
     def get_context_data(self: IsWishlistView, **kwargs: Any) -> dict[str, Any]:
-        context = {}
+        context = super().get_context_data(**kwargs)
 
         user = self.try_user()
         wishlist = self.try_wishlist()
         context["wishlist"] = wishlist
         context["wishlist_is_favorite"] = FavoriteService.is_favorite(wishlist=wishlist, user=user)
-        wishes = self.object_list.all()
-        context["wishes"] = wishes
-        context["wishes_count"] = len(wishes)
+        context["wishes_count"] = context["wishes"].count
 
         return context

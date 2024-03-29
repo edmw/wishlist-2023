@@ -24,7 +24,7 @@ class ListsView(
     template_name = "lists/lists.html"
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
-        context = {}
+        context = super().get_context_data(**kwargs)
 
         user = self.try_user()
         context["your_wishlists_count"] = WishlistService.count_wishlists_for_user(user=user)

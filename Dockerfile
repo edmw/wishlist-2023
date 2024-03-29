@@ -122,7 +122,10 @@ RUN mkdir -p "$APP_HOME" && \
     chown -R $APP_USER:$APP_USER $APP_HOME && \
     chown -R $APP_USER:$APP_USER $APP_STATIC
 # Python: Optimization.
-ENV PYTHONOPTIMIZE=2
+# 03/24 Optimization must be disabled because pycparser will break if
+# docstrings are removed by the optimization. pycparser is needed for the
+# cryptography package.
+ENV PYTHONOPTIMIZE=
 # Python: Warning control.
 ENV PYTHONWARNINGS="ignore::DeprecationWarning"
 # Django: Disable debug mode.
