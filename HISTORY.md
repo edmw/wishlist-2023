@@ -2,9 +2,15 @@
 
 ## [x.x.x]
 
+* 🛠️ upgrade project dependencies
 * 🛠️ add lenses for querying models
 * 🛠️ refactor models
-* 🛠️ update vscode launch settings
+* 🛠️ settings: remove obsolete handling for redis username
+* 🛠️ vscode: update launch settings
+* 🛠️ makefile: add target for viewing logs
+* 🪛 fix page contexts
+* 🪛 python: disable optimization
+* 🪛 docker compose: fix dependencies
 
 ## [1.1.0]
 
@@ -12,9 +18,9 @@
 * 🛠️ update project dependencies
 * 🛠️ add region marker to settings
 * 🛠️ enable docker buildkit caching for pip install
-* 🪛 disable CI automatic runs
-* 🪛 fix CI cleanup action
-* 🪛 fix debugtest make target
+* 🪛 CI: disable automatic runs
+* 🪛 CI: fix cleanup action
+* 🪛 makefile: fix debugtest target
 * 🖊️ fix history
 
 ## [1.0.0]
