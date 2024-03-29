@@ -35,5 +35,7 @@ class UserSettingsNotificationsTestView(LoginRequiredMixin, UserDetailView):
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
+
         context["send_result"] = getattr(self, "send_result", None)
+
         return context

@@ -49,9 +49,11 @@ class FavoriteCreateView(
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
+
         wishlist_id = WishlistID(self.request.GET[constants.LIST_ID_KEY])
         wishlist = WishlistService.get_wishlist(id=wishlist_id)
         context["wishlist"] = wishlist
+
         return context
 
     def form_valid(self, form: ModelForm) -> HttpResponse:
