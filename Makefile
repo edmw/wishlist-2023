@@ -62,8 +62,12 @@ RUN_DOCKER_LOCAL_DEPLOY := WEBAPP_KEY=$(RUN_WEBAPP_LOCAL_DEPLOY_KEY) \
 run: build-develop --run-banner.Running_Local_Server
 	$(RUN_DOCKER_LOCAL) -f environments/local/docker-compose.debug.yml up
 
+.PHONY: logs
+logs:
+	$(RUN_DOCKER_LOCAL) logs -f app worker beat
+
 .PHONY: run-develop
-run-develop: build-develop --run-banner.Running_Local_Server
+run-develop: build-develop --run-banner.Running_Local_Server_with_Development_Version
 	$(RUN_DOCKER_LOCAL) up
 
 .PHONY: down
