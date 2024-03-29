@@ -50,7 +50,7 @@ services:
     container_name: wishlist-worker
     entrypoint: >-
       python -W ignore::DeprecationWarning manage.py
-        celery_run_worker --log-level=WARNING
+        celery_run_worker --log-level=INFO
     environment:
       - WEBAPP_KEY
       - HTTP_PROXY=${HTTP_PROXY-}
@@ -75,7 +75,7 @@ services:
     container_name: wishlist-beat
     entrypoint: >-
       python -W ignore::DeprecationWarning manage.py
-        celery_run_beat --log-level=WARNING
+        celery_run_beat --log-level=INFO
     environment:
       - WEBAPP_KEY
       - HTTP_PROXY=${HTTP_PROXY-}
