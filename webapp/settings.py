@@ -628,22 +628,15 @@ if ENVIRONMENT_IS_TESTING:
 
 CELERY_TIMEZONE = "Europe/Berlin"
 CELERY_BROKER_URL = env.str("CELERY_BROKER_URL", None)
-CELERY_BROKER_USER = env.str("CELERY_BROKER_USER", None)
-CELERY_BROKER_PASSWORD = env.str("CELERY_BROKER_PASSWORD", None)
 if CELERY_BROKER_URL and CELERY_BROKER_URL.startswith("rediss://"):
     CELERY_BROKER_USE_SSL = {
-        # username at this place is some kinda hack:
-        # kombu, the redis transport layer of celery, does support redis broker
-        # urls with passwords, only. there is no way to define a username via
-        # the redis broker url. BUT kombu accepts additional ssl parameters
-        # which are NOT white-listed, so here we use the ssl parameters
-        # dictionary to inject the needed username.
-        "username": env.str("CELERY_BROKER_USER", None),
         "ssl_cert_reqs": "required",
         "ssl_ca_certs": env.str("CELERY_BROKER_CA_CERTS", None),
     }
 else:
     CELERY_BROKER_USE_SSL = None
+
+CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
 
 CELERY_ACCEPT_CONTENT = ["application/json"]
 CELERY_TASK_DEFAULT_QUEUE = env.str("CELERY_TASK_QUEUE", "de.yamanote.wl")
@@ -920,12 +913,15 @@ LOGGING = {
             "level": LOGGING_LEVEL,
         },
         "django": {
-            "level": LOGGING_LEVEL_SHALLOW,
+            "level": LOGGING_LEVEL,
         },
         "django.server": {
-            "level": LOGGING_LEVEL_SHALLOW,
+            "level": LOGGING_LEVEL,
         },
         "django.db.backends": {
+            "level": LOGGING_LEVEL_SHALLOW,
+        },
+        "django.utils.autoreload": {
             "level": LOGGING_LEVEL_SHALLOW,
         },
         "celery": {  # celery logging: used by celery components
