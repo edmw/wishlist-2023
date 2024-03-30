@@ -31,7 +31,7 @@
                     {% blocktranslate %}The "Don't spoil my surprises" setting is off by default so all reservations on this wish list will be visible to you. If you want the reservations to remain secret check this option. This option affects the edit view of this wish list only. The presentation view will always show the current reservations.{% endblocktranslate %}
                 </small>
             </div>
-            {% include "form_submit.html" with label=_("Save") %}
+            {% include "form_submit.html" with label=_("Save") danger=False disabled=False %}
         </form>
     </div>
 {% endblock content %}

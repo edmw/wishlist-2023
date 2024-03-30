@@ -15,7 +15,7 @@
         <form method="post" class="wl-form wl-list mt-4">
             {% csrf_token %}
             {% block form_extra %}{% endblock form_extra %}
-            {% include "form_submit.html" with label=_("Yes") %}
+            {% include "form_submit.html" with label=_("Yes") danger=False disabled=False %}
         </form>
         {% block note %}{% endblock note %}
     </div>

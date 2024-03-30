@@ -8,7 +8,7 @@
 * 🛠️ settings: remove obsolete handling for redis username
 * 🛠️ vscode: update launch settings
 * 🛠️ makefile: add target for viewing logs
-* 🪛 fix page contexts
+* 🪛 fix page contexts and includes
 * 🪛 python: disable optimization
 * 🪛 docker compose: fix dependencies
 
