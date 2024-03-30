@@ -91,6 +91,10 @@ cache_dir = ".cache/pytest"
 norecursedirs = ".git .vscode .cache"
 
 [tool.ruff]
+line-length = 108
+cache-dir = ".cache/ruff"
+
+[tool.ruff.lint]
 select = [
   "F",    # pyflakes
   "E",    # pycodestyle
@@ -106,10 +110,8 @@ select = [
 ]
 ignore = ["ANN101", "ANN102", "ANN401", "D205", "D400", "D401"]
 fixable = []
-line-length = 108
-cache-dir = ".cache/ruff"
 
-[tool.ruff.per-file-ignores]
+[tool.ruff.lint.per-file-ignores]
 "__init__.py" = ["F401"]
 "apps.py" = ["F401"]
 "core/templates_tags/*" = ["PT"]
@@ -119,11 +121,11 @@ cache-dir = ".cache/ruff"
 "**/test_*.py" = ["D"]
 "**/tests/**.py" = ["D"]
 
-[tool.ruff.flake8-annotations]
+[tool.ruff.lint.flake8-annotations]
 allow-star-arg-any = true
 mypy-init-return = true
 
-[tool.ruff.pydocstyle]
+[tool.ruff.lint.pydocstyle]
 convention = "pep257"
 
 [tool.pyright]

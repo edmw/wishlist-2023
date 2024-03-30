@@ -2,6 +2,8 @@
 
 ## [x.x.x]
 
+## [1.2.0]
+
 * 🛠️ upgrade project dependencies
 * 🛠️ add lenses for querying models
 * 🛠️ refactor models
