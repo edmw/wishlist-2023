@@ -7,9 +7,9 @@
     <p>{% blocktranslate %}When you release a wish, the reservation for that wish is deleted. The user who reserved this wish will not be notified that his reservation has been deleted. Therefore, you should only release a wish if you are sure. Otherwise, you may receive multiple gifts for your wish.{% endblocktranslate %}</p>
     <form method="get" action="{{ wish.get_absolute_release_url }}" class="wl-form">
         {% input_to_previous %}
-        {% include 'form_submit.html' with label=_('Release this wish') %}
+        {% include "form_submit.html" with label=_('Release this wish') danger=False disabled=False %}
     </form>
 {% else %}
     <p>{% blocktranslate %}This wish has not yet been reserved and can therefore not be released.{% endblocktranslate %}</p>
-    {% include 'form_submit.html' with label=_('Release this wish') disabled=True %}
+    {% include "form_submit.html" with label=_('Release this wish') danger=False disabled=True %}
 {% endif %}

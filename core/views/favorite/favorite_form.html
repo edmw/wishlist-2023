@@ -18,7 +18,7 @@
                     {% render_errors form.notify_on_item_create.errors %}
                 </small>
             </div>
-            {% include "form_submit.html" with label=_("Save") %}
+            {% include "form_submit.html" with label=_("Save") danger=False disabled=False %}
         </form>
     </div>
 {% endblock content %}

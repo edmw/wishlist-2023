@@ -8,9 +8,9 @@
     <p>{% blocktranslate %}Caution! Deleted wishes cannot be restored.{% endblocktranslate %}</p>
     <form method="get" action="{{ wish.get_absolute_delete_url }}" class="wl-form">
         {% input_to_previous %}
-        {% include 'form_submit.html' with label=_('Delete this wish permanently') danger=True %}
+        {% include "form_submit.html" with label=_('Delete this wish permanently') danger=True disabled=False %}
     </form>
 {% else %}
     <p class="text-muted">{% blocktranslate %}This wish has already been reserved. A wish already reserved but not yet received cannot be deleted. It must first be released to be able to delete it.{% endblocktranslate %}</p>
-    {% include 'form_submit.html' with label=_('Delete this wish permanently') disabled=True %}
+    {% include "form_submit.html" with label=_('Delete this wish permanently') danger=False disabled=True %}
 {% endif %}

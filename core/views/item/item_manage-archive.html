@@ -8,7 +8,7 @@
     <form method="post" action="{% url_with_previous wish.get_absolute_archive_url %}" class="wl-form">
         {% csrf_token %}
         {% include "item/item_archive-form.html" with form=archive_form %}
-        {% include 'form_submit.html' with label=_('Archive this wish') %}
+        {% include "form_submit.html" with label=_('Archive this wish') danger=False disabled=False %}
     </form>
 {% else %}
     {% if wish.archived %}
@@ -17,11 +17,11 @@
         <form method="post" action="{% url_with_previous wish.get_absolute_unarchive_url %}" class="wl-form">
             {% csrf_token %}
             {% include "item/item_unarchive-form.html" with form=unarchive_form %}
-            {% include 'form_submit.html' with label=_('Unarchive this wish') %}
+            {% include "form_submit.html" with label=_('Unarchive this wish') danger=False disabled=False %}
         </form>
     {% else %}
         <h3>{% blocktranslate %}Archive Wish{% endblocktranslate %}</h3>
         <p class="text-muted">{% blocktranslate %}This wish has already been reserved. A wish already reserved but not yet received cannot be archived.{% endblocktranslate %}</p>
-        {% include 'form_submit.html' with label=_('Archive this wish') disabled=True %}
+        {% include "form_submit.html" with label=_('Archive this wish') danger=False disabled=True %}
     {% endif %}
 {% endif %}
