@@ -1,5 +1,6 @@
 """Base class and Mixins for webapp’s commands."""
 
+import argparse
 import logging
 import os
 from pathlib import Path
@@ -15,6 +16,40 @@ class WebappBaseCommand(BaseCommand):
 
     Provides utility functions and can be extended by Mixins.
     """
+
+    suppressed_base_arguments = [
+        "--verbosity",
+        "--pythonpath",
+        "--settings",
+        "--traceback",
+        "--no-color",
+        "--force-color",
+    ]
+
+    def create_parser(self, prog_name: str, subcommand: str, **kwargs: Any) -> CommandParser:
+        kwargs["add_help"] = False
+        parser = super().create_parser(prog_name, subcommand, **kwargs)
+        parser.add_argument(
+            "-h",
+            "--help",
+            action="help",
+            default=argparse.SUPPRESS,
+            help="Show this help message and exit.",
+        )
+        return parser
+
+    def print(self, lines: str | list[str]) -> None:
+        """Prints the specified text to stdout.
+
+        Arguments:
+            lines: str | list[str]
+                Either a string or multiple strings which will be printed.
+        """
+        if not isinstance(lines, list):
+            lines = [lines]
+
+        for line in lines:
+            self.stdout.write(line)
 
     def banner(self, lines: str | list[str], discreet: bool = False, min_width: int = 42) -> None:
         """Prints a banner with the specified text to stdout.
@@ -47,8 +82,7 @@ class WebappBaseCommand(BaseCommand):
         out.append(first_and_last_line)
         out.append("")
 
-        for line in out:
-            self.stdout.write(line)
+        self.print(out)
 
     def get_app_paths(self) -> list[Path]:
         """Returns a list of Paths to all apps which are part of the webapp.
@@ -92,8 +126,7 @@ class BaseCommandProtocol(Protocol):
 
 class HasArguments:
     class AddArgumentsCallable(Protocol):
-        def __call__(self, parser: CommandParser) -> None:
-            ...
+        def __call__(self, parser: CommandParser) -> None: ...
 
     add_arguments: AddArgumentsCallable
 
@@ -107,7 +140,7 @@ class SupportsLogging(HasArguments, BaseCommandProtocol):
             "--log-level",
             choices=["NOTSET", "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"],
             default="WARNING",
-            help="set log level",
+            help="Set log level for logging.",
         )
         super().add_arguments(parser=parser)
 
@@ -130,7 +163,7 @@ class SupportsDebugging(HasArguments, BaseCommandProtocol):
             "--debug",
             default=False,
             action="store_true",
-            help="enable debugging",
+            help="Enable debugging through debugpy on port 3000.",
         )
         super().add_arguments(parser=parser)
 

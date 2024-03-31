@@ -1,0 +1,83 @@
+"""Wish generate image command."""
+
+import textwrap
+from argparse import ArgumentError
+from typing import Any
+
+from django.core.management.base import CommandParser
+
+from core.models import WishID, WishLens
+from core.models.types.wishlist_id import WishlistID
+from core.services import WishlistService, WishService
+from core.tasks.wish import generate_image_for_reference_photo
+from webapp.management.commands import WebappBaseCommand
+
+
+class Command(WebappBaseCommand):
+    """Wish generate image command: Generates images for wishes from reference photo."""
+
+    help = "Generates images for wishes from reference photos."
+
+    def add_arguments(self, parser: CommandParser) -> None:
+        group = parser.add_mutually_exclusive_group(required=True)
+        group.add_argument(
+            "--wish-id",
+            metavar="UUID",
+            help=(
+                "ID of the wish for which the image is to be created from the "
+                "reference photo. Does nothing if no reference photo is stored "
+                "for the wish."
+            ),
+        )
+        group.add_argument(
+            "--wishlist-id",
+            metavar="UUID",
+            help=(
+                "ID of the wishlist for whose wishes the images are to be "
+                "created from the reference photos. Does nothing if no "
+                "reference photos are stored for the wishes."
+            ),
+        )
+        group.add_argument(
+            "--all",
+            action="store_true",
+            help=(
+                "Generates images for all wishes from their reference photos. "
+                "Does nothing if no eference photos are stored for the wishes."
+            ),
+        )
+
+        parser.add_argument(
+            "--foreground",
+            action="store_true",
+            help="Executes in foreground instead utilizing background workers.",
+        )
+        return super().add_arguments(parser)
+
+    def handle(self, *args: Any, **options: Any) -> None:
+        super().handle(*args, **options)
+
+        self.banner(["WISH IMAGE FROM REFERENCE PHOTO", *textwrap.wrap(self.help)])
+
+        if options.get("all"):
+            wishes = WishLens().queryset.all()
+        elif wish_id := options.get("wish_id"):
+            wishes = [WishService.get_wish(id=WishID(wish_id))]
+        elif wishlist_id := options.get("wishlist_id"):
+            wishlist = WishlistService.get_wishlist(id=WishlistID(wishlist_id))
+            wishes = WishLens().by_wishlist(list=wishlist).queryset.all()
+        else:
+            raise ArgumentError(None, "No wishes specified.")
+
+        foreground = options.get("foreground", False)
+
+        for wish in wishes:
+            if foreground:
+                generate_image_for_reference_photo(wish_id=wish.id)
+            else:
+                self.print(f"Scheduling: Wish {wish!r}")
+                generate_image_for_reference_photo.apply_async(
+                    kwargs={
+                        "wish_id": wish.id,
+                    },
+                )  # type:ignore

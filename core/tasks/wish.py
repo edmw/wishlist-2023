@@ -27,7 +27,7 @@ def notify_on_create(self: Task, wish_id: WishID) -> bool:
         self: Actual task instance
         wish_id: The identifier for the wish which was reserved.
     """
-    TaskLoggingService.task_begin("Sending Notification for created Wish", logger=logger)
+    TaskLoggingService.task_begin("Sending Notification for created Wish <%s>", wish_id, logger=logger)
 
     wish = WishService.get_wish(id=wish_id)
     wishlist = wish.wishlist
@@ -48,7 +48,7 @@ def notify_on_create(self: Task, wish_id: WishID) -> bool:
                     },
                 )
 
-    TaskLoggingService.task_end("Sending Notification for created Wish", logger=logger)
+    TaskLoggingService.task_end("Sending Notification for created Wish <%s>", wish_id, logger=logger)
 
     return True
 
@@ -65,7 +65,9 @@ def notify_on_reservation_create(self: Task, wish_id: WishID) -> bool:
         self: Actual task instance
         wish_id: The identifier for the wish which was reserved.
     """
-    TaskLoggingService.task_begin("Sending Notification for created Reservation", logger=logger)
+    TaskLoggingService.task_begin(
+        "Sending Notification for created Reservation on Wish <%s>", wish_id, logger=logger
+    )
 
     wish = WishService.get_wish(id=wish_id)
     wishlist = wish.wishlist
@@ -85,7 +87,9 @@ def notify_on_reservation_create(self: Task, wish_id: WishID) -> bool:
             },
         )
 
-    TaskLoggingService.task_end("Sending Notification for created Reservation", logger=logger)
+    TaskLoggingService.task_end(
+        "Sending Notification for created Reservation on Wish <%s>", wish_id, logger=logger
+    )
 
     return True
 
@@ -102,7 +106,9 @@ def notify_on_reservation_delete(self: Task, wish_id: WishID) -> bool:
         self: Actual task instance
         wish_id: The identifier for the wish which was reserved.
     """
-    TaskLoggingService.task_begin("Sending Notification for deleted Reservation", logger=logger)
+    TaskLoggingService.task_begin(
+        "Sending Notification for deleted Reservation on Wish <%s>", wish_id, logger=logger
+    )
 
     wish = WishService.get_wish(id=wish_id)
     wishlist = wish.wishlist
@@ -122,7 +128,9 @@ def notify_on_reservation_delete(self: Task, wish_id: WishID) -> bool:
             },
         )
 
-    TaskLoggingService.task_end("Sending Notification for deleted Reservation", logger=logger)
+    TaskLoggingService.task_end(
+        "Sending Notification for deleted Reservation on Wish <%s>", wish_id, logger=logger
+    )
 
     return True
 
@@ -141,7 +149,9 @@ def generate_image_for_reference_photo(self: Task, wish_id: WishID) -> bool:
         self: Actual task instance
         wish_id: The identifier for the wish.
     """
-    TaskLoggingService.task_begin("Updating Image for Reference Photo", logger=logger)
+    TaskLoggingService.task_begin(
+        "Updating Image for Reference Photo for Wish <%s>", wish_id, logger=logger
+    )
 
     wish = WishService.get_wish(id=wish_id)
     if reference_photo := wish.reference_photo:
@@ -166,6 +176,6 @@ def generate_image_for_reference_photo(self: Task, wish_id: WishID) -> bool:
                     data={"image.url": reference_photo},
                 )
 
-    TaskLoggingService.task_end("Updating Image for Reference Photo", logger=logger)
+    TaskLoggingService.task_end("Updating Image for Reference Photo for Wish <%s>", wish_id, logger=logger)
 
     return True
