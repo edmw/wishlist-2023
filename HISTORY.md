@@ -2,6 +2,10 @@
 
 ## [x.x.x]
 
+## [1.5.0]
+
+* 🛠️ add use of base62 encoded ids to management commands
+
 ## [1.4.0]
 
 * 🛠️ add management command to generate images for reference photos
