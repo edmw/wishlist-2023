@@ -342,7 +342,7 @@ environment-upgrade:
 
 .PHONY: shell.%
 shell.%: --guard-shell.% build-develop --tool-banner.Executing_Shell
-	$(MAKE_DOCKER_COMPOSE) $(RUN_WEBAPP_LOCAL) exec $* bash
+	@ $(MAKE_DOCKER_COMPOSE) $(RUN_WEBAPP_LOCAL) exec $* bash
 
 .PHONY: shell
 shell:

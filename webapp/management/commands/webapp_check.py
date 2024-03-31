@@ -1,12 +1,13 @@
 """Check command."""
+
 import subprocess
 import textwrap
 from typing import Any
 
-from ._base import SupportsDebugging, WebappBaseCommand
+from ._base import WebappBaseCommand
 
 
-class Command(SupportsDebugging, WebappBaseCommand):
+class Command(WebappBaseCommand):
     """Check command: Executes code checks."""
 
     help = (
