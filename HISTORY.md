@@ -2,7 +2,7 @@
 
 ## [x.x.x]
 
-## [1.3.0]
+## [1.4.0]
 
 * 🛠️ add management command to generate images for reference photos
 * 🛠️ combine make_password and create_password management commands into hash_password
