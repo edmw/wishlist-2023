@@ -2,6 +2,8 @@
 
 ## [x.x.x]
 
+* 🛠️ combine make_password and create_password management commands into hash_password
+
 ## [1.2.0]
 
 * 🛠️ upgrade project dependencies
