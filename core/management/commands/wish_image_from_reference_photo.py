@@ -10,10 +10,11 @@ from core.models import WishID, WishLens
 from core.models.types.wishlist_id import WishlistID
 from core.services import WishlistService, WishService
 from core.tasks.wish import generate_image_for_reference_photo
-from webapp.management.commands import WebappBaseCommand
+
+from ._base import CoreBaseCommand
 
 
-class Command(WebappBaseCommand):
+class Command(CoreBaseCommand):
     """Wish generate image command: Generates images for wishes from reference photo."""
 
     help = "Generates images for wishes from reference photos."
@@ -22,20 +23,24 @@ class Command(WebappBaseCommand):
         group = parser.add_mutually_exclusive_group(required=True)
         group.add_argument(
             "--wish-id",
-            metavar="UUID",
+            type=self.id_argument(WishID),
+            metavar="ID",
             help=(
                 "ID of the wish for which the image is to be created from the "
                 "reference photo. Does nothing if no reference photo is stored "
-                "for the wish."
+                "for the wish. ID is either the UUID for the wish or the "
+                "base62 encoded UUID."
             ),
         )
         group.add_argument(
             "--wishlist-id",
-            metavar="UUID",
+            metavar="ID",
+            type=self.id_argument(WishlistID),
             help=(
                 "ID of the wishlist for whose wishes the images are to be "
                 "created from the reference photos. Does nothing if no "
-                "reference photos are stored for the wishes."
+                "reference photos are stored for the wishes. ID is either "
+                "the UUID for the wishlist or the base62 encoded UUID."
             ),
         )
         group.add_argument(
@@ -62,9 +67,9 @@ class Command(WebappBaseCommand):
         if options.get("all"):
             wishes = WishLens().queryset.all()
         elif wish_id := options.get("wish_id"):
-            wishes = [WishService.get_wish(id=WishID(wish_id))]
+            wishes = [WishService.get_wish(id=wish_id)]
         elif wishlist_id := options.get("wishlist_id"):
-            wishlist = WishlistService.get_wishlist(id=WishlistID(wishlist_id))
+            wishlist = WishlistService.get_wishlist(id=wishlist_id)
             wishes = WishLens().by_wishlist(list=wishlist).queryset.all()
         else:
             raise ArgumentError(None, "No wishes specified.")
