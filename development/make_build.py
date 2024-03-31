@@ -118,6 +118,7 @@ def docker_build(
         command=docker_build_command(platform=platform, target=target, image_name=image_name),
         environment={
             "DOCKER_BUILDKIT": "1",
+            "DOCKER_CLI_HINTS": "false",
             "DOCKER_SCAN_SUGGEST": "false",
         },
         verbose=verbose,
