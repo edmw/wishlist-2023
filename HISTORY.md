@@ -2,6 +2,8 @@
 
 ## [x.x.x]
 
+* 🪛 fix template errors
+
 ## [1.5.0]
 
 * 🛠️ add use of base62 encoded ids to management commands

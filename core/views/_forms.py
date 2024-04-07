@@ -30,6 +30,7 @@ class SelectStylesMixin(Widget):
 
 class RadioSelectStylesMixin(Widget):
     def __init__(self, attrs: dict[str, str] | None = None):
+        attrs = {"class": "form-radio-input", **(attrs or {})}
         super().__init__(attrs)
 
 
