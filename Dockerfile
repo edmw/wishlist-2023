@@ -72,6 +72,8 @@ RUN mkdir -p "$APP_HOME" && \
     mkdir -p "$APP_STATIC" && \
     chown -R $APP_USER:$APP_USER $APP_HOME && \
     chown -R $APP_USER:$APP_USER $APP_STATIC
+# Python: Optimization.
+ENV PYTHONOPTIMIZE=
 # Python: Warning control.
 ENV PYTHONWARNINGS=always
 # Python: Force the stdout and stderr streams to be unbuffered.
