@@ -93,7 +93,7 @@ class WishModelMixin(WishlistMixin, django.views.generic.base.ContextMixin):
         wishlist = self.try_wishlist()
         return WishLens.view().by_wishlist(list=wishlist).for_listing().queryset.all()
 
-    def get_context_data(self, **kwargs) -> dict[str, Any]:
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
         if self.context_object_name not in context:
             context[self.context_object_name] = None
