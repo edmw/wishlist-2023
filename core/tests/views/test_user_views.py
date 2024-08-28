@@ -11,7 +11,7 @@ from core.tests._base import AssertLoggingMixin
 from core.tests.conftest import CoreFixture
 
 
-@pytest.mark.django_db()
+@pytest.mark.django_db
 class TestUserProfileView(AssertLoggingMixin):
     def _get(self, client: Client, user_id: UserID) -> HttpResponse:
         response = client.get(
@@ -40,7 +40,7 @@ class TestUserProfileView(AssertLoggingMixin):
         assert self._get(client, core.user_alice.id).status_code == HTTPStatus.FOUND
 
 
-@pytest.mark.django_db()
+@pytest.mark.django_db
 class TestUserProfileUpdateView(AssertLoggingMixin):
     def _get_update(self, client: Client, user_id: UserID) -> HttpResponse:
         response = client.get(
@@ -86,7 +86,7 @@ class TestUserProfileUpdateView(AssertLoggingMixin):
         assert self._post_update(client, core.user_alice.id).status_code == HTTPStatus.FOUND
 
 
-@pytest.mark.django_db()
+@pytest.mark.django_db
 class TestUserSettingsView(AssertLoggingMixin):
     def _get(self, client: Client, user_id: UserID) -> HttpResponse:
         response = client.get(
@@ -115,7 +115,7 @@ class TestUserSettingsView(AssertLoggingMixin):
         assert self._get(client, core.user_alice.id).status_code == HTTPStatus.FOUND
 
 
-@pytest.mark.django_db()
+@pytest.mark.django_db
 class TestUserSettingsUpdateView(AssertLoggingMixin):
     def _get_update(self, client: Client, user_id: UserID) -> HttpResponse:
         response = client.get(

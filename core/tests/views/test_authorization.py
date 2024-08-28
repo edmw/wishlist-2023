@@ -130,7 +130,7 @@ def _assert_authorization_required(
     views.setdefault(view_name, []).append(view_method)
 
 
-@pytest.mark.django_db()
+@pytest.mark.django_db
 def test_authorization_required(core: CoreFixture, client: Client) -> None:
     pages = [page.name for page in urls.pages]
 
@@ -143,7 +143,7 @@ def test_authorization_required(core: CoreFixture, client: Client) -> None:
 
 
 @pytest.mark.parametrize(("view_name", "view_method", "view_kwargs", "view_params"), VIEWS_ALL)
-@pytest.mark.django_db()
+@pytest.mark.django_db
 def test_authorization_ok(
     core: CoreFixture,
     view_name: str,

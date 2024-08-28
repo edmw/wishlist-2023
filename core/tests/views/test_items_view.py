@@ -11,7 +11,7 @@ from core.tests._base import AssertLoggingMixin
 from core.tests.conftest import CoreFixture
 
 
-@pytest.mark.django_db()
+@pytest.mark.django_db
 class TestItemsView(AssertLoggingMixin):
     def _get(self, client: Client, user_id: UserID, list_id: WishlistID) -> HttpResponse:
         response = client.get(

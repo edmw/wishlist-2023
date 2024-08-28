@@ -13,7 +13,7 @@ from core.tests._base import AssertLoggingMixin
 from core.tests.conftest import CoreFixture
 
 
-@pytest.mark.django_db()
+@pytest.mark.django_db
 class TestListCreateView(AssertLoggingMixin):
     def _get_create(self, client: Client, user_id: UserID) -> HttpResponse:
         response = client.get(
@@ -61,7 +61,7 @@ class TestListCreateView(AssertLoggingMixin):
         assert self._post_create(client, core.user_alice.id).status_code == HTTPStatus.FOUND
 
 
-@pytest.mark.django_db()
+@pytest.mark.django_db
 class TestListUpdateView(AssertLoggingMixin):
     def _get_update(self, client: Client, user_id: UserID, list_id: WishlistID) -> HttpResponse:
         response = client.get(
@@ -132,7 +132,7 @@ class TestListUpdateView(AssertLoggingMixin):
         assert self._post_update(client, user_id, list_id).status_code == HTTPStatus.FOUND
 
 
-@pytest.mark.django_db()
+@pytest.mark.django_db
 class TestListDeleteView(AssertLoggingMixin):
     def _get_delete(self, client: Client, user_id: UserID, list_id: WishlistID) -> HttpResponse:
         response = client.get(

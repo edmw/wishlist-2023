@@ -1,4 +1,5 @@
 """Tests for handling of languages in middleware."""
+
 import pytest
 from django.conf import settings as django_settings
 from django.test.client import RequestFactory
@@ -75,7 +76,7 @@ def test_parse_accept_language_sorted() -> None:
     assert languages[4] == ("fr", None, None, 0.2)
 
 
-@pytest.fixture()
+@pytest.fixture
 def available_language_codes() -> list[str]:
     """Returns a list of codes for all available languages from settings."""
     return [language[0] for language in django_settings.LANGUAGES]
