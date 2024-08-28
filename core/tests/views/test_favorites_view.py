@@ -11,7 +11,7 @@ from core.tests._base import AssertLoggingMixin
 from core.tests.conftest import CoreFixture
 
 
-@pytest.mark.django_db()
+@pytest.mark.django_db
 class TestFavoritesView(AssertLoggingMixin):
     """Test for the permissions on favorites views: Checks if entitled users
     are able to access the views, others not.

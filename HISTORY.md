@@ -6,6 +6,7 @@
 
 * 🛠️ upgrade node to version 20
 * 🛠️ upgrade python dependencies
+* 🪛 fix check findings
 
 ## [1.6.0]
 
