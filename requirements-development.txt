@@ -7,28 +7,28 @@
 amqp==5.2.0               # via kombu
 asgiref==3.8.1            # via django
 async-timeout==4.0.3      # via redis
-attrs==23.2.0             # via jsonschema, referencing
-bandit==1.7.8             # via wishlist (pyproject.toml)
+attrs==24.2.0             # via jsonschema, referencing
+bandit==1.7.9             # via wishlist (pyproject.toml)
 beautifulsoup4==4.12.3    # via wishlist (pyproject.toml)
 billiard==4.2.0           # via celery
-black==24.3.0             # via wishlist (pyproject.toml)
+black==24.8.0             # via wishlist (pyproject.toml)
 boto3==1.28.85            # via wishlist (pyproject.toml)
 botocore==1.31.85         # via boto3, s3transfer
 celery==5.3.6             # via django-celery-beat, django-celery-results, wishlist (pyproject.toml)
-certifi==2024.2.2         # via requests
-cffi==1.16.0              # via cryptography
+certifi==2024.7.4         # via requests
+cffi==1.17.0              # via cryptography
 charset-normalizer==3.3.2  # via requests
 click==8.1.7              # via black, celery, click-didyoumean, click-plugins, click-repl
 click-didyoumean==0.3.1   # via celery
 click-plugins==1.1.1      # via celery
 click-repl==0.3.0         # via celery
-codespell==2.2.6          # via wishlist (pyproject.toml)
-coverage==7.4.4           # via pytest-cov, wishlist (pyproject.toml)
-cron-descriptor==1.4.3    # via django-celery-beat
+codespell==2.3.0          # via wishlist (pyproject.toml)
+coverage==7.6.1           # via pytest-cov, wishlist (pyproject.toml)
+cron-descriptor==1.4.5    # via django-celery-beat
 cryptography==40.0.2      # via pyjwt, wishlist (pyproject.toml)
-debugpy==1.8.1            # via wishlist (pyproject.toml)
+debugpy==1.8.5            # via wishlist (pyproject.toml)
 defusedxml==0.7.1         # via python3-openid
-django==4.2.11            # via django-allauth, django-celery-beat, django-celery-results, django-csp, django-debug-toolbar, django-storages, django-timezone-field, djangorestframework, djangorestframework-dataclasses, drf-spectacular, wishlist (pyproject.toml)
+django==4.2.15            # via django-allauth, django-celery-beat, django-celery-results, django-csp, django-debug-toolbar, django-storages, django-timezone-field, djangorestframework, djangorestframework-dataclasses, drf-spectacular, wishlist (pyproject.toml)
 django-allauth==0.54.0    # via wishlist (pyproject.toml)
 django-celery-beat==2.5.0  # via wishlist (pyproject.toml)
 django-celery-results==2.5.1  # via wishlist (pyproject.toml)
@@ -37,75 +37,75 @@ django-csp==3.7           # via wishlist (pyproject.toml)
 django-debug-toolbar==4.2.0  # via wishlist (pyproject.toml)
 django-probes==1.7.0      # via wishlist (pyproject.toml)
 django-storages==1.13.2   # via wishlist (pyproject.toml)
-django-timezone-field==6.1.0  # via django-celery-beat
+django-timezone-field==7.0  # via django-celery-beat
 django-types==0.19.1      # via wishlist (pyproject.toml)
 djangorestframework==3.14.0  # via djangorestframework-dataclasses, drf-spectacular, wishlist (pyproject.toml)
 djangorestframework-dataclasses==1.2.0  # via wishlist (pyproject.toml)
 drf-spectacular==0.26.5   # via wishlist (pyproject.toml)
 environs==9.5.0           # via wishlist (pyproject.toml)
-freezegun==1.4.0          # via wishlist (pyproject.toml)
+freezegun==1.5.1          # via wishlist (pyproject.toml)
 gunicorn==21.2.0          # via wishlist (pyproject.toml)
-hiredis==2.3.2            # via redis
+hiredis==3.0.0            # via redis
 humanize==4.8.0           # via wishlist (pyproject.toml)
-idna==3.6                 # via requests
+idna==3.8                 # via requests
 inflection==0.5.1         # via drf-spectacular
 iniconfig==2.0.0          # via pytest
 isort==5.13.2             # via wishlist (pyproject.toml)
 jmespath==1.0.1           # via boto3, botocore
-jsonschema==4.21.1        # via drf-spectacular
+jsonschema==4.23.0        # via drf-spectacular
 jsonschema-specifications==2023.12.1  # via jsonschema
-kombu==5.3.5              # via celery
+kombu==5.4.0              # via celery
 linkify-it-py==2.0.3      # via markdown-it-py
 markdown-it-py==3.0.0     # via rich, wishlist (pyproject.toml)
-marshmallow==3.21.1       # via environs
+marshmallow==3.22.0       # via environs
 mdurl==0.1.2              # via markdown-it-py
 mypy-extensions==1.0.0    # via black
 mysql-connector-python==8.1.0  # via wishlist (pyproject.toml)
 oauthlib==3.2.2           # via requests-oauthlib
-packaging==24.0           # via black, gunicorn, marshmallow, pytest
+packaging==24.1           # via black, gunicorn, marshmallow, pytest
 pathspec==0.12.1          # via black
-pbr==6.0.0                # via stevedore
+pbr==6.1.0                # via stevedore
 pillow==10.0.1            # via wishlist (pyproject.toml)
-platformdirs==4.2.0       # via black
-pluggy==1.4.0             # via pytest
+platformdirs==4.2.2       # via black
+pluggy==1.5.0             # via pytest
 polib==1.2.0              # via wishlist (pyproject.toml)
-prompt-toolkit==3.0.43    # via click-repl
+prompt-toolkit==3.0.47    # via click-repl
 protobuf==4.21.12         # via mysql-connector-python
-psycopg==3.1.18           # via wishlist (pyproject.toml)
-psycopg-binary==3.1.18    # via psycopg
-psycopg-pool==3.2.1       # via psycopg
-pycparser==2.21           # via cffi
-pygments==2.17.2          # via rich
-pyjwt==2.8.0              # via django-allauth
-pytest==8.1.1             # via pytest-cov, pytest-django, pytest-mock, wishlist (pyproject.toml)
-pytest-cov==4.1.0         # via wishlist (pyproject.toml)
+psycopg==3.1.20           # via wishlist (pyproject.toml)
+psycopg-binary==3.1.20    # via psycopg
+psycopg-pool==3.2.2       # via psycopg
+pycparser==2.22           # via cffi
+pygments==2.18.0          # via rich
+pyjwt==2.9.0              # via django-allauth
+pytest==8.3.2             # via pytest-cov, pytest-django, pytest-mock, wishlist (pyproject.toml)
+pytest-cov==5.0.0         # via wishlist (pyproject.toml)
 pytest-django==4.8.0      # via wishlist (pyproject.toml)
 pytest-mock==3.14.0       # via wishlist (pyproject.toml)
-python-crontab==3.0.0     # via django-celery-beat
+python-crontab==3.2.0     # via django-celery-beat
 python-dateutil==2.9.0.post0  # via botocore, celery, freezegun, python-crontab
 python-dotenv==1.0.1      # via environs
 python-json-logger==2.0.7  # via wishlist (pyproject.toml)
 python3-openid==3.2.0     # via django-allauth
 pytz==2024.1              # via djangorestframework
-pyyaml==6.0.1             # via bandit, drf-spectacular, wishlist (pyproject.toml)
-redis==5.0.3              # via celery, wishlist (pyproject.toml)
-referencing==0.34.0       # via jsonschema, jsonschema-specifications
+pyyaml==6.0.2             # via bandit, drf-spectacular, wishlist (pyproject.toml)
+redis==5.0.8              # via celery, wishlist (pyproject.toml)
+referencing==0.35.1       # via jsonschema, jsonschema-specifications
 requests==2.31.0          # via django-allauth, requests-oauthlib, wishlist (pyproject.toml)
 requests-oauthlib==2.0.0  # via django-allauth
-rich==13.7.1              # via bandit, wishlist (pyproject.toml)
-rpds-py==0.18.0           # via jsonschema, referencing
-ruff==0.3.4               # via wishlist (pyproject.toml)
+rich==13.8.0              # via bandit, wishlist (pyproject.toml)
+rpds-py==0.20.0           # via jsonschema, referencing
+ruff==0.6.2               # via wishlist (pyproject.toml)
 s3transfer==0.7.0         # via boto3
 semver==3.0.2             # via wishlist (pyproject.toml)
 six==1.16.0               # via python-dateutil
-soupsieve==2.5            # via beautifulsoup4
-sqlparse==0.4.4           # via django, django-debug-toolbar
-stevedore==5.2.0          # via bandit
+soupsieve==2.6            # via beautifulsoup4
+sqlparse==0.5.1           # via django, django-debug-toolbar
+stevedore==5.3.0          # via bandit
 structlog==23.1.0         # via wishlist (pyproject.toml)
-types-pillow==10.2.0.20240324  # via wishlist (pyproject.toml)
-types-psycopg2==2.9.21.20240311  # via django-types
-types-requests==2.31.0.20240311  # via wishlist (pyproject.toml)
-typing-extensions==4.10.0  # via psycopg, psycopg-pool
+types-pillow==10.2.0.20240822  # via wishlist (pyproject.toml)
+types-psycopg2==2.9.21.20240819  # via django-types
+types-requests==2.32.0.20240712  # via wishlist (pyproject.toml)
+typing-extensions==4.12.2  # via psycopg, psycopg-pool
 tzdata==2024.1            # via celery, django-celery-beat
 uc-micro-py==1.0.3        # via linkify-it-py
 uritemplate==4.1.1        # via drf-spectacular
