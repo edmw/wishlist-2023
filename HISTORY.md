@@ -2,6 +2,10 @@
 
 ## [x.x.x]
 
+## [1.6.0]
+
+* 🛠️ upgrade base image to debian bookworm
+
 ## [1.5.1]
 
 * 🪛 fix template errors

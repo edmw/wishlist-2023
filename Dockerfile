@@ -6,15 +6,15 @@
 # Contains
 # - Python runtime
 # - Javascript/Node runtime
-FROM python:3.11-slim-bullseye AS docker-base
+FROM python:3.11-slim-bookworm AS docker-base
 RUN apt-get update -y && apt-get install -y curl gpg gettext
 # Install Node and Node Package Manager.
 RUN curl -s https://deb.nodesource.com/gpgkey/nodesource.gpg.key \
     | gpg --dearmor \
     | tee /usr/share/keyrings/nodesource.gpg \
     >/dev/null
-RUN echo 'deb [signed-by=/usr/share/keyrings/nodesource.gpg] https://deb.nodesource.com/node_19.x bullseye main' > /etc/apt/sources.list.d/nodesource.list && \
-    echo 'deb-src [signed-by=/usr/share/keyrings/nodesource.gpg] https://deb.nodesource.com/node_19.x bullseye main' >> /etc/apt/sources.list.d/nodesource.list
+RUN echo 'deb [signed-by=/usr/share/keyrings/nodesource.gpg] https://deb.nodesource.com/node_19.x bookworm main' > /etc/apt/sources.list.d/nodesource.list && \
+    echo 'deb-src [signed-by=/usr/share/keyrings/nodesource.gpg] https://deb.nodesource.com/node_19.x bookworm main' >> /etc/apt/sources.list.d/nodesource.list
 RUN apt-get update -y && apt-get install -y nodejs
 
 
@@ -63,10 +63,10 @@ ENV APP_USER=webapp
 RUN mkdir -p "/home/$APP_USER" && \
     groupadd -r $APP_USER && \
     useradd -r \
-        -g $APP_USER --groups staff \
-        -d /home/$APP_USER \
-        -s /sbin/nologin \
-        $APP_USER
+    -g $APP_USER --groups staff \
+    -d /home/$APP_USER \
+    -s /sbin/nologin \
+    $APP_USER
 # Create directories for the server.
 RUN mkdir -p "$APP_HOME" && \
     mkdir -p "$APP_STATIC" && \
@@ -89,7 +89,7 @@ USER $APP_USER
 # This installer is for the deployment image *only*.
 # Installs all dependencies for running the server in production.
 # - installed Python Packages (without development dependencies)
-FROM python:3.11-slim-bullseye as deploy-installer
+FROM python:3.11-slim-bookworm as deploy-installer
 # Setup Web Application install environment.
 ENV INSTALL_HOME=/
 WORKDIR $INSTALL_HOME
@@ -114,10 +114,10 @@ ENV APP_USER=webapp
 RUN mkdir -p "/home/$APP_USER" && \
     groupadd -r $APP_USER && \
     useradd -r \
-        -g $APP_USER --groups staff \
-        -d /home/$APP_USER \
-        -s /sbin/nologin \
-        $APP_USER
+    -g $APP_USER --groups staff \
+    -d /home/$APP_USER \
+    -s /sbin/nologin \
+    $APP_USER
 # Create directories for the server.
 RUN mkdir -p "$APP_HOME" && \
     mkdir -p "$APP_STATIC" && \
