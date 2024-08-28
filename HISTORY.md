@@ -2,6 +2,11 @@
 
 ## [x.x.x]
 
+## [1.7.0]
+
+* 🛠️ upgrade node to version 20
+* 🛠️ upgrade python dependencies
+
 ## [1.6.0]
 
 * 🛠️ upgrade base image to debian bookworm
