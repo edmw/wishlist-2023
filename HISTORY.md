@@ -3,6 +3,7 @@
 ## [x.x.x]
 
 * 🪛 fix template errors
+* 🛠️ improve error handling for wish_image_from_reference_photo command
 
 ## [1.5.0]
 

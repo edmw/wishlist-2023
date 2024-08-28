@@ -5,8 +5,9 @@ from django.utils.translation import gettext as _
 
 from core.models import FavoriteLens, WishID
 from core.services import (
-    ImageRetrieveTimeoutError,
     ImageService,
+    ImageServiceRetrieveTimeoutError,
+    ImageServiceUnidentifiedImageError,
     NotificationService,
     WishService,
 )
@@ -158,7 +159,13 @@ def generate_image_for_reference_photo(self: Task, wish_id: WishID) -> bool:
         try:
             image = ImageService.generate_jpeg_image_from_url(url=reference_photo)
             wish.image_field.update(name=reference_photo, image=image)
-        except ImageRetrieveTimeoutError:
+        except ImageServiceUnidentifiedImageError:
+            TaskLoggingService.task_fail(
+                "Unidentified image while retrieving image for Reference Photo",
+                logger=logger,
+                data={"wish.id": str(wish_id), "image.url": reference_photo},
+            )
+        except ImageServiceRetrieveTimeoutError:
             try:
                 TaskLoggingService.task_retry(
                     "Timeout while retrieving image for Reference Photo",
@@ -173,7 +180,7 @@ def generate_image_for_reference_photo(self: Task, wish_id: WishID) -> bool:
                 TaskLoggingService.task_fail(
                     "Maximum retries exeeded while retrieving image for Reference Photo",
                     logger=logger,
-                    data={"image.url": reference_photo},
+                    data={"wish.id": str(wish_id), "image.url": reference_photo},
                 )
 
     TaskLoggingService.task_end("Updating Image for Reference Photo for Wish <%s>", wish_id, logger=logger)
