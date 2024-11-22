@@ -75,6 +75,8 @@ which will bump the version number accordingly, build a new release image, commi
 
 Note: To build a new release, `main` must be the current branch, `main` must be a tracking branch, `main` must be up-to-date, and `main` must not be dirty.
 
+Note: Currently, the history will not be updated. Best practice is to update the history file before running `make release.*`.
+
 ## Make
 
 ### Webapp

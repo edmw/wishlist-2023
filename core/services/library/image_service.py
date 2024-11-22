@@ -11,6 +11,13 @@ logger = logging.getLogger(__name__)
 class ImageServiceError(Exception): ...
 
 
+class ImageServiceRetrieveConnectionError(ImageServiceError):
+    """Raised if the image could not be retrieved due to a connection error."""
+
+    def __init__(self, url: str) -> None:
+        super().__init__(f"Connection error while retrieving image from {url}")
+
+
 class ImageServiceRetrieveTimeoutError(ImageServiceError):
     """Raised if the image could not be retrieved within the specified time period."""
 
@@ -41,6 +48,8 @@ class ImageService:
             else:
                 b = (0, 0, width, height)
             return image.convert("RGB").resize((512, 512), box=b)
+        except requests.exceptions.ConnectionError as connection_error:
+            raise ImageServiceRetrieveConnectionError(url=url) from connection_error
         except requests.exceptions.Timeout as timeout_error:
             raise ImageServiceRetrieveTimeoutError(url=url) from timeout_error
         except UnidentifiedImageError as unidentified_image_error:
