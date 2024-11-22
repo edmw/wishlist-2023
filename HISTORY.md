@@ -2,10 +2,13 @@
 
 ## [x.x.x]
 
+## [1.8.2]
+
+* 🪛 fix handling of retries when generating images interactively
+
 ## [1.8.1]
 
 * 🪛 fix handling of connection errors when generating images
-
 
 ## [1.8.0]
 
