@@ -4,6 +4,7 @@ An entity that uses a name and description to represent a list of wishes for a
 user. A wish list has a visibility for how it can be viewed by other users.
 Items on a wish list have a sort order.
 """
+
 from __future__ import annotations
 
 import logging
@@ -53,6 +54,7 @@ class Wishlist(
 
     wishes: models.QuerySet  # relation
     wishes_count: int  # annotation
+    wishes_count_not_archived: int  # annotation
 
     # Lifecycle
 
