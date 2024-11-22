@@ -14,10 +14,10 @@ The application is built and run with Docker containers for development.
 
 ```
 $ cd <PROJECT_DIRECTORY>
-$ pyenv install 3.11.1
-$ pyenv virtualenv 3.11.1 wishlist
-$ pyenv local wishlist
-$ pyenv shell wishlist
+$ pyenv install 3.12
+$ pyenv virtualenv 3.12 wishlist-12
+$ pyenv local wishlist-12
+$ pyenv shell wishlist-12
 $ make dependencies-install-development
 ```
 

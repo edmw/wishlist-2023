@@ -48,12 +48,13 @@ def docker_inspect(image_name: str) -> dict[str, Any]:
     raise ValueError()
 
 
-def docker_build_command(platform: str, target: str, image_name: str) -> list[str]:
+def docker_build_command(platform: str, target: str, base_image: str, image_name: str) -> list[str]:
     """Returns the Docker command used to build the images for this project.
 
     Arguments:
         platform: The platform to build for.
         target: The target to be built, one of "develop" or "deploy".
+        base_image: The name of the base image to build upon.
         image_name: The name and optionally the tag for the image to be built.
 
     Returns:
@@ -62,6 +63,8 @@ def docker_build_command(platform: str, target: str, image_name: str) -> list[st
     return [
         "docker",
         "build",
+        "--progress",
+        "plain",
         "--target",
         target,
         "--file",
@@ -69,6 +72,8 @@ def docker_build_command(platform: str, target: str, image_name: str) -> list[st
         "--platform",
         platform,
         "--pull",
+        "--build-arg",
+        f"BASE_IMAGE={base_image}",
         "--build-arg",
         "BUILDKIT_INLINE_CACHE=1",
         "--tag",
@@ -86,6 +91,7 @@ BuildResult = namedtuple(
         "image_name",
         "image_size",
         "platform",
+        "base_image",
     ],
 )
 
@@ -93,6 +99,7 @@ BuildResult = namedtuple(
 def docker_build(
     platform: str,
     target: str,
+    base_image: str,
     image_name: str,
     image_tag: str,
     verbose: bool = False,
@@ -103,6 +110,7 @@ def docker_build(
     Arguments:
         platform: The platform to build for.
         target: The target to be built, one of "develop" or "deploy".
+        base_image: The name of the base image to build upon.
         image_name: The name to use for the resulting image.
         image_tag: The tag to append to the image name.
         verbose: If true, prints the output of the command.
@@ -115,7 +123,9 @@ def docker_build(
     """
     image_name = f"{image_name}-{target}:{image_tag}"
     make.subprocess_run(
-        command=docker_build_command(platform=platform, target=target, image_name=image_name),
+        command=docker_build_command(
+            platform=platform, target=target, base_image=base_image, image_name=image_name
+        ),
         environment={
             "DOCKER_BUILDKIT": "1",
             "DOCKER_CLI_HINTS": "false",
@@ -139,6 +149,7 @@ def docker_build(
         image_name=image_name,
         image_size=image_size,
         platform=platform,
+        base_image=base_image,
     )
 
 
@@ -151,6 +162,7 @@ def docker_build_result(result: BuildResult) -> None:
             f"Image name: {result.image_name}",
             f"Image size: {make.sizeof_fmt(result.image_size)}",
             f"Platform: {result.platform}",
+            f"Base image: {result.base_image}",
         ],
         char="=",
     )
@@ -186,12 +198,14 @@ def release(args: argparse.Namespace) -> int:
     make.write_version(version)
 
     platform = args.platform
+    base_image = args.base_image
     build_name = args.build_name
     build_target = "deploy"
     image_tag = str(version)
     build_result = docker_build(
         platform=platform,
         target=build_target,
+        base_image=base_image,
         image_name=build_name,
         image_tag=image_tag,
         verbose=not args.quiet,
@@ -232,12 +246,14 @@ def build_develop(args: argparse.Namespace) -> int:
     make.banner("BUILD FOR DEVELOPMENT", "👷")
 
     platform = args.platform
+    base_image = args.base_image
     build_name = args.build_name
     build_target = "develop"
     image_tag = "local"
     build_result = docker_build(
         platform=platform,
         target=build_target,
+        base_image=base_image,
         image_name=build_name,
         image_tag=image_tag,
         verbose=not args.quiet,
@@ -253,12 +269,14 @@ def build_deploy(args: argparse.Namespace) -> int:
     make.banner("BUILD FOR DEPLOYMENT", "👷")
 
     platform = args.platform
+    base_image = args.base_image
     build_name = args.build_name
     build_target = "deploy"
     image_tag = "local"
     build_result = docker_build(
         platform=platform,
         target=build_target,
+        base_image=base_image,
         image_name=build_name,
         image_tag=image_tag,
         verbose=not args.quiet,
@@ -294,6 +312,12 @@ def main(argv: Sequence[str] | None = None) -> int:
         "--name",
         help="base name for the build",
         dest="build_name",
+        required=True,
+    )
+    parser.add_argument(
+        "--base",
+        help="name of base image to build upon",
+        dest="base_image",
         required=True,
     )
     parser.add_argument(
