@@ -2,6 +2,13 @@
 
 ## [x.x.x]
 
+## [1.8.1]
+
+* 🪛 fix handling of connection errors when generating images
+
+
+## [1.8.0]
+
 * 🖼️ display number of actual and number of total wishes for wishlists
 * 🛠️ upgrade python to 3.12
 * 🛠️ upgrade django to 5.1

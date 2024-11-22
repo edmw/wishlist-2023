@@ -6,6 +6,7 @@ from django.utils.translation import gettext as _
 from core.models import FavoriteLens, WishID
 from core.services import (
     ImageService,
+    ImageServiceRetrieveConnectionError,
     ImageServiceRetrieveTimeoutError,
     ImageServiceUnidentifiedImageError,
     NotificationService,
@@ -165,7 +166,7 @@ def generate_image_for_reference_photo(self: Task, wish_id: WishID) -> bool:
                 logger=logger,
                 data={"wish.id": str(wish_id), "image.url": reference_photo},
             )
-        except ImageServiceRetrieveTimeoutError:
+        except (ImageServiceRetrieveTimeoutError, ImageServiceRetrieveConnectionError):
             try:
                 TaskLoggingService.task_retry(
                     "Timeout while retrieving image for Reference Photo",

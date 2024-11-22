@@ -8,6 +8,7 @@ from .framework.notification_service import NotificationService
 from .framework.permission_service import PermissionService
 from .library.image_service import (
     ImageService,
+    ImageServiceRetrieveConnectionError,
     ImageServiceRetrieveTimeoutError,
     ImageServiceUnidentifiedImageError,
 )
