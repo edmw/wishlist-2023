@@ -61,6 +61,20 @@ $ make run-deploy
 
 This uses the deployment image with only required tools and libraries installed.
 
+## Release a new Version
+
+Release a new version of the project using either
+
+```
+make release.patch
+make release.minor
+make release.major
+```
+
+which will bump the version number accordingly, build a new release image, commit a version tag, and push the new image to the registry.
+
+Note: To build a new release, `main` must be the current branch, `main` must be a tracking branch, `main` must be up-to-date, and `main` must not be dirty.
+
 ## Make
 
 ### Webapp
