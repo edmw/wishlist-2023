@@ -4,6 +4,7 @@ import textwrap
 from argparse import ArgumentError
 from typing import Any
 
+from celery import exceptions as celery_exceptions
 from django.core.management.base import CommandParser
 
 from core.models import WishID, WishLens
@@ -78,7 +79,12 @@ class Command(CoreBaseCommand):
 
         for wish in wishes:
             if foreground:
-                generate_image_for_reference_photo(wish_id=wish.id)
+                try:
+                    generate_image_for_reference_photo(wish_id=wish.id)
+                except celery_exceptions.Retry:
+                    # Retry is not an error, so ignore it. If running in
+                    # foreground the will no retry, intentionally.
+                    pass
             else:
                 self.print(f"Scheduling: Wish {wish!r}")
                 generate_image_for_reference_photo.apply_async(
