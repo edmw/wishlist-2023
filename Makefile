@@ -6,7 +6,7 @@ MAKE_DOCKER_PYTHON := python -W ignore::DeprecationWarning
 MAKE_PATH := $(abspath $(lastword $(MAKEFILE_LIST)))
 MAKE_DIR := $(dir $(MAKE_PATH))
 
-BUILD_PLATFORM ?= "linux/arm64"
+BUILD_PLATFORM ?= linux/arm64
 BUILD_IMAGE_NAME := wishlist-webapp
 
 .DEFAULT_GOAL := run
@@ -211,11 +211,11 @@ check-down:
 
 .PHONY: build-develop
 build-develop:
-	@ $(MAKE_PYTHON) development/make_build.py --platform "$(BUILD_PLATFORM)" --name "$(BUILD_IMAGE_NAME)" develop
+	@ BUILD_BASE_IMAGE=$(shell $(MAKE_PYTHON) development/make.py get_build_base_image); $(MAKE_PYTHON) development/make_build.py --platform "$(BUILD_PLATFORM)" --base "$$BUILD_BASE_IMAGE" --name "$(BUILD_IMAGE_NAME)" develop
 
 .PHONY: build-deploy
 build-deploy:
-	@ $(MAKE_PYTHON) development/make_build.py --platform "$(BUILD_PLATFORM)" --name "$(BUILD_IMAGE_NAME)" deploy
+	@ BUILD_BASE_IMAGE=$(shell $(MAKE_PYTHON) development/make.py get_build_base_image); $(MAKE_PYTHON) development/make_build.py --platform "$(BUILD_PLATFORM)" --base "$$BUILD_BASE_IMAGE" --name "$(BUILD_IMAGE_NAME)" deploy
 
 --guard-build-release.%:
 	@ if [ ! "$*" = "patch" -a ! "$*" = "minor" -a ! "$*" = "major" ]; then \
@@ -225,7 +225,7 @@ build-deploy:
 
 .PHONY: build-release.%
 build-release.%: --guard-build-release.%
-	@ $(MAKE_PYTHON) development/make_build.py --name "$(BUILD_IMAGE_NAME)" release --bump="$*"
+	@ BUILD_BASE_IMAGE=$(shell $(MAKE_PYTHON) development/make.py get_build_base_image); $(MAKE_PYTHON) development/make_build.py --base "$$BUILD_BASE_IMAGE" --name "$(BUILD_IMAGE_NAME)" release --bump="$*"
 
 
 ########  ######## ##       ########    ###     ######  #### ##    ##  ######
@@ -265,7 +265,7 @@ dependencies-install-deployment: --dependencies-banner.Installing_Deployment
 	$(MAKE_PYTHON) -m pip --require-virtualenv --quiet check
 
 .PHONY: dependencies-install-development
-dependencies-install-development: --dependencies-banner.Installing_Deployment
+dependencies-install-development: --dependencies-banner.Installing_Development
 	$(MAKE_PYTHON) -m pip --require-virtualenv --quiet install --upgrade -r requirements.txt -r requirements-development.txt
 	$(MAKE_PYTHON) -m pip --require-virtualenv --quiet check
 

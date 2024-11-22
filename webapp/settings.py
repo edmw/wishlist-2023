@@ -168,6 +168,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "csp.middleware.CSPMiddleware",
+    "allauth.account.middleware.AccountMiddleware",
     "webapp.middlewares.request_middleware.request_middleware",
     "webapp.middlewares.logging_middleware.logging_middleware",
     "webapp.middlewares.language_middleware.language_middleware",

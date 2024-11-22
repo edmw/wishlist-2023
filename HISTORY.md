@@ -2,6 +2,10 @@
 
 ## [x.x.x]
 
+* 🛠️ upgrade python to 3.12
+* 🛠️ upgrade django to 5.1
+* 🛠️ upgrade project dependencies
+
 ## [1.7.0]
 
 * 🛠️ upgrade node to version 20

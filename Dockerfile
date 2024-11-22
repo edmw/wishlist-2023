@@ -1,4 +1,5 @@
 # Base
+ARG BASE_IMAGE=python:3.12-slim-bookworm
 # This is the base for either the development image or the deployment image.
 # The development image will be build *upon* the contents this image,
 # while the deployment image will be build *with* the contents of this image.
@@ -6,7 +7,7 @@
 # Contains
 # - Python runtime
 # - Javascript/Node runtime
-FROM python:3.11-slim-bookworm AS docker-base
+FROM ${BASE_IMAGE} AS docker-base
 RUN apt-get update -y && apt-get install -y curl gpg gettext
 # Install Node and Node Package Manager.
 RUN curl -s https://deb.nodesource.com/gpgkey/nodesource.gpg.key \
@@ -39,7 +40,7 @@ RUN npm run build
 # This installer is for the development image *only*.
 # Installs all dependencies for running the server and development.
 # - installed Python Packages
-FROM docker-builder as develop-installer
+FROM docker-builder AS develop-installer
 # Setup Web Application install environment.
 ENV INSTALL_HOME=/
 WORKDIR $INSTALL_HOME
@@ -54,7 +55,7 @@ RUN --mount=type=cache,target=/root/.cache \
 # This is the image for development. Contains all the resources and dependencies
 # for running, building and developing the webapp. The webapp’s code need to be
 # mounted into this image.
-FROM develop-installer as develop
+FROM develop-installer AS develop
 # Setup Web Application environment.
 ENV APP_HOME=/webapp
 ENV APP_STATIC=/webapp-static
@@ -89,7 +90,7 @@ USER $APP_USER
 # This installer is for the deployment image *only*.
 # Installs all dependencies for running the server in production.
 # - installed Python Packages (without development dependencies)
-FROM python:3.11-slim-bookworm as deploy-installer
+FROM ${BASE_IMAGE} AS deploy-installer
 # Setup Web Application install environment.
 ENV INSTALL_HOME=/
 WORKDIR $INSTALL_HOME
@@ -104,7 +105,7 @@ RUN python -m pip install --upgrade pip && python -m pip install --upgrade -r re
 # This is the image for deployment. Contains all the resources and dependencies
 # for running the webapp in production. The webapp’s code is copied into this
 # image.
-FROM deploy-installer as deploy
+FROM deploy-installer AS deploy
 LABEL org.opencontainers.image.description="Web application for managing wish lists."
 # Setup Web Application environment.
 ENV APP_HOME=/webapp

@@ -1,12 +1,14 @@
 """Helper functions for Maker Scripts."""
 
+import argparse
 import os
 import stat
 import subprocess
 import sys
 import tempfile
+import tomllib
 from pprint import pprint
-from typing import Any, Callable
+from typing import Any, Callable, Sequence, TextIO
 
 import semver
 
@@ -17,6 +19,7 @@ def banner(
     char: str = "#",
     lf: str = "\n",
     fail: bool = False,
+    file: TextIO = sys.stdout,
 ) -> None:
     """Prints a banner to console.
 
@@ -51,7 +54,7 @@ def banner(
             out += [f"{left} {line.center(width)} {right}", lf]
         out += [out[1]]
 
-    sys.stdout.writelines(out)
+    file.writelines(out)
 
 
 def subprocess_run(
@@ -168,3 +171,60 @@ def write_version(version: semver.VersionInfo) -> None:
             # SECURITY: Nothing to do if unlink fails.
             except BaseException:  # nosec
                 pass
+
+
+def get_build_base_image(args: argparse.Namespace) -> int:
+    with open("pyproject.toml", "rb") as f:
+        pyproject_data = tomllib.load(f)
+
+    if base_image := pyproject_data.get("deployment", {}).get("base_image"):
+        print(base_image)
+        return 0
+    else:
+        banner(
+            [
+                "MAKE:",
+                "Unable to get docker base image",
+                "You may need to add '[development]/base_image'",
+                "to your pyproject.toml.",
+            ],
+            fail=True,
+            file=sys.stderr,
+        )
+        sys.exit(1)
+
+
+def main(argv: Sequence[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(description="Make Helper -- provides project specific helper")
+    parser.add_argument(
+        "-v",
+        "--verbose",
+        help="increase output verbosity",
+        action="store_true",
+    )
+    parser.add_argument(
+        "-q",
+        "--quiet",
+        help="decrease output verbosity",
+        action="store_true",
+    )
+
+    subparsers = parser.add_subparsers(title="helper", required=True)
+
+    parser_develop = subparsers.add_parser(
+        "get_build_base_image",
+        help="Read docker base image for builds from pyproject.toml",
+    )
+    parser_develop.set_defaults(func=get_build_base_image)
+
+    args = parser.parse_args(argv)
+
+    result = args.func(args)
+    print()
+    return result
+
+
+if __name__ == "__main__":
+    # get the ball rolling
+
+    raise SystemExit(main())
