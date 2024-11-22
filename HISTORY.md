@@ -2,6 +2,7 @@
 
 ## [x.x.x]
 
+* 🖼️ display number of actual and number of total wishes for wishlists
 * 🛠️ upgrade python to 3.12
 * 🛠️ upgrade django to 5.1
 * 🛠️ upgrade project dependencies
