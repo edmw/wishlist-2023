@@ -6,6 +6,7 @@
 * 🛠️ upgrade python to 3.12
 * 🛠️ upgrade django to 5.1
 * 🛠️ upgrade project dependencies
+* 🛠️ switch from django-types to django-stubs
 
 ## [1.7.0]
 

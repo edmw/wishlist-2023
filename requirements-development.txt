@@ -5,7 +5,7 @@
 #    pip-compile --annotation-style=line --extra=build --extra=check --extra=support --extra=test --extra=tool --output-file=requirements-development.txt --strip-extras pyproject.toml
 #
 amqp==5.3.1               # via kombu
-asgiref==3.8.1            # via django, django-allauth
+asgiref==3.8.1            # via django, django-allauth, django-stubs
 attrs==24.2.0             # via jsonschema, referencing
 bandit==1.7.10            # via wishlist (pyproject.toml)
 beautifulsoup4==4.12.3    # via wishlist (pyproject.toml)
@@ -26,7 +26,7 @@ coverage==7.6.7           # via pytest-cov, wishlist (pyproject.toml)
 cron-descriptor==1.4.5    # via django-celery-beat
 cryptography==43.0.3      # via pyjwt, wishlist (pyproject.toml)
 debugpy==1.8.9            # via wishlist (pyproject.toml)
-django==5.1.3             # via django-allauth, django-celery-beat, django-celery-results, django-csp, django-debug-toolbar, django-storages, django-timezone-field, djangorestframework, djangorestframework-dataclasses, drf-spectacular, wishlist (pyproject.toml)
+django==5.1.3             # via django-allauth, django-celery-beat, django-celery-results, django-csp, django-debug-toolbar, django-storages, django-stubs, django-stubs-ext, django-timezone-field, djangorestframework, djangorestframework-dataclasses, drf-spectacular, wishlist (pyproject.toml)
 django-allauth==65.2.0    # via wishlist (pyproject.toml)
 django-celery-beat==2.7.0  # via wishlist (pyproject.toml)
 django-celery-results==2.5.1  # via wishlist (pyproject.toml)
@@ -35,8 +35,9 @@ django-csp==3.8           # via wishlist (pyproject.toml)
 django-debug-toolbar==4.4.6  # via wishlist (pyproject.toml)
 django-probes==1.7.0      # via wishlist (pyproject.toml)
 django-storages==1.14.4   # via wishlist (pyproject.toml)
+django-stubs==5.1.1       # via wishlist (pyproject.toml)
+django-stubs-ext==5.1.1   # via django-stubs
 django-timezone-field==7.0  # via django-celery-beat
-django-types==0.19.1      # via wishlist (pyproject.toml)
 djangorestframework==3.15.2  # via djangorestframework-dataclasses, drf-spectacular, wishlist (pyproject.toml)
 djangorestframework-dataclasses==1.3.1  # via wishlist (pyproject.toml)
 drf-spectacular==0.27.2   # via wishlist (pyproject.toml)
@@ -98,9 +99,9 @@ sqlparse==0.5.2           # via django, django-debug-toolbar
 stevedore==5.4.0          # via bandit
 structlog==24.4.0         # via wishlist (pyproject.toml)
 types-pillow==10.2.0.20240822  # via wishlist (pyproject.toml)
-types-psycopg2==2.9.21.20241019  # via django-types
+types-pyyaml==6.0.12.20240917  # via django-stubs
 types-requests==2.32.0.20241016  # via wishlist (pyproject.toml)
-typing-extensions==4.12.2  # via psycopg, psycopg-pool
+typing-extensions==4.12.2  # via django-stubs, django-stubs-ext, psycopg, psycopg-pool
 tzdata==2024.2            # via celery, django-celery-beat, kombu
 uc-micro-py==1.0.3        # via linkify-it-py
 uritemplate==4.1.1        # via drf-spectacular
