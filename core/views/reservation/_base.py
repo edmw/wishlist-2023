@@ -2,7 +2,8 @@ import logging
 from typing import Any, Optional, Protocol, cast
 
 from django.db.models import Model, QuerySet
-from django.http import HttpRequest, HttpResponse
+from django.http import HttpRequest
+from django.http.response import HttpResponseBase
 from django.views.generic.detail import SingleObjectMixin
 
 from core import constants
@@ -13,8 +14,7 @@ from core.views._typing import DoesViewDispatching, HasModel, HasRequest, HasUse
 logger = logging.getLogger(__name__)
 
 
-class IsReservationView(HasUser, HasModel, HasRequest, Protocol):
-    ...
+class IsReservationView(HasUser, HasModel, HasRequest, Protocol): ...
 
 
 class HasPermissionForReservationViewMixin(DoesViewDispatching, SingleObjectMixin):
@@ -22,7 +22,9 @@ class HasPermissionForReservationViewMixin(DoesViewDispatching, SingleObjectMixi
 
     request: HttpRequest
 
-    def dispatch(self: IsReservationView, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+    def dispatch(
+        self: IsReservationView, request: HttpRequest, *args: Any, **kwargs: Any
+    ) -> HttpResponseBase:
         """Dispatches the request to the supported http method handler after
         verifying the requesting user is allowed to access the requested
         resource.
@@ -62,7 +64,9 @@ class HasPermissionForReservationViewMixin(DoesViewDispatching, SingleObjectMixi
 class HasPermissionForReservationViewToCreateMixin(HasPermissionForReservationViewMixin):
     """Verifies the requesting user is allowed to create a reservation."""
 
-    def dispatch(self: IsReservationView, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+    def dispatch(
+        self: IsReservationView, request: HttpRequest, *args: Any, **kwargs: Any
+    ) -> HttpResponseBase:
         """Dispatches the request to the supported http method handler after
         verifying the requesting user is allowed to access the requested
         resource.

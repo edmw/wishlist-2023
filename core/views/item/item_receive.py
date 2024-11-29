@@ -4,6 +4,8 @@ from typing import Any, cast
 from django.core.exceptions import BadRequest, ValidationError
 from django.db.models import QuerySet
 from django.forms import ModelForm
+from django.http import HttpRequest
+from django.http.response import HttpResponseBase
 from django.utils.translation import gettext as _
 from django.utils.translation import gettext_noop
 
@@ -54,6 +56,16 @@ class ItemReceiveView(
 
     success_url = "/"
     success_message = gettext_noop("The wish has been successfully marked as received.")
+    error_message_not_receivable = gettext_noop(
+        "This wish can not be received. May be it is not reserved yet."
+    )
+
+    def dispatch(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponseBase:
+        wish = self.try_wish()
+        if not wish.receivable:
+            return self.redirect_back_with_error_message(_(self.error_message_not_receivable))
+
+        return super().dispatch(request, *args, **kwargs)
 
     def get_object(self, queryset: QuerySet[Reservation] | None = None) -> Reservation:
         wish = self.try_wish()

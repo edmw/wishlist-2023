@@ -39,15 +39,15 @@ def wish_preference(wish: Wish) -> SafeText:
 
 @register.simple_tag
 def wish_status(wish: Wish, mask_reservations: bool) -> SafeText:
-    if mask_reservations:
-        status = "???"
+    if wish.is_received:
+        status = _("received")
     else:
-        if wish.is_reserved:
-            if wish.is_received:
-                status = _("received")
-            else:
-                status = _("reserved")
+        if mask_reservations:
+            status = "???"
         else:
-            status = _("wanted")
+            if wish.is_reserved:
+                status = _("reserved")
+            else:
+                status = _("wanted")
     # SECURITY: `status` is safe.
     return mark_safe(status)  # nosec

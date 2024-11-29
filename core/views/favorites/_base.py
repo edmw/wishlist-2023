@@ -1,7 +1,8 @@
 import logging
 from typing import Any, Optional, Protocol, cast
 
-from django.http import HttpRequest, HttpResponse
+from django.http import HttpRequest
+from django.http.response import HttpResponseBase
 
 from core import constants
 from core.models import UserID
@@ -11,14 +12,13 @@ from core.views._typing import DoesViewDispatching, HasModel, HasUser
 logger = logging.getLogger(__name__)
 
 
-class IsFavoriteView(HasUser, HasModel, Protocol):
-    ...
+class IsFavoriteView(HasUser, HasModel, Protocol): ...
 
 
 class HasPermissionForFavoritesViewMixin(DoesViewDispatching):
     """Verifies the requesting user is allowed to access the user’s favorites."""
 
-    def dispatch(self: IsFavoriteView, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+    def dispatch(self: IsFavoriteView, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponseBase:
         """Dispatches the request to the supported http method handler after
         verifying the requesting user is allowed to access the requested
         resource.

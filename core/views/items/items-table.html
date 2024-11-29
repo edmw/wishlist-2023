@@ -37,12 +37,10 @@
                     <td data-label="{% translate 'Preference' %}">{{ wish.preference.display }}</td>
                     <td data-label="{% translate 'Status' %}">{% wish_status wish mask_reservations %}</td>
                     <td class="wl-actions wl-actions-right" data-label="">
-                        {% if not mask_reservations %}
-                            {% if wish.is_reserved and not wish.is_received %}
-                                <div class="btn-group" role="group">
-                                    <a href="{% make_linked_url wish.get_absolute_receive_url %}" title="{% translate 'Mark item as received' %}" class="btn btn-action ms-3">{% icon "gift" %}</a>
-                                </div>
-                            {% endif %}
+                        {% if not wish.is_received %}
+                            <div class="btn-group" role="group">
+                                <a href="{% make_linked_url wish.get_absolute_receive_url %}" title="{% translate 'Mark item as received' %}" class="btn btn-action ms-3">{% icon "gift" %}</a>
+                            </div>
                         {% endif %}
                     </td>
                     <td class="wl-actions wl-actions-right" data-label="">

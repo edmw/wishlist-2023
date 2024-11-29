@@ -57,6 +57,7 @@ check = [
   "ruff",
   "bandit[toml]",
   "django-stubs",
+  "celery-types",
   "types-requests",
   "types-Pillow",
   "codespell",
@@ -135,7 +136,10 @@ mypy-init-return = true
 convention = "pep257"
 
 [tool.pyright]
+typeCheckingMode = "standard"
+stubPath = ".python-typings"
 exclude = ["core/migrations/*"]
+ignore = ["~/.pyenv/**", ".pyenv/**"]
 
 [tool.bandit]
 skips = ["B404"]

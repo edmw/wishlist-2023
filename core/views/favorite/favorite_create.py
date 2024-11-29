@@ -4,6 +4,7 @@ from typing import Any, cast
 from django.db.utils import IntegrityError
 from django.forms import ModelForm
 from django.http import HttpRequest, HttpResponse
+from django.http.response import HttpResponseBase
 from django.utils.translation import gettext as _
 from django.utils.translation import gettext_noop
 
@@ -39,7 +40,7 @@ class FavoriteCreateView(
     )
     error_message_favorite_exists = gettext_noop("You already have this wish list in your favorites.")
 
-    def dispatch(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+    def dispatch(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponseBase:
         if user := self.user:
             favorites_count = FavoriteService.count_favorites_for_user(user=user)
             if favorites_count >= Favorite.MAXIMUM_NUMBER_OF_FAVORITES_PER_USER:

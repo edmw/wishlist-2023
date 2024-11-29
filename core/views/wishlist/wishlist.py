@@ -2,7 +2,8 @@ import logging
 from typing import Any, Protocol
 
 import django.db.models
-from django.http import HttpRequest, HttpResponse
+from django.http import HttpRequest
+from django.http.response import HttpResponseBase
 from django.utils.translation import gettext_noop
 
 from core.models import Wish, WishLens
@@ -27,7 +28,7 @@ class HasPermissionForWishlistViewMixin(DoesViewDispatching):
 
     request: HttpRequest
 
-    def dispatch(self: IsWishlistView, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+    def dispatch(self: IsWishlistView, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponseBase:
         """Dispatches the request to the supported http method handler after
         verifying the requesting user is allowed to access the requested
         resource.

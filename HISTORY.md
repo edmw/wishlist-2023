@@ -2,6 +2,9 @@
 
 ## [x.x.x]
 
+* 🖼️ always show the button to mark a wish as received and display an error
+  message if the button is clicked for a wish that cannot be flagged
+
 ## [1.8.2]
 
 * 🪛 fix handling of retries when generating images interactively
