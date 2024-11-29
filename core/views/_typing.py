@@ -1,7 +1,8 @@
 from typing import Any, Callable, Protocol
 
 import django.db.models
-from django.http import HttpRequest, HttpResponse
+from django.http import HttpRequest
+from django.http.response import HttpResponseBase
 
 import core.models
 
@@ -20,16 +21,14 @@ class HasObjectList(Protocol):
 
 class SupportsViewSetup(Protocol):
     class SetupCallable(Protocol):
-        def __call__(self, request: HttpRequest, *args: Any, **kwargs: Any) -> None:
-            ...
+        def __call__(self, request: HttpRequest, *args: Any, **kwargs: Any) -> None: ...
 
     setup: SetupCallable
 
 
 class DoesViewDispatching(Protocol):
     class DispatchCallable(Protocol):
-        def __call__(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
-            ...
+        def __call__(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponseBase: ...
 
     dispatch: DispatchCallable
 

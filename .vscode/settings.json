@@ -3,7 +3,8 @@
         "*.html": "django-html"
     },
     "editor.rulers": [
-        80,108
+        80,
+        108
     ],
     "[python]": {
         "editor.formatOnSave": true,
@@ -24,8 +25,5 @@
         "-c pyproject.yaml"
     ],
     "python.analysis.autoSearchPaths": false,
-    "python.analysis.diagnosticMode": "workspace",
-    "python.analysis.ignore": [
-        "~/.pyenv/**"
-    ]
+    "python.analysis.diagnosticMode": "workspace"
 }

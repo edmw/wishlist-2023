@@ -537,6 +537,11 @@ msgstr "Wunsch erhalten"
 msgid "The wish has been successfully marked as received."
 msgstr "Der Wunsch wurde erfolgreich als erhalten markiert."
 
+msgid "This wish can not be received. May be it is not reserved yet."
+msgstr ""
+"Dieser Wunsch kann nicht als erhalten markiert werden. Vielleicht wurde der "
+"Wunsch noch nicht reserviert."
+
 #, python-format
 msgid ""
 "... you want to <span class=\"text-danger\">delete</span> the reservation "

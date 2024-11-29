@@ -60,15 +60,15 @@ RUN_DOCKER_LOCAL_DEPLOY := WEBAPP_KEY=$(RUN_WEBAPP_LOCAL_DEPLOY_KEY) \
 
 .PHONY: run
 run: build-develop --run-banner.Running_Local_Server
-	$(RUN_DOCKER_LOCAL) -f environments/local/docker-compose.debug.yml up
-
-.PHONY: logs
-logs:
-	$(RUN_DOCKER_LOCAL) logs -f app worker beat
+	echo; $(RUN_DOCKER_LOCAL) -f environments/local/docker-compose.debug.yml up
 
 .PHONY: run-develop
 run-develop: build-develop --run-banner.Running_Local_Server_with_Development_Version
-	$(RUN_DOCKER_LOCAL) up
+	echo; $(RUN_DOCKER_LOCAL) up
+
+.PHONY: logs
+logs:
+	@ $(RUN_DOCKER_LOCAL) logs -f app worker beat
 
 .PHONY: down
 down: build-develop
@@ -76,7 +76,7 @@ down: build-develop
 
 .PHONY: run-deploy
 run-deploy: build-deploy --run-banner.Running_Local_Server_with_Production_Version
-	$(RUN_DOCKER_LOCAL_DEPLOY) up
+	echo; $(RUN_DOCKER_LOCAL_DEPLOY) up
 
 .PHONY: down-deploy
 down-deploy: build-develop
@@ -145,7 +145,7 @@ TEST_DOCKER_RUN := run \
 	--rm \
 	app
 TEST_DOCKER_RUN_TEST := $(TEST_DOCKER_RUN) \
-	$(MAKE_DOCKER_PYTHON) manage.py webapp_test
+	$(MAKE_DOCKER_PYTHON) -Xfrozen_modules=off manage.py webapp_test
 
 .PHONY: --test-banner.%
 --test-banner.%:
@@ -153,18 +153,18 @@ TEST_DOCKER_RUN_TEST := $(TEST_DOCKER_RUN) \
 
 .PHONY: test-ci
 test-ci: --test-banner.Testing_Local_Server
-	$(TEST_DOCKER) $(TEST_DOCKER_RUN_TEST) $(TEST_SPEC); exit_code=$$?; make test-down; exit $$exit_code
+	echo; $(TEST_DOCKER) $(TEST_DOCKER_RUN_TEST) $(TEST_SPEC); exit_code=$$?; make test-down; exit $$exit_code
 
 .PHONY: test
 test: build-develop test-ci ;
 
 .PHONY: debugtest
 debugtest: build-develop --test-banner.Testing_Local_Server
-	$(TEST_DOCKER_DEBUG) $(TEST_DOCKER_RUN_TEST) --debug $(TEST_SPEC); exit_code=$$?; make test-down; exit $$exit_code
+	echo; $(TEST_DOCKER_DEBUG) $(TEST_DOCKER_RUN_TEST) --debug $(TEST_SPEC); exit_code=$$?; make test-down; exit $$exit_code
 
 .PHONY: test-coverage-ci
 test-coverage-ci: --test-banner.Testing_Server_with_Coverage
-	$(TEST_DOCKER) $(TEST_DOCKER_RUN_TEST) --coverage $(TEST_SPEC); exit_code=$$?; make test-down; exit $$exit_code
+	echo; $(TEST_DOCKER) $(TEST_DOCKER_RUN_TEST) --coverage $(TEST_SPEC); exit_code=$$?; make test-down; exit $$exit_code
 
 .PHONY: test-coverage
 test-coverage: build-develop test-coverage-ci ;
@@ -191,7 +191,7 @@ TEST_DOCKER_RUN_CHECK := $(TEST_DOCKER_RUN) \
 
 .PHONY: check-ci
 check-ci: --check-banner.Checking_Code
-	$(TEST_DOCKER) $(TEST_DOCKER_RUN_CHECK); exit_code=$$?; make check-down; exit $$exit_code
+	echo; $(TEST_DOCKER) $(TEST_DOCKER_RUN_CHECK); exit_code=$$?; make check-down; exit $$exit_code
 
 .PHONY: check
 check: build-develop check-ci ;

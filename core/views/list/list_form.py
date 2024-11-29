@@ -3,6 +3,7 @@ from typing import Any
 
 from django.forms import CheckboxInput, ModelForm, RadioSelect, Select, TextInput
 from django.http import HttpRequest, HttpResponse
+from django.http.response import HttpResponseBase
 from django.utils.translation import gettext as _
 from django.utils.translation import gettext_noop
 
@@ -106,7 +107,7 @@ class ListCreateView(
         "You already have too many wish lists. Please delete some wish lists before you create new ones."
     )
 
-    def dispatch(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+    def dispatch(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponseBase:
         if user := self.user:
             wishlists_count = WishlistService.count_wishlists_for_user(user=user)
             if wishlists_count >= Wishlist.MAXIMUM_NUMBER_OF_WISHLISTS_PER_USER:
