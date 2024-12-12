@@ -16,4 +16,4 @@ class OnDeleteNotifyMixin(IsDeletable):
             kwargs={
                 "wish_id": reservation.wish_id,
             },
-        )  # type:ignore
+        )

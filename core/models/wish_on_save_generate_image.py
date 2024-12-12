@@ -58,4 +58,4 @@ class OnSaveGenerateImageMixin(IsSaveable):
                     "wish_id": wish.id,
                 },
                 countdown=0.1,
-            )  # type:ignore
+            )

@@ -37,4 +37,4 @@ class OnSaveNotifyMixin(IsSaveable):
                 kwargs={
                     "wish_id": reservation.wish_id,
                 },
-            )  # type:ignore
+            )
