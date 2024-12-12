@@ -259,13 +259,20 @@ release.%: --guard-release.% check build-release.%
 --dependencies-banner.%:
 	@ printf "\033[48;5;000m 🔗🔗🔗  " && echo "$(*)\c" | sed -r 's/_/ /g' && echo " \033[0m\n"
 
+.PHONY: check-venv
+check-venv:
+	@if [ -z "$$VIRTUAL_ENV" ]; then \
+		echo "No virtual environment is activated. Please activate a virtual environment first."; \
+		exit 1; \
+	fi
+
 .PHONY: dependencies-install-deployment
-dependencies-install-deployment: --dependencies-banner.Installing_Deployment
+dependencies-install-deployment: --dependencies-banner.Installing_Deployment check-venv
 	$(MAKE_PYTHON) -m pip --require-virtualenv --quiet install --upgrade -r requirements.txt
 	$(MAKE_PYTHON) -m pip --require-virtualenv --quiet check
 
 .PHONY: dependencies-install-development
-dependencies-install-development: --dependencies-banner.Installing_Development
+dependencies-install-development: --dependencies-banner.Installing_Development check-venv
 	$(MAKE_PYTHON) -m pip --require-virtualenv --quiet install --upgrade -r requirements.txt -r requirements-development.txt
 	$(MAKE_PYTHON) -m pip --require-virtualenv --quiet check
 
