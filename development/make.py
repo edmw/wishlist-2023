@@ -173,13 +173,12 @@ def write_version(version: semver.VersionInfo) -> None:
                 pass
 
 
-def get_build_base_image(args: argparse.Namespace) -> int:
+def get_build_base_image() -> int:
     with open("pyproject.toml", "rb") as f:
         pyproject_data = tomllib.load(f)
 
     if base_image := pyproject_data.get("deployment", {}).get("base_image"):
-        print(base_image)
-        return 0
+        return base_image
     else:
         banner(
             [
@@ -192,6 +191,11 @@ def get_build_base_image(args: argparse.Namespace) -> int:
             file=sys.stderr,
         )
         sys.exit(1)
+
+
+def _get_build_base_image(args: argparse.Namespace) -> int:
+    print(get_build_base_image())
+    return 0
 
 
 def main(argv: Sequence[str] | None = None) -> int:
@@ -215,7 +219,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         "get_build_base_image",
         help="Read docker base image for builds from pyproject.toml",
     )
-    parser_develop.set_defaults(func=get_build_base_image)
+    parser_develop.set_defaults(func=_get_build_base_image)
 
     args = parser.parse_args(argv)
 

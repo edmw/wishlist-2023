@@ -271,13 +271,13 @@ dependencies-install-development: --dependencies-banner.Installing_Development
 
 .PHONY: dependencies-pin-deployment
 dependencies-pin-deployment: --dependencies-banner.Pinning_Deployment
-	$(MAKE_PYTHON) -m piptools compile --quiet --resolver=backtracking --generate-hashes --allow-unsafe \
+	$(MAKE_PYTHON) -m piptools compile --quiet --resolver=backtracking --generate-hashes --allow-unsafe --strip-extras \
 		-o requirements.txt \
 		pyproject.toml
 
 .PHONY: dependencies-pin-development
 dependencies-pin-development: --dependencies-banner.Pinning_Development
-	$(MAKE_PYTHON) -m piptools compile --quiet --resolver=backtracking --generate-hashes --allow-unsafe \
+	$(MAKE_PYTHON) -m piptools compile --quiet --resolver=backtracking --generate-hashes --allow-unsafe --strip-extras \
 		--extra build \
 		--extra test \
 		--extra check \

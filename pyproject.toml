@@ -44,6 +44,9 @@ dependencies = [
 [project.optional-dependencies]
 build = [
   "semver",
+  "invoke",
+  "keyring",
+  "SecretStorage",
 ]
 test = [
   "pytest",

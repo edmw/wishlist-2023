@@ -168,7 +168,17 @@ def docker_build_result(result: BuildResult) -> None:
     )
 
 
-def release(args: argparse.Namespace) -> int:
+def release(
+    do_check: bool,
+    bump: str,
+    platform: str,
+    base_image: str,
+    build_name: str,
+    verbose: bool = False,
+    quiet: bool = False,
+    debug: bool = False,
+    output: bool = True,
+) -> BuildResult:
     """Builds the release version of this project.
 
     - Checks preconditions.
@@ -179,16 +189,17 @@ def release(args: argparse.Namespace) -> int:
     Returns:
         Exit code.
     """
-    make.banner("BUILD RELEASE", "👷")
+    if output:
+        make.banner("BUILD RELEASE", "👷")
 
-    if args.check:
+    if do_check:
         check.git_branch_is("main", or_exit_using=_project_has_bad_git_branch)
         if check.git_branch_is_tracking("main"):
             check.git_branch_is_uptodate(or_exit_using=_project_has_outdated_git_branch)
         check.git_status_is_clean(or_exit_using=_project_has_dirty_git_status)
 
     version = make.get_version(or_exit_using=_project_has_invalid_version)
-    match args.bump:
+    match bump:
         case "minor":
             version = version.bump_minor()
         case "major":
@@ -197,9 +208,9 @@ def release(args: argparse.Namespace) -> int:
             version = version.bump_patch()
     make.write_version(version)
 
-    platform = args.platform
-    base_image = args.base_image
-    build_name = args.build_name
+    platform = platform
+    base_image = base_image
+    build_name = build_name
     build_target = "deploy"
     image_tag = str(version)
     build_result = docker_build(
@@ -208,10 +219,11 @@ def release(args: argparse.Namespace) -> int:
         base_image=base_image,
         image_name=build_name,
         image_tag=image_tag,
-        verbose=not args.quiet,
-        debug=args.debug,
+        verbose=not quiet,
+        debug=debug,
     )
-    docker_build_result(build_result)
+    if output:
+        docker_build_result(build_result)
 
     make.subprocess_run(
         [
@@ -221,8 +233,8 @@ def release(args: argparse.Namespace) -> int:
             "--message",
             f"[make_build] build release version {build_result.image_name}",
         ],
-        verbose=args.verbose,
-        debug=args.debug,
+        verbose=verbose,
+        debug=debug,
     )
 
     make.subprocess_run(
@@ -234,20 +246,38 @@ def release(args: argparse.Namespace) -> int:
             "--message",
             f"[make_build] build release version {build_result.image_name}",
         ],
-        verbose=args.verbose,
-        debug=args.debug,
+        verbose=verbose,
+        debug=debug,
     )
 
+    return build_result
+
+
+def _release(args: argparse.Namespace) -> int:
+    _ = release(
+        do_check=args.check,
+        bump=args.bump,
+        platform=args.platform,
+        base_image=args.base_image,
+        build_name=args.build_name,
+        quiet=args.quiet,
+        debug=args.debug,
+    )
     return 0
 
 
-def build_develop(args: argparse.Namespace) -> int:
+def build_develop(
+    platform: str,
+    base_image: str,
+    build_name: str,
+    quiet: bool = False,
+    debug: bool = False,
+    output: bool = True,
+) -> BuildResult:
     """Builds the project‘s image for development."""
-    make.banner("BUILD FOR DEVELOPMENT", "👷")
+    if output:
+        make.banner("BUILD FOR DEVELOPMENT", "👷")
 
-    platform = args.platform
-    base_image = args.base_image
-    build_name = args.build_name
     build_target = "develop"
     image_tag = "local"
     build_result = docker_build(
@@ -256,21 +286,38 @@ def build_develop(args: argparse.Namespace) -> int:
         base_image=base_image,
         image_name=build_name,
         image_tag=image_tag,
-        verbose=not args.quiet,
+        verbose=not quiet,
+        debug=debug,
+    )
+    if output:
+        docker_build_result(build_result)
+
+    return build_result
+
+
+def _build_develop(args: argparse.Namespace) -> int:
+    _ = build_develop(
+        platform=args.platform,
+        base_image=args.base_image,
+        build_name=args.build_name,
+        quiet=args.quiet,
         debug=args.debug,
     )
-    docker_build_result(build_result)
-
     return 0
 
 
-def build_deploy(args: argparse.Namespace) -> int:
+def build_deploy(
+    platform: str,
+    base_image: str,
+    build_name: str,
+    quiet: bool = False,
+    debug: bool = False,
+    output: bool = True,
+) -> BuildResult:
     """Builds the project‘s image for deployment."""
-    make.banner("BUILD FOR DEPLOYMENT", "👷")
+    if output:
+        make.banner("BUILD FOR DEPLOYMENT", "👷")
 
-    platform = args.platform
-    base_image = args.base_image
-    build_name = args.build_name
     build_target = "deploy"
     image_tag = "local"
     build_result = docker_build(
@@ -279,11 +326,23 @@ def build_deploy(args: argparse.Namespace) -> int:
         base_image=base_image,
         image_name=build_name,
         image_tag=image_tag,
-        verbose=not args.quiet,
+        verbose=not quiet,
+        debug=debug,
+    )
+    if output:
+        docker_build_result(build_result)
+
+    return build_result
+
+
+def _build_deploy(args: argparse.Namespace) -> int:
+    _ = build_deploy(
+        platform=args.platform,
+        base_image=args.base_image,
+        build_name=args.build_name,
+        quiet=args.quiet,
         debug=args.debug,
     )
-    docker_build_result(build_result)
-
     return 0
 
 
@@ -340,13 +399,13 @@ def main(argv: Sequence[str] | None = None) -> int:
         "develop",
         help="Execute build workflow for developing this project",
     )
-    parser_develop.set_defaults(func=build_develop)
+    parser_develop.set_defaults(func=_build_develop)
 
     parser_deploy = subparsers.add_parser(
         "deploy",
         help="Execute build workflow for deploying this project",
     )
-    parser_deploy.set_defaults(func=build_deploy)
+    parser_deploy.set_defaults(func=_build_deploy)
 
     parser_release = subparsers.add_parser(
         "release",
@@ -359,7 +418,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         choices=["patch", "minor", "major"],
         default="patch",
     )
-    parser_release.set_defaults(func=release)
+    parser_release.set_defaults(func=_release)
 
     args = parser.parse_args(argv)
 
