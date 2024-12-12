@@ -1,10 +1,9 @@
 """The health checks."""
 
 from http import HTTPStatus
-from typing import Any
+from typing import Any, Mapping
 
 from django.conf import settings as django_settings
-from django.http import HttpResponse
 from django.utils.encoding import smart_str
 from rest_framework.decorators import api_view, permission_classes, renderer_classes
 from rest_framework.permissions import IsAuthenticated
@@ -47,7 +46,10 @@ class ChecksTextRenderer(BaseRenderer):
     format = "txt"
 
     def render(
-        self, data: Any, accepted_media_type: str | None = None, renderer_context: dict | None = None
+        self,
+        data: Any,
+        accepted_media_type: str | None = None,
+        renderer_context: Mapping[str, Any] | None = None,
     ) -> str:
         """Converts check results to text-renderable string and renders
         to a string.
@@ -59,14 +61,17 @@ class ChecksTextRenderer(BaseRenderer):
                 checks: list[HealthCheckResult] = data
                 data = "\n".join([str(check) for check in checks]) + "\n"
 
-        return smart_str(data, self.charset)
+        return smart_str(data, encoding=self.charset or "utf-8")
 
 
 class ChecksJSONRenderer(JSONRenderer):
     """Renderer for rendering health checks as json binary."""
 
     def render(
-        self, data: Any, accepted_media_type: str | None = None, renderer_context: dict | None = None
+        self,
+        data: Any,
+        accepted_media_type: str | None = None,
+        renderer_context: Mapping[str, Any] | None = None,
     ) -> bytes:
         """Converts check results to json-serializeable object and delegates
         rendering to the super-class.
@@ -84,7 +89,7 @@ class ChecksJSONRenderer(JSONRenderer):
 @api_view(["GET"])
 @permission_classes([IsAuthenticated, CanCheckHealth])
 @renderer_classes([ChecksTextRenderer, ChecksJSONRenderer])
-def healthcheck(request: Request) -> HttpResponse:
+def healthcheck(request: Request) -> Response:
     """Performs various checks to determine the health status of this
     application.
 
