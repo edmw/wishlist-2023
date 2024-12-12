@@ -3,7 +3,7 @@ from html import escape
 from typing import Any
 
 from django.forms import Widget
-from django.utils.safestring import SafeText, mark_safe
+from django.utils.safestring import SafeString, mark_safe
 from django.utils.translation import gettext as _
 
 logger = logging.getLogger(__name__)
@@ -62,7 +62,7 @@ class LabelBeforeMixin(Widget):
         attrs: dict[str, str] | None = None,
         *args: Any,
         **kwargs: Any,
-    ) -> SafeText:
+    ) -> SafeString:
         """Renders a label for the widget before the widget‘s markup."""
         html = super().render(name, value, attrs, *args, **kwargs)
         if self.label_text:
@@ -84,7 +84,7 @@ class LabelAfterMixin(Widget):
         attrs: dict[str, str] | None = None,
         *args: Any,
         **kwargs: Any,
-    ) -> SafeText:
+    ) -> SafeString:
         """Renders a label for the widget after the widget‘s markup."""
         html = super().render(name, value, attrs, *args, **kwargs)
         if self.label_text:

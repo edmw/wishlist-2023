@@ -1,10 +1,11 @@
 """Wish model representation in admin site."""
+
 from typing import Iterable
 
 from django.contrib import admin
 from django.db.models import QuerySet
 from django.http import HttpRequest
-from django.utils.safestring import SafeText, mark_safe
+from django.utils.safestring import SafeString, mark_safe
 
 from core.models import Reservation, Wish
 
@@ -157,7 +158,7 @@ class WishAdmin(admin.ModelAdmin):
     reserved.boolean = True
     reserved.admin_order_field = "reservation"
 
-    def image_preview(self, wish: Wish) -> SafeText:
+    def image_preview(self, wish: Wish) -> SafeString:
         """Returns HTML used for displaying the preview image of the wish’s
         photo.
 
