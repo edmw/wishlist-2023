@@ -8,7 +8,7 @@ from django.template import defaulttags
 from django.templatetags.static import static
 from django.utils.encoding import escape_uri_path
 from django.utils.html import escape
-from django.utils.safestring import SafeText, mark_safe
+from django.utils.safestring import SafeString, mark_safe
 from django.utils.translation import gettext as _
 
 from core.services import FormattingService, RenderService, URLService
@@ -26,7 +26,7 @@ register = template.Library()
 #     ##    ######## ##     ##    ##
 
 
-def span(text: str, classes: list[SafeText]) -> SafeText:
+def span(text: str, classes: list[SafeString]) -> SafeString:
     """Renders text."""
     # SECURITY: `classes` is safe.
     # SECURITY: `text` is escaped.
@@ -34,28 +34,28 @@ def span(text: str, classes: list[SafeText]) -> SafeText:
 
 
 @register.simple_tag
-def cheering(text: str) -> SafeText:
+def cheering(text: str) -> SafeString:
     """Renders success text."""
     # SECURITY: Literal is safe.
     return span(text, [mark_safe("text-success")])  # nosec
 
 
 @register.simple_tag
-def booing(text: str) -> SafeText:
+def booing(text: str) -> SafeString:
     """Renders failure text."""
     # SECURITY: Literal is safe.
     return span(text, [mark_safe("text-danger")])  # nosec
 
 
 @register.simple_tag
-def informative(text: str) -> SafeText:
+def informative(text: str) -> SafeString:
     """Renders informational text."""
     # SECURITY: Literal is safe
     return span(text, [mark_safe("text-secondary")])  # nosec
 
 
 @register.simple_tag
-def progress_meter(current: int, total: int) -> SafeText:
+def progress_meter(current: int, total: int) -> SafeString:
     """Renders a progress meter."""
     # SECURITY: `current` is of type integer.
     # SECURITY: `total` is of type integer.
@@ -72,7 +72,7 @@ def progress_meter(current: int, total: int) -> SafeText:
 
 
 @register.simple_tag(takes_context=True)
-def render_markdown(context: template.Context, value: str) -> SafeText:
+def render_markdown(context: template.Context, value: str) -> SafeString:
     if value in (None, ""):
         # SECURITY: Empty string is safe.
         return mark_safe("")  # nosec
@@ -84,7 +84,7 @@ def render_markdown(context: template.Context, value: str) -> SafeText:
 
 
 @register.simple_tag(takes_context=True)
-def render_markdown_to_text(context: template.Context, value: str) -> SafeText:
+def render_markdown_to_text(context: template.Context, value: str) -> SafeString:
     if value in (None, ""):
         # SECURITY: Empty string is safe.
         return mark_safe("")  # nosec
@@ -105,7 +105,7 @@ def render_markdown_to_text(context: template.Context, value: str) -> SafeText:
 
 
 @register.simple_tag(takes_context=True)
-def render_datetime(context: template.Context, value: datetime, *args: Any, **kwargs: Any) -> SafeText:
+def render_datetime(context: template.Context, value: datetime, *args: Any, **kwargs: Any) -> SafeString:
     if value in (None, ""):
         # SECURITY: Empty string is safe.
         return mark_safe("")  # nosec
@@ -150,7 +150,7 @@ def datetime_natural(value: datetime, arg: str | None = None) -> str:
 
 
 @register.simple_tag
-def icon(name: str) -> SafeText:
+def icon(name: str) -> SafeString:
     feather = static("core/icons/feather.svg")
     # SECURITY: `feather` is safe.
     # SECURITY: `name` is escaped.
@@ -160,7 +160,7 @@ def icon(name: str) -> SafeText:
 
 
 @register.simple_tag
-def icon_large(name: str) -> SafeText:
+def icon_large(name: str) -> SafeString:
     feather = static("core/icons/feather.svg")
     # SECURITY: `feather` is safe.
     # SECURITY: `name` is escaped.

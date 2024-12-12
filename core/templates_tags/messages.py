@@ -5,7 +5,7 @@ from typing import Any
 from django import template
 from django.contrib.messages.storage.base import Message
 from django.utils.html import escape
-from django.utils.safestring import SafeText, mark_safe
+from django.utils.safestring import SafeString, mark_safe
 
 register = template.Library()
 
@@ -18,7 +18,7 @@ LEVEL_TAG_MAP_TO_CLASS = {
 
 
 @register.simple_tag(takes_context=False)
-def message_style(message: Message, *args: Any, **kwargs: Any) -> SafeText:
+def message_style(message: Message, *args: Any, **kwargs: Any) -> SafeString:
     classes = ["alert"]
     if level_tag := message.level_tag:
         level_class = LEVEL_TAG_MAP_TO_CLASS.get(level_tag, "primary")
@@ -30,9 +30,9 @@ def message_style(message: Message, *args: Any, **kwargs: Any) -> SafeText:
 
 
 @register.simple_tag(takes_context=False)
-def message_text(message: Message, *args: Any, **kwargs: Any) -> SafeText:
+def message_text(message: Message, *args: Any, **kwargs: Any) -> SafeString:
     text = message.message
-    if isinstance(text, SafeText):
+    if isinstance(text, SafeString):
         return text
     else:
         return escape(text)
