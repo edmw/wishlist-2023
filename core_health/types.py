@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import NamedTuple
+from typing import NamedTuple, Sequence, Tuple, Union, overload, override
 
 
 class HealthCheckResult(NamedTuple):
@@ -22,7 +22,7 @@ class HealthCheckResult(NamedTuple):
         return f"{str(self.status):6} [{self.component_name}][{self.check_id:04}] {self.check_text}"
 
 
-class HealthCheckResults(list):
+class HealthCheckResults(list[HealthCheckResult]):
     """Represents the results of multiple health checks.
 
     This extension of the list type allows adding more results where
@@ -39,7 +39,7 @@ class HealthCheckResults(list):
 
     def _append(
         self,
-        more: list[HealthCheckResult] | list[tuple[bool, str, int, str]],
+        more: Sequence[HealthCheckResult] | Sequence[tuple[bool, str, int, str]],
     ) -> None:
         """Appends the given check results to self."""
         for result in more:
@@ -57,9 +57,16 @@ class HealthCheckResults(list):
             else:
                 raise TypeError()
 
+    @overload
+    def __add__(self, more: Sequence[HealthCheckResult]) -> HealthCheckResults: ...
+
+    @overload
+    def __add__(self, more: Sequence[Tuple[bool, str, int, str]]) -> HealthCheckResults: ...
+
+    @override
     def __add__(
         self,
-        more: list[HealthCheckResult] | list[tuple[bool, str, int, str]],
+        more: Sequence[Union[HealthCheckResult, Tuple[bool, str, int, str]]],
     ) -> HealthCheckResults:
         """Override magic `__add__` method to allow tuples to be added.
         Tuples will be converted to `HealthCheckResult` objects before adding.
@@ -67,9 +74,16 @@ class HealthCheckResults(list):
         self._append(more)
         return self
 
+    @overload
+    def __iadd__(self, more: Sequence[HealthCheckResult]) -> HealthCheckResults: ...
+
+    @overload
+    def __iadd__(self, more: Sequence[Tuple[bool, str, int, str]]) -> HealthCheckResults: ...
+
+    @override
     def __iadd__(
         self,
-        more: list[HealthCheckResult] | list[tuple[bool, str, int, str]],
+        more: Sequence[Union[HealthCheckResult, Tuple[bool, str, int, str]]],
     ) -> HealthCheckResults:
         """Override magic `__iadd__` method to allow tuples to be added.
         Tuples will be converted to `HealthCheckResult` objects before adding.
