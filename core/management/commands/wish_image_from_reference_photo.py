@@ -91,4 +91,4 @@ class Command(CoreBaseCommand):
                     kwargs={
                         "wish_id": wish.id,
                     },
-                )  # type:ignore
+                )
