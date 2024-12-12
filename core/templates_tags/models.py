@@ -2,7 +2,7 @@
 
 from django import template
 from django.templatetags.static import static
-from django.utils.safestring import SafeText, mark_safe
+from django.utils.safestring import SafeString, mark_safe
 from django.utils.translation import gettext as _
 
 from core.models import Wish
@@ -20,7 +20,7 @@ register = template.Library()
 
 
 @register.simple_tag
-def wish_image(wish: Wish) -> SafeText:
+def wish_image(wish: Wish) -> SafeString:
     if wish.image_field:
         # SECURITY: Image url is safe (internal).
         return mark_safe(f'<img src="{ wish.image_field.url }" />')  # nosec
@@ -31,14 +31,14 @@ def wish_image(wish: Wish) -> SafeText:
 
 
 @register.simple_tag
-def wish_preference(wish: Wish) -> SafeText:
+def wish_preference(wish: Wish) -> SafeString:
     number_of_hearts = int(wish.preference) + 3
     # SECURITY: There is nothing unsafe.
     return mark_safe(number_of_hearts * "♥")  # nosec
 
 
 @register.simple_tag
-def wish_status(wish: Wish, mask_reservations: bool) -> SafeText:
+def wish_status(wish: Wish, mask_reservations: bool) -> SafeString:
     if wish.is_received:
         status = _("received")
     else:

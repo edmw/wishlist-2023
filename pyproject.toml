@@ -59,10 +59,10 @@ test = [
 check = [
   "ruff",
   "bandit[toml]",
-  "django-stubs",
+  "django-stubs == 5.1.*",
+  "djangorestframework-stubs == 3.15.*",
   "celery-types",
   "types-requests",
-  "types-Pillow",
   "codespell",
 ]
 tool = [
@@ -142,7 +142,7 @@ convention = "pep257"
 typeCheckingMode = "standard"
 stubPath = ".python-typings"
 exclude = ["core/migrations/*"]
-ignore = ["~/.pyenv/**", ".pyenv/**"]
+ignore = ["~/.pyenv/**", ".pyenv/**", ".python-typings"]
 
 [tool.bandit]
 skips = ["B404"]

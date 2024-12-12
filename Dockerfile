@@ -10,12 +10,12 @@ ARG BASE_IMAGE=python:3.12-slim-bookworm
 FROM ${BASE_IMAGE} AS docker-base
 RUN apt-get update -y && apt-get install -y curl gpg gettext
 # Install Node and Node Package Manager.
-RUN curl -s https://deb.nodesource.com/gpgkey/nodesource.gpg.key \
-    | gpg --dearmor \
-    | tee /usr/share/keyrings/nodesource.gpg \
-    >/dev/null
-RUN echo 'deb [signed-by=/usr/share/keyrings/nodesource.gpg] https://deb.nodesource.com/node_20.x bookworm main' > /etc/apt/sources.list.d/nodesource.list && \
-    echo 'deb-src [signed-by=/usr/share/keyrings/nodesource.gpg] https://deb.nodesource.com/node_20.x bookworm main' >> /etc/apt/sources.list.d/nodesource.list
+RUN curl -s https://deb.nodesource.com/gpgkey/nodesource.gpg.key\
+ | gpg --dearmor\
+ | tee /usr/share/keyrings/nodesource.gpg\
+ >/dev/null
+RUN echo 'deb [signed-by=/usr/share/keyrings/nodesource.gpg] https://deb.nodesource.com/node_20.x bookworm main' > /etc/apt/sources.list.d/nodesource.list &&\
+ echo 'deb-src [signed-by=/usr/share/keyrings/nodesource.gpg] https://deb.nodesource.com/node_20.x bookworm main' >> /etc/apt/sources.list.d/nodesource.list
 RUN apt-get update -y && apt-get install -y nodejs
 
 
@@ -46,9 +46,9 @@ ENV INSTALL_HOME=/
 WORKDIR $INSTALL_HOME
 # Install Python dependencies for development.
 COPY requirements-development.txt ./
-RUN --mount=type=cache,target=/root/.cache \
-    python -m pip install --upgrade pip \
-    && python -m pip install --upgrade -r requirements-development.txt
+RUN --mount=type=cache,target=/root/.cache\
+ python -m pip install --root-user-action=ignore --upgrade pip\
+ && python -m pip install --root-user-action=ignore --upgrade -r requirements-development.txt
 
 
 # Development Image
@@ -61,18 +61,18 @@ ENV APP_HOME=/webapp
 ENV APP_STATIC=/webapp-static
 ENV APP_USER=webapp
 # Add user for running the server.
-RUN mkdir -p "/home/$APP_USER" && \
-    groupadd -r $APP_USER && \
-    useradd -r \
-    -g $APP_USER --groups staff \
-    -d /home/$APP_USER \
-    -s /sbin/nologin \
-    $APP_USER
+RUN mkdir -p "/home/$APP_USER" &&\
+ groupadd -r $APP_USER &&\
+ useradd -r\
+ -g $APP_USER --groups staff\
+ -d /home/$APP_USER\
+ -s /sbin/nologin\
+ $APP_USER
 # Create directories for the server.
-RUN mkdir -p "$APP_HOME" && \
-    mkdir -p "$APP_STATIC" && \
-    chown -R $APP_USER:$APP_USER $APP_HOME && \
-    chown -R $APP_USER:$APP_USER $APP_STATIC
+RUN mkdir -p "$APP_HOME" &&\
+ mkdir -p "$APP_STATIC" &&\
+ chown -R $APP_USER:$APP_USER $APP_HOME &&\
+ chown -R $APP_USER:$APP_USER $APP_STATIC
 # Python: Optimization.
 ENV PYTHONOPTIMIZE=
 # Python: Warning control.
@@ -98,7 +98,8 @@ WORKDIR $INSTALL_HOME
 COPY --from=docker-builder /build/dist /build/dist
 # Install Python dependencies for production.
 COPY requirements.txt .
-RUN python -m pip install --upgrade pip && python -m pip install --upgrade -r requirements.txt
+RUN python -m pip install --root-user-action=ignore --upgrade pip\
+ && python -m pip install --root-user-action=ignore --upgrade -r requirements.txt
 
 
 # Deployment Image
@@ -112,18 +113,18 @@ ENV APP_HOME=/webapp
 ENV APP_STATIC=/webapp-static
 ENV APP_USER=webapp
 # Add user for running the server.
-RUN mkdir -p "/home/$APP_USER" && \
-    groupadd -r $APP_USER && \
-    useradd -r \
-    -g $APP_USER --groups staff \
-    -d /home/$APP_USER \
-    -s /sbin/nologin \
-    $APP_USER
+RUN mkdir -p "/home/$APP_USER" &&\
+ groupadd -r $APP_USER &&\
+ useradd -r\
+ -g $APP_USER --groups staff\
+ -d /home/$APP_USER\
+ -s /sbin/nologin\
+ $APP_USER
 # Create directories for the server.
-RUN mkdir -p "$APP_HOME" && \
-    mkdir -p "$APP_STATIC" && \
-    chown -R $APP_USER:$APP_USER $APP_HOME && \
-    chown -R $APP_USER:$APP_USER $APP_STATIC
+RUN mkdir -p "$APP_HOME" &&\
+ mkdir -p "$APP_STATIC" &&\
+ chown -R $APP_USER:$APP_USER $APP_HOME &&\
+ chown -R $APP_USER:$APP_USER $APP_STATIC
 # Python: Optimization.
 # 03/24 Optimization must be disabled because pycparser will break if
 # docstrings are removed by the optimization. pycparser is needed for the
