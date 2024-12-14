@@ -1,9 +1,14 @@
+# region Import
+
+
 from __future__ import annotations
 
 import sys
+from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
 from types import ModuleType
+from typing import Final, Protocol
 
 import keyring
 from invoke.collection import Collection
@@ -25,7 +30,7 @@ def import_module_from_path(module_name: str, module_path: str) -> ModuleType:
 
     try:
         spec = importlib.util.spec_from_file_location(module_name, absolute_path)
-        if spec:
+        if spec and spec.loader:
             module = importlib.util.module_from_spec(spec)
             sys.modules[module_name] = module
             spec.loader.exec_module(module)
@@ -48,6 +53,12 @@ make_build = import_module_from_path(
     "development/make_build.py",
 )
 
+
+# endregion
+
+# region Setup
+
+
 PROJECT_NAME = "wishlist"
 
 
@@ -57,15 +68,66 @@ class Mode(Enum):
     DEPLOY = "deploy"
 
 
+class Bump(Enum):
+    PATCH = "patch"
+    MINOR = "minor"
+    MAJOR = "major"
+
+
+@dataclass(frozen=True)
+class Compose:
+    LOCAL: Final[str] = "environments/local/docker-compose.yml"
+    LOCAL_DEBUG: Final[str] = "environments/local/docker-compose.debug.yml"
+    LOCAL_DEPLOY: Final[str] = "environments/local-deploy/docker-compose.yml"
+    COMMON_DATABASE: Final[str] = "environments/common/docker-compose.database.yml"
+    COMMON_DATASTORE: Final[str] = "environments/common/docker-compose.datastore.yml"
+    COMMON_FILES: Final[str] = "environments/common/docker-compose.files.yml"
+    PRIVATE_LOCAL_ENV: Final[str] = "private/environments/local/docker-compose.env.yml"
+    PRIVATE_LOCAL_DEPLOY_ENV: Final[str] = "private/environments/local-deploy/docker-compose.env.yml"
+    TESTING: Final[str] = "environments/testing/docker-compose.yml"
+
+
+# endregion
+
 # region Builder
 
 
-class Builder:
+class BuilderBase:
     def __init__(self, context: Context, platform: str):
         self.context = context
 
         self.platform = platform
         self.base_image = make.get_build_base_image()
+
+    def banner(self, title: str, message: str) -> None:
+        print()
+        print(
+            Panel(
+                Text(message, justify="center"),
+                title=Text(title, style="white on black"),
+                width=72,
+                style="white on black",
+            )
+        )
+        print()
+
+    def print_build_result(self, build_result: dict[str, str]) -> None:
+        print()
+        table = Table(box=box.MINIMAL, show_header=False)
+        table.add_row("Target", build_result["target"])
+        table.add_row("Image name", build_result["image_name"])
+        table.add_row("Image size", make.sizeof_fmt(build_result["image_size"]))
+        table.add_row("Platform", build_result["platform"])
+        table.add_row("Base image", build_result["base_image"])
+        print(
+            Panel.fit(
+                table, title=Text("👷 BUILD RESULT 👷", style="white on black"), style="white on black"
+            )
+        )
+        print()
+
+
+class Builder(BuilderBase):
 
     def build(self, mode: Mode = Mode.DEVELOP) -> None:
         match mode:
@@ -73,10 +135,7 @@ class Builder:
                 message = "Building Webapp for Development"
             case Mode.DEPLOY:
                 message = "Building Webapp for Deployment"
-
-        print()
-        print(Panel.fit(message, title="👷👷👷", style="white on black"))
-        print()
+        self.banner("👷👷👷", message)
 
         if mode in [Mode.DEVELOP, Mode.DEVELOP_DEBUG]:
             build_result = make_build.build_develop(
@@ -95,20 +154,37 @@ class Builder:
         else:
             raise ValueError(f"Invalid mode: {mode}")
 
-        print()
-        table = Table(box=box.MINIMAL, show_header=False)
-        table.add_row("Target", build_result.target)
-        table.add_row("Image name", build_result.image_name)
-        table.add_row("Image size", make.sizeof_fmt(build_result.image_size))
-        table.add_row("Platform", build_result.platform)
-        table.add_row("Base image", build_result.base_image)
-        print(Panel.fit(table, title="👷 BUILD RESULT 👷", style="white on black"))
-        print()
+        self.print_build_result(build_result._asdict())
+
+
+class ReleaseBuilder(BuilderBase):
+
+    def build(self, bump: Bump) -> None:
+        message = "Building Webapp for Release"
+        self.banner("👷👷👷", message)
+
+        build_result = make_build.release(
+            bump=str(bump),
+            platform=self.platform,
+            base_image=self.base_image,
+            build_name=PROJECT_NAME,
+            do_check=True,
+        )
+
+        self.print_build_result(build_result._asdict())
 
 
 # endregion Builder
 
 # region Runner
+
+
+class RunnerProtocol(Protocol):
+    context: Context
+    options_project: list[str]
+    run_manage_options: list[str]
+
+    def banner(self, title: str, message: str) -> None: ...
 
 
 class RunnerBase:
@@ -123,10 +199,22 @@ class RunnerBase:
 
         self.run_manage_options = [
             *self.options_project,
-            "-f environments/testing/docker-compose.yml",
-            "-f environments/common/docker-compose.database.yml",
-            "-f environments/common/docker-compose.datastore.yml",
+            f"-f {Compose.TESTING}",
+            f"-f {Compose.COMMON_DATABASE}",
+            f"-f {Compose.COMMON_DATASTORE}",
         ]
+
+    def banner(self, title: str, message: str) -> None:
+        print()
+        print(
+            Panel(
+                Text(message, justify="center"),
+                title=Text(title, style="white on black"),
+                width=72,
+                style="white on black",
+            )
+        )
+        print()
 
     def build_down_command(self) -> str:
         return " ".join(
@@ -136,6 +224,15 @@ class RunnerBase:
                 "down",
             ]
         )
+
+
+class RunnerUsesManageCommandProtocol(RunnerProtocol):
+    def build_run_manage_command(
+        self: RunnerProtocol, command: list[str], python_options: list[str] | None = None
+    ) -> str: ...
+
+
+class RunnerUsesManageCommand(RunnerUsesManageCommandProtocol):
 
     def build_run_manage_command(self, command: list[str], python_options: list[str] | None = None) -> str:
         return " ".join(
@@ -155,6 +252,15 @@ class RunnerBase:
             ]
         )
 
+    def run_manage_command(self, command: list[str], python_options: list[str] | None = None) -> None:
+        message = f"Executing Command\n{command[0]}"
+        self.banner("🚀🚀🚀", message)
+
+        self.context.run(
+            self.build_run_manage_command(command, python_options=python_options),
+            pty=True,
+        )
+
 
 class Runner(RunnerBase):
 
@@ -164,29 +270,29 @@ class Runner(RunnerBase):
         self.options = {
             Mode.DEVELOP: [
                 *self.options_project,
-                "-f environments/local/docker-compose.yml",
-                "-f environments/common/docker-compose.database.yml",
-                "-f environments/common/docker-compose.datastore.yml",
-                "-f environments/common/docker-compose.files.yml",
-                "-f private/environments/local/docker-compose.env.yml",  # TODO: only add if file exists
+                f"-f {Compose.LOCAL}",
+                f"-f {Compose.COMMON_DATABASE}",
+                f"-f {Compose.COMMON_DATASTORE}",
+                f"-f {Compose.COMMON_FILES}",
             ],
             Mode.DEVELOP_DEBUG: [
                 *self.options_project,
-                "-f environments/local/docker-compose.yml",
-                "-f environments/local/docker-compose.debug.yml",
-                "-f environments/common/docker-compose.database.yml",
-                "-f environments/common/docker-compose.datastore.yml",
-                "-f environments/common/docker-compose.files.yml",
-                # TODO: only add if file exists:
-                "-f private/environments/local/docker-compose.env.yml",
+                f"-f {Compose.LOCAL}",
+                f"-f {Compose.LOCAL_DEBUG}",
+                f"-f {Compose.COMMON_DATABASE}",
+                f"-f {Compose.COMMON_DATASTORE}",
+                f"-f {Compose.COMMON_FILES}",
             ],
             Mode.DEPLOY: [
                 *self.options_project,
-                "-f environments/local-deploy/docker-compose.yml",
-                # TODO: only add if file exists:
-                "-f private/environments/local-deploy/docker-compose.env.yml",
+                f"-f {Compose.LOCAL_DEPLOY}",
             ],
         }
+        if Path(Compose.PRIVATE_LOCAL_ENV).exists():
+            self.options[Mode.DEVELOP].append(f"-f {Compose.PRIVATE_LOCAL_ENV}")
+            self.options[Mode.DEVELOP_DEBUG].append(f"-f {Compose.PRIVATE_LOCAL_ENV}")
+        if Path(Compose.PRIVATE_LOCAL_DEPLOY_ENV).exists():
+            self.options[Mode.DEPLOY].append(f"-f {Compose.PRIVATE_LOCAL_DEPLOY_ENV}")
 
     def get_webapp_key(self, mode: Mode) -> str | None:
         name = "local" if mode in [Mode.DEVELOP, Mode.DEVELOP_DEBUG] else "local-deploy"
@@ -200,10 +306,7 @@ class Runner(RunnerBase):
                 message = "Running Webapp in Development mode and debugging enabled"
             case Mode.DEPLOY:
                 message = "Running Webapp in Deployment mode"
-
-        print()
-        print(Panel.fit(message, title="🚀🚀🚀", style="white on black"))
-        print()
+        self.banner("🚀🚀🚀", message)
 
         options = self.options[mode]
         command = ["docker compose", *options, "up"]
@@ -226,22 +329,10 @@ class Runner(RunnerBase):
         )
 
 
-class TestRunner(RunnerBase):
+class TestRunner(RunnerBase, RunnerUsesManageCommand):
 
     def start(self) -> None:
-        message = "Testing Webapp"
-
-        print()
-        print(Panel.fit(message, title="🚀🚀🚀", style="white on black"))
-        print()
-
-        self.context.run(
-            self.build_run_manage_command(
-                ["webapp_test"],
-                python_options=["-Xfrozen_modules=off"],
-            ),
-            pty=True,
-        )
+        self.run_manage_command(["webapp_test"], python_options=["-Xfrozen_modules=off"])
 
     def stop(self) -> None:
         command = self.build_down_command()
@@ -249,16 +340,15 @@ class TestRunner(RunnerBase):
         self.context.run(command, pty=True)
 
 
-class CommandRunner(RunnerBase):
+class CommandRunner(RunnerBase, RunnerUsesManageCommand):
+
+    def __init__(self, context: Context, container: str = "app"):
+        super().__init__(context)
+
+        self.container = container
 
     def run(self, command: list[str]) -> None:
-        message = f"Executing Command\n{command[0]}"
-
-        print()
-        print(Panel.fit(Text(message, justify="center"), title="🚀🚀🚀", style="white on black"))
-        print()
-
-        self.context.run(self.build_run_manage_command(command), pty=True)
+        self.run_manage_command(command)
 
     def stop(self) -> None:
         command = self.build_down_command()
@@ -281,6 +371,24 @@ def build_develop(context: Context) -> None:
 def build_deploy(context: Context) -> None:
     """Builds the webapp for deployment mode and ARM64 architecture."""
     Builder(context, "linux/arm64").build(mode=Mode.DEPLOY)
+
+
+@task(name="release_patch")
+def build_release_patch(context: Context) -> None:
+    """Builds the webapp for a patch release and AMD64 architecture."""
+    ReleaseBuilder(context, "linux/amd64").build(bump=Bump.PATCH)
+
+
+@task(name="release_minor")
+def build_release_minor(context: Context) -> None:
+    """Builds the webapp for a minor release and AMD64 architecture."""
+    ReleaseBuilder(context, "linux/amd64").build(bump=Bump.MINOR)
+
+
+@task(name="release_major")
+def build_release_major(context: Context) -> None:
+    """Builds the webapp for a major release and AMD64 architecture."""
+    ReleaseBuilder(context, "linux/amd64").build(bump=Bump.MAJOR)
 
 
 @task(name="develop", pre=[build_develop])
@@ -379,6 +487,9 @@ namespace = Collection(
         "build",
         build_develop,
         build_deploy,
+        build_release_patch,
+        build_release_minor,
+        build_release_major,
     ),
     Collection(
         "run",

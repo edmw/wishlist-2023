@@ -33,6 +33,9 @@ def _project_has_invalid_version() -> list[str]:
     return ["VERSION INVALID", "Version file must contain valid value"]
 
 
+# region Docker
+
+
 def docker_inspect(image_name: str) -> dict[str, Any]:
     """Returns Docker‘s information about the specified image."""
     result = subprocess.run(  # nosec
@@ -82,6 +85,10 @@ def docker_build_command(platform: str, target: str, base_image: str, image_name
     ]
 
 
+# endregion
+
+# region BuildResult
+
 # A collection of values that are the results of building a Docker image.
 BuildResult = namedtuple(
     "BuildResult",
@@ -94,6 +101,11 @@ BuildResult = namedtuple(
         "base_image",
     ],
 )
+
+
+# endregion
+
+# region Docker Build
 
 
 def docker_build(
@@ -168,8 +180,12 @@ def docker_build_result(result: BuildResult) -> None:
     )
 
 
+# endregion
+
+# region Release
+
+
 def release(
-    do_check: bool,
     bump: str,
     platform: str,
     base_image: str,
@@ -178,6 +194,7 @@ def release(
     quiet: bool = False,
     debug: bool = False,
     output: bool = True,
+    do_check: bool = True,
 ) -> BuildResult:
     """Builds the release version of this project.
 
@@ -255,15 +272,20 @@ def release(
 
 def _release(args: argparse.Namespace) -> int:
     _ = release(
-        do_check=args.check,
         bump=args.bump,
         platform=args.platform,
         base_image=args.base_image,
         build_name=args.build_name,
         quiet=args.quiet,
         debug=args.debug,
+        do_check=args.check,
     )
     return 0
+
+
+# endregion
+
+# region Build Develop
 
 
 def build_develop(
@@ -306,6 +328,11 @@ def _build_develop(args: argparse.Namespace) -> int:
     return 0
 
 
+# endregion
+
+# region Build Deploy
+
+
 def build_deploy(
     platform: str,
     base_image: str,
@@ -344,6 +371,11 @@ def _build_deploy(args: argparse.Namespace) -> int:
         debug=args.debug,
     )
     return 0
+
+
+# endregion
+
+# region main
 
 
 def main(argv: Sequence[str] | None = None) -> int:
@@ -431,3 +463,6 @@ if __name__ == "__main__":
     # get the ball rolling
 
     raise SystemExit(main())
+
+
+# endregion
