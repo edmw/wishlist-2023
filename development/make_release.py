@@ -13,6 +13,9 @@ def _project_has_invalid_version() -> list[str]:
     return ["VERSION INVALID", "Version file must contain valid value"]
 
 
+# region Push
+
+
 def push(args: argparse.Namespace) -> int:
     """Pushes a Docker image for the project to the project‘s registry.
 
@@ -51,6 +54,11 @@ def push(args: argparse.Namespace) -> int:
     )
 
     return 0
+
+
+# endregion
+
+# region main
 
 
 def main(argv: Sequence[str] | None = None) -> int:
@@ -107,3 +115,6 @@ if __name__ == "__main__":
     # get the ball rolling
 
     raise SystemExit(main())
+
+
+# endregion

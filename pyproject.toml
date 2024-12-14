@@ -145,6 +145,7 @@ exclude = ["core/migrations/*"]
 ignore = ["~/.pyenv/**", ".pyenv/**", ".python-typings"]
 
 [tool.bandit]
+exclude_dirs = ["./.python-typings"]
 skips = ["B404"]
 
 [tool.bandit.assert_used]
