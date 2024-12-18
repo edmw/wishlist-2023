@@ -17,7 +17,9 @@ from invoke.collection import Collection
 from invoke.context import Context
 from invoke.tasks import Task, task
 from rich import box, print
+from rich.live import Live
 from rich.panel import Panel
+from rich.spinner import Spinner
 from rich.table import Table
 from rich.text import Text
 
@@ -660,6 +662,57 @@ def clean(context: Context) -> None:
         cleaner.find_directory_and_remove("__pycache__", Paths.PROJECT, "Removing __pycache__ directories")
 
 
+@task()
+def install_development(context: Context) -> None:
+    printer = Printer()
+    printer.print_banner("🔧🔧🔧", "Installing\nDevelopment Dependencies")
+    printer.print_enumerated("Installing dependencies")
+    context.run(
+        "python -m pip --require-virtualenv --quiet install --upgrade -r requirements.txt -r requirements-development.txt"
+    )
+    printer.print_enumerated("Checking installed dependencies")
+    context.run("python -m pip --require-virtualenv --quiet check")
+    print()
+
+
+@task()
+def install_deployment(context: Context) -> None:
+    printer = Printer()
+    printer.print_banner("🔧🔧🔧", "Installing\nDeployment Dependencies")
+    printer.print_enumerated("Installing dependencies")
+    context.run(
+        "python -m pip --require-virtualenv --quiet install --upgrade -r requirements.txt -r requirements.txt"
+    )
+    printer.print_enumerated("Checking installed dependencies")
+    context.run("python -m pip --require-virtualenv --quiet check")
+    print()
+
+
+@task()
+def pin_development(context: Context) -> None:
+    printer = Printer()
+    printer.print_banner("🔧🔧🔧", "Pinning\nDevelopment Dependencies")
+    printer.print_enumerated("Pinning dependencies")
+    with Live(Spinner("dots", style="green"), refresh_per_second=10):
+        context.run(
+            "python -m piptools compile --quiet --resolver=backtracking --generate-hashes --allow-unsafe --strip-extras --extra build --extra test --extra check --extra tool --extra support -o requirements-development.txt pyproject.toml"
+        )
+    print()
+
+
+@task()
+def pin_deployment(context: Context) -> None:
+
+    printer = Printer()
+    printer.print_banner("🔧🔧🔧", "Pinning\nDeployment Dependencies")
+    printer.print_enumerated("Pinning dependencies")
+    with Live(Spinner("dots", style="green"), refresh_per_second=10):
+        context.run(
+            "python -m piptools compile --quiet --resolver=backtracking --generate-hashes --allow-unsafe --strip-extras -o requirements.txt pyproject.toml"
+        )
+    print()
+
+
 # endregion environment
 
 # endregion ⭐ Tasks ⭐
@@ -690,3 +743,7 @@ collection_application.add_task(cast(Task, dumpdata))
 collection_application.add_task(cast(Task, shell))
 
 collection_environment.add_task(cast(Task, clean))
+collection_environment.add_task(cast(Task, install_development))
+collection_environment.add_task(cast(Task, install_deployment))
+collection_environment.add_task(cast(Task, pin_development))
+collection_environment.add_task(cast(Task, pin_deployment))
