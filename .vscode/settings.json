@@ -12,7 +12,6 @@
             "source.organizeImports": "explicit"
         }
     },
-    "python.formatting.provider": "black",
     "black-formatter.importStrategy": "useBundled",
     "black-formatter.args": [
         "--line-length=108"
@@ -21,10 +20,5 @@
         "--profile",
         "black"
     ],
-    "python.linting.banditArgs": [
-        "-c pyproject.yaml"
-    ],
-    "python.analysis.autoSearchPaths": false,
     "python.analysis.diagnosticMode": "workspace",
-    "python.analysis.stubPath": ".python-typings"
 }

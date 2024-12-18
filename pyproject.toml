@@ -43,6 +43,7 @@ dependencies = [
 
 [project.optional-dependencies]
 build = [
+  "pip-tools",
   "semver",
   "invoke",
   "keyring",
