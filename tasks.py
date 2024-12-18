@@ -3,17 +3,19 @@
 
 from __future__ import annotations
 
+import shutil
 import sys
+from contextlib import contextmanager
 from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
 from types import ModuleType
-from typing import Final, Protocol
+from typing import Final, Generator, Protocol, cast
 
 import keyring
 from invoke.collection import Collection
 from invoke.context import Context
-from invoke.tasks import task
+from invoke.tasks import Task, task
 from rich import box, print
 from rich.panel import Panel
 from rich.table import Table
@@ -62,6 +64,21 @@ make_build = import_module_from_path(
 PROJECT_NAME = "wishlist"
 
 
+@dataclass(frozen=True)
+class Paths:
+    PROJECT: Final[Path] = Path(__file__).resolve().parent
+    REPORTS: Final[Path] = PROJECT / "reports"
+    REPORTS_COVERAGE: Final[Path] = REPORTS / "coverage"
+    REPORTS_COVERAGE_HTML: Final[Path] = REPORTS_COVERAGE / "html"
+    ENV_LOCAL: Final[Path] = PROJECT / "environments" / "local"
+    ENV_LOCAL_DEPLOY: Final[Path] = PROJECT / "environments" / "local-deploy"
+    ENV_TESTING: Final[Path] = PROJECT / "environments" / "testing"
+    ENV_COMMON: Final[Path] = PROJECT / "environments" / "common"
+    ENV_PRIVATE: Final[Path] = PROJECT / "private" / "environments"
+    ENV_PRIVATE_LOCAL: Final[Path] = ENV_PRIVATE / "local"
+    ENV_PRIVATE_LOCAL_DEPLOY: Final[Path] = ENV_PRIVATE / "local-deploy"
+
+
 class Mode(Enum):
     DEVELOP = "develop"
     DEVELOP_DEBUG = "develop_debug"
@@ -76,30 +93,26 @@ class Bump(Enum):
 
 @dataclass(frozen=True)
 class Compose:
-    LOCAL: Final[str] = "environments/local/docker-compose.yml"
-    LOCAL_DEBUG: Final[str] = "environments/local/docker-compose.debug.yml"
-    LOCAL_DEPLOY: Final[str] = "environments/local-deploy/docker-compose.yml"
-    COMMON_DATABASE: Final[str] = "environments/common/docker-compose.database.yml"
-    COMMON_DATASTORE: Final[str] = "environments/common/docker-compose.datastore.yml"
-    COMMON_FILES: Final[str] = "environments/common/docker-compose.files.yml"
-    PRIVATE_LOCAL_ENV: Final[str] = "private/environments/local/docker-compose.env.yml"
-    PRIVATE_LOCAL_DEPLOY_ENV: Final[str] = "private/environments/local-deploy/docker-compose.env.yml"
-    TESTING: Final[str] = "environments/testing/docker-compose.yml"
+    LOCAL: Final[str] = str(Paths.ENV_LOCAL / "docker-compose.yml")
+    LOCAL_DEBUG: Final[str] = str(Paths.ENV_LOCAL / "docker-compose.debug.yml")
+    LOCAL_DEPLOY: Final[str] = str(Paths.ENV_LOCAL_DEPLOY / "docker-compose.yml")
+    COMMON_DATABASE: Final[str] = str(Paths.ENV_COMMON / "docker-compose.database.yml")
+    COMMON_DATASTORE: Final[str] = str(Paths.ENV_COMMON / "docker-compose.datastore.yml")
+    COMMON_FILES: Final[str] = str(Paths.ENV_COMMON / "docker-compose.files.yml")
+    PRIVATE_LOCAL_ENV: Final[str] = str(Paths.ENV_PRIVATE_LOCAL / "docker-compose.env.yml")
+    PRIVATE_LOCAL_DEPLOY_ENV: Final[str] = str(Paths.ENV_PRIVATE_LOCAL_DEPLOY / "docker-compose.env.yml")
+    TESTING: Final[str] = str(Paths.ENV_TESTING / "docker-compose.yml")
 
 
 # endregion
 
-# region Builder
+# region ⭐ Printer ⭐
 
 
-class BuilderBase:
-    def __init__(self, context: Context, platform: str):
-        self.context = context
+class Printer:
 
-        self.platform = platform
-        self.base_image = make.get_build_base_image()
-
-    def banner(self, title: str, message: str) -> None:
+    @staticmethod
+    def print_banner(title: str, message: str) -> None:
         print()
         print(
             Panel(
@@ -110,6 +123,65 @@ class BuilderBase:
             )
         )
         print()
+
+    def __init__(self) -> None:
+        self.enumeration = 0
+
+    def print_enumerated(self, message: str, advance: bool = True) -> None:
+        if advance:
+            self.enumeration += 1
+        print(f"#{self.enumeration} {message}")
+
+
+# endregion ⭐ Printer ⭐
+
+# region ⭐ Files ⭐
+
+
+class FilesCleaner:
+    def __init__(self) -> None:
+        self.printer = Printer()
+        self.printer.print_banner("🧹🧹🧹", "Cleaning up\nFiles")
+
+    @contextmanager
+    def section(self, message: str) -> Generator[None, None, None]:
+        self.printer.print_enumerated(message)
+        yield
+        print()
+
+    def remove_directory(self, directory: Path, message: str | None = None) -> None:
+        if message:
+            self.printer.print_enumerated(message, advance=False)
+        if directory.exists():
+            shutil.rmtree(directory)
+
+    def remove_files_in_directory(self, directory: Path, message: str | None = None) -> None:
+        if message:
+            self.printer.print_enumerated(message, advance=False)
+        for item in directory.iterdir():
+            if item.is_file() and item.name != ".gitignore":
+                item.unlink()
+            elif item.is_dir():
+                shutil.rmtree(item)
+
+    def find_directory_and_remove(self, name: str, directory: Path, message: str | None = None) -> None:
+        if message:
+            self.printer.print_enumerated(message, advance=False)
+        for directory_name in directory.rglob(name):
+            shutil.rmtree(directory_name)
+
+
+# endregion ⭐ Files ⭐
+
+# region ⭐ Builder ⭐
+
+
+class BuilderBase:
+    def __init__(self, context: Context, platform: str) -> None:
+        self.context = context
+
+        self.platform = platform
+        self.base_image = make.get_build_base_image()
 
     def print_build_result(self, build_result: dict[str, str]) -> None:
         print()
@@ -127,6 +199,9 @@ class BuilderBase:
         print()
 
 
+# region Builder
+
+
 class Builder(BuilderBase):
 
     def build(self, mode: Mode = Mode.DEVELOP) -> None:
@@ -135,7 +210,7 @@ class Builder(BuilderBase):
                 message = "Building Webapp for Development"
             case Mode.DEPLOY:
                 message = "Building Webapp for Deployment"
-        self.banner("👷👷👷", message)
+        Printer.print_banner("👷👷👷", message)
 
         if mode in [Mode.DEVELOP, Mode.DEVELOP_DEBUG]:
             build_result = make_build.build_develop(
@@ -157,11 +232,16 @@ class Builder(BuilderBase):
         self.print_build_result(build_result._asdict())
 
 
+# endregion Builder
+
+# region ReleaseBuilder
+
+
 class ReleaseBuilder(BuilderBase):
 
     def build(self, bump: Bump) -> None:
         message = "Building Webapp for Release"
-        self.banner("👷👷👷", message)
+        Printer.print_banner("👷👷👷", message)
 
         build_result = make_build.release(
             bump=str(bump),
@@ -174,9 +254,11 @@ class ReleaseBuilder(BuilderBase):
         self.print_build_result(build_result._asdict())
 
 
-# endregion Builder
+# endregion ReleaseBuilder
 
-# region Runner
+# endregion ⭐ Builder ⭐
+
+# region ⭐ Runner ⭐
 
 
 class RunnerProtocol(Protocol):
@@ -189,19 +271,19 @@ class RunnerProtocol(Protocol):
 
 class RunnerBase:
 
-    def __init__(self, context: Context):
+    def __init__(self, context: Context) -> None:
         self.context = context
 
         self.options_project = [
             f"--project-name {PROJECT_NAME}",
-            "--project-directory .",
+            '--project-directory "."',
         ]
 
         self.run_manage_options = [
             *self.options_project,
-            f"-f {Compose.TESTING}",
-            f"-f {Compose.COMMON_DATABASE}",
-            f"-f {Compose.COMMON_DATASTORE}",
+            f'-f "{Compose.TESTING}"',
+            f'-f "{Compose.COMMON_DATABASE}"',
+            f'-f "{Compose.COMMON_DATASTORE}"',
         ]
 
     def banner(self, title: str, message: str) -> None:
@@ -253,7 +335,7 @@ class RunnerUsesManageCommand(RunnerUsesManageCommandProtocol):
         )
 
     def run_manage_command(self, command: list[str], python_options: list[str] | None = None) -> None:
-        message = f"Executing Command\n{command[0]}"
+        message = f"Running Command\n{command[0]}"
         self.banner("🚀🚀🚀", message)
 
         self.context.run(
@@ -262,37 +344,40 @@ class RunnerUsesManageCommand(RunnerUsesManageCommandProtocol):
         )
 
 
+# region Runner
+
+
 class Runner(RunnerBase):
 
-    def __init__(self, context: Context):
+    def __init__(self, context: Context) -> None:
         super().__init__(context)
 
         self.options = {
             Mode.DEVELOP: [
                 *self.options_project,
-                f"-f {Compose.LOCAL}",
-                f"-f {Compose.COMMON_DATABASE}",
-                f"-f {Compose.COMMON_DATASTORE}",
-                f"-f {Compose.COMMON_FILES}",
+                f'-f "{Compose.LOCAL}"',
+                f'-f "{Compose.COMMON_DATABASE}"',
+                f'-f "{Compose.COMMON_DATASTORE}"',
+                f'-f "{Compose.COMMON_FILES}"',
             ],
             Mode.DEVELOP_DEBUG: [
                 *self.options_project,
-                f"-f {Compose.LOCAL}",
-                f"-f {Compose.LOCAL_DEBUG}",
-                f"-f {Compose.COMMON_DATABASE}",
-                f"-f {Compose.COMMON_DATASTORE}",
-                f"-f {Compose.COMMON_FILES}",
+                f'-f "{Compose.LOCAL}"',
+                f'-f "{Compose.LOCAL_DEBUG}"',
+                f'-f "{Compose.COMMON_DATABASE}"',
+                f'-f "{Compose.COMMON_DATASTORE}"',
+                f'-f "{Compose.COMMON_FILES}"',
             ],
             Mode.DEPLOY: [
                 *self.options_project,
-                f"-f {Compose.LOCAL_DEPLOY}",
+                f'-f "{Compose.LOCAL_DEPLOY}"',
             ],
         }
         if Path(Compose.PRIVATE_LOCAL_ENV).exists():
-            self.options[Mode.DEVELOP].append(f"-f {Compose.PRIVATE_LOCAL_ENV}")
-            self.options[Mode.DEVELOP_DEBUG].append(f"-f {Compose.PRIVATE_LOCAL_ENV}")
+            self.options[Mode.DEVELOP].append(f'-f "{Compose.PRIVATE_LOCAL_ENV}"')
+            self.options[Mode.DEVELOP_DEBUG].append(f'-f "{Compose.PRIVATE_LOCAL_ENV}"')
         if Path(Compose.PRIVATE_LOCAL_DEPLOY_ENV).exists():
-            self.options[Mode.DEPLOY].append(f"-f {Compose.PRIVATE_LOCAL_DEPLOY_ENV}")
+            self.options[Mode.DEPLOY].append(f'-f "{Compose.PRIVATE_LOCAL_DEPLOY_ENV}"')
 
     def get_webapp_key(self, mode: Mode) -> str | None:
         name = "local" if mode in [Mode.DEVELOP, Mode.DEVELOP_DEBUG] else "local-deploy"
@@ -329,10 +414,22 @@ class Runner(RunnerBase):
         )
 
 
+# endregion Runner
+
+# region TestRunner
+
+
 class TestRunner(RunnerBase, RunnerUsesManageCommand):
 
-    def start(self) -> None:
-        self.run_manage_command(["webapp_test"], python_options=["-Xfrozen_modules=off"])
+    def start(self, spec: str | None = None, coverage: bool = False, debug: bool = False) -> None:
+        command = ["webapp_test"]
+        if coverage:
+            command.append("--coverage")
+        if debug:
+            command.append("--debug")
+        if spec:
+            command.append(f'"{spec}"')
+        self.run_manage_command(command, python_options=["-Xfrozen_modules=off"])
 
     def stop(self) -> None:
         command = self.build_down_command()
@@ -340,14 +437,28 @@ class TestRunner(RunnerBase, RunnerUsesManageCommand):
         self.context.run(command, pty=True)
 
 
+# endregion TestRunner
+
+# region CommandRunner
+
+
 class CommandRunner(RunnerBase, RunnerUsesManageCommand):
 
-    def __init__(self, context: Context, container: str = "app"):
+    def __init__(self, context: Context, container: str = "app") -> None:
         super().__init__(context)
 
         self.container = container
 
-    def run(self, command: list[str]) -> None:
+    def execute(self, container: str, command: list[str]) -> None:
+        message = f"Executing Command\n{command[0]}"
+        self.banner("🚀🚀🚀", message)
+
+        self.context.run(
+            " ".join(["docker compose", *self.run_manage_options, "exec", container, *command]),
+            pty=True,
+        )
+
+    def run_manage(self, command: list[str]) -> None:
         self.run_manage_command(command)
 
     def stop(self) -> None:
@@ -356,9 +467,30 @@ class CommandRunner(RunnerBase, RunnerUsesManageCommand):
         self.context.run(command, pty=True)
 
 
-# endregion Runner
+# endregion CommandRunner
 
-# region Tasks
+# endregion ⭐ Runner ⭐
+
+# region ⭐ Tasks ⭐
+
+
+collection_build = Collection("build")
+collection_run = Collection("run")
+collection_test = Collection("test")
+collection_check = Collection("check")
+collection_application = Collection("application")
+collection_environment = Collection("environment")
+
+namespace = Collection(
+    collection_build,
+    collection_run,
+    collection_test,
+    collection_check,
+    collection_application,
+    collection_environment,
+)
+
+# region build
 
 
 @task(name="develop")
@@ -391,6 +523,11 @@ def build_release_major(context: Context) -> None:
     ReleaseBuilder(context, "linux/amd64").build(bump=Bump.MAJOR)
 
 
+# endregion build
+
+# region run
+
+
 @task(name="develop", pre=[build_develop])
 def run_develop(context: Context) -> None:
     """Starts a local server and runs the webapp in development mode."""
@@ -421,22 +558,38 @@ def down_deploy(context: Context) -> None:
     Runner(context).stop(mode=Mode.DEPLOY)
 
 
+# endregion run
+
+# region test
+
+
 @task(name="down", pre=[build_develop])
 def test_down(context: Context) -> None:
     """Stops and removes all containers used for testing the webapp."""
     TestRunner(context).stop()
 
 
-@task(name="run", pre=[build_develop], post=[test_down], default=True)
-def test(context: Context) -> None:
+@task(name="run", pre=[build_develop], post=[test_down], default=True, help={"spec": "Run specific test."})
+def test(context: Context, spec: str | None = None) -> None:
     """Runs tests for the webapp in development mode."""
-    TestRunner(context).start()
+    TestRunner(context).start(spec=spec)
 
 
-@task(name="debug", pre=[build_develop], post=[test_down])
-def test_debug(context: Context) -> None:
+@task(name="coverage", pre=[build_develop], post=[test_down], help={"spec": "Run specific test."})
+def test_coverage(context: Context, spec: str | None = None) -> None:
+    """Runs tests for the webapp in development mode and builds coverage report."""
+    TestRunner(context).start(spec=spec, coverage=True)
+
+
+@task(name="debug", pre=[build_develop], post=[test_down], help={"spec": "Run specific test."})
+def test_debug(context: Context, spec: str | None = None) -> None:
     """Runs tests for the webapp in development mode with debugging enabled."""
-    TestRunner(context).start()
+    TestRunner(context).start(spec=spec, debug=True)
+
+
+# endregion test
+
+# region check
 
 
 @task(name="down", pre=[build_develop])
@@ -448,25 +601,30 @@ def check_down(context: Context) -> None:
 @task(name="run", pre=[build_develop], post=[check_down], default=True)
 def check(context: Context) -> None:
     """Runs checks for the webapp in development mode."""
-    CommandRunner(context).run(command=["webapp_check"])
+    CommandRunner(context).run_manage(command=["webapp_check"])
+
+
+# endregion check
+
+# region application
 
 
 @task(pre=[build_develop])
 def translations(context: Context) -> None:
     """"""
-    CommandRunner(context).run(command=["webapp_make_translations"])
+    CommandRunner(context).run_manage(command=["webapp_make_translations"])
 
 
 @task(pre=[build_develop])
 def migrations(context: Context) -> None:
     """"""
-    CommandRunner(context).run(command=["webapp_make_migrations"])
+    CommandRunner(context).run_manage(command=["webapp_make_migrations"])
 
 
 @task(pre=[build_develop])
 def dumpdata(context: Context) -> None:
     """"""
-    CommandRunner(context).run(
+    CommandRunner(context).run_manage(
         command=[
             "dumpdata",
             "core",
@@ -480,40 +638,55 @@ def dumpdata(context: Context) -> None:
     )
 
 
-# endregion
+@task(pre=[build_develop])
+def shell(context: Context) -> None:
+    """"""
+    CommandRunner(context).execute(container="app", command=["bash"])
 
-namespace = Collection(
-    Collection(
-        "build",
-        build_develop,
-        build_deploy,
-        build_release_patch,
-        build_release_minor,
-        build_release_major,
-    ),
-    Collection(
-        "run",
-        run,
-        run_develop,
-        down_develop,
-        run_deploy,
-        down_deploy,
-    ),
-    Collection(
-        "test",
-        test,
-        test_debug,
-        test_down,
-    ),
-    Collection(
-        "check",
-        check,
-        check_down,
-    ),
-    Collection(
-        "webapp",
-        migrations,
-        translations,
-        dumpdata,
-    ),
-)
+
+# endregion application
+
+# region environment
+
+
+@task()
+def clean(context: Context) -> None:
+    """Cleans up files and directories."""
+    cleaner = FilesCleaner()
+    with cleaner.section("Removing reports"):
+        cleaner.remove_files_in_directory(Paths.REPORTS_COVERAGE_HTML, "Removing coverage reports")
+    with cleaner.section("Removing caches"):
+        cleaner.remove_directory(Paths.PROJECT / ".cache", "Removing .cache directory")
+        cleaner.find_directory_and_remove("__pycache__", Paths.PROJECT, "Removing __pycache__ directories")
+
+
+# endregion environment
+
+# endregion ⭐ Tasks ⭐
+
+collection_build.add_task(cast(Task, build_develop))
+collection_build.add_task(cast(Task, build_deploy))
+collection_build.add_task(cast(Task, build_release_patch))
+collection_build.add_task(cast(Task, build_release_minor))
+collection_build.add_task(cast(Task, build_release_major))
+
+collection_run.add_task(cast(Task, run_develop))
+collection_run.add_task(cast(Task, run))
+collection_run.add_task(cast(Task, down_develop))
+collection_run.add_task(cast(Task, run_deploy))
+collection_run.add_task(cast(Task, down_deploy))
+
+collection_test.add_task(cast(Task, test_down))
+collection_test.add_task(cast(Task, test))
+collection_test.add_task(cast(Task, test_coverage))
+collection_test.add_task(cast(Task, test_debug))
+
+collection_check.add_task(cast(Task, check_down))
+collection_check.add_task(cast(Task, check))
+
+collection_application.add_task(cast(Task, translations))
+collection_application.add_task(cast(Task, migrations))
+collection_application.add_task(cast(Task, dumpdata))
+collection_application.add_task(cast(Task, shell))
+
+collection_environment.add_task(cast(Task, clean))
