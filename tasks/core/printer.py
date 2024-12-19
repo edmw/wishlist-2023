@@ -1,8 +1,9 @@
+import time
 from contextlib import contextmanager
+from typing import Iterator
 
 from rich import box, get_console
 from rich.panel import Panel
-from rich.spinner import Spinner
 from rich.table import Table
 from rich.text import Text
 
@@ -46,18 +47,48 @@ class Printer:
         )
         console.print()
 
-    def __init__(self) -> None:
-        self.enumeration = 0
-
-    def print_enumerated(self, message: str, advance: bool = True) -> None:
-        if advance:
-            self.enumeration += 1
-        console.print(f"#{self.enumeration} {message}")
-
     @contextmanager
-    def spinner(self):
+    def spinner(self) -> Iterator[None]:
         with console.status("", refresh_per_second=10):
             yield
+
+    class Enumerator:
+        def __init__(self, console):
+            self.console = console
+            self.enumeration = 0
+            self.enumeration_start = None
+
+        @property
+        def _elapsed_time_str(self):
+            if self.enumeration_start is None:
+                return ""
+            else:
+                elapsed_time = time.perf_counter() - self.enumeration_start
+                return f" {elapsed_time:.3f}"
+
+        def do(self, message: str):
+            self.console.print(
+                f"#{self.enumeration}{self._elapsed_time_str} {message}",
+                highlight=False,
+            )
+            if self.enumeration_start is None:
+                self.enumeration_start = time.perf_counter()
+
+        def done(self):
+            if elapsed_time_str := self._elapsed_time_str:
+                self.console.print(f"#{self.enumeration} DONE{elapsed_time_str}s", highlight=False)
+            console.print()
+
+            self.enumeration += 1
+            self.enumeration_start = None
+
+    @contextmanager
+    def enumerator(self):
+        enumerator = Printer.Enumerator(console)
+        try:
+            yield enumerator
+        finally:
+            pass
 
 
 # endregion ⭐ Printer ⭐

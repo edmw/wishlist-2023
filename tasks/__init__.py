@@ -15,10 +15,14 @@ from .make import (
     clean,
     install_deployment,
     install_development,
+    pin_dependencies,
     pin_deployment,
     pin_development,
     sync_deployment,
     sync_development,
+    update_dependencies,
+    update_deployment,
+    update_development,
 )
 from .manage import dumpdata, migrations, shell, translations
 from .run import down_deploy, down_develop, run, run_deploy, run_develop
@@ -68,6 +72,10 @@ collection_manage.add_task(cast(Task, shell))
 collection_make.add_task(cast(Task, clean))
 collection_make.add_task(cast(Task, pin_development))
 collection_make.add_task(cast(Task, pin_deployment))
+collection_make.add_task(cast(Task, pin_dependencies))
+collection_make.add_task(cast(Task, update_development))
+collection_make.add_task(cast(Task, update_deployment))
+collection_make.add_task(cast(Task, update_dependencies))
 collection_make.add_task(cast(Task, install_development))
 collection_make.add_task(cast(Task, install_deployment))
 collection_make.add_task(cast(Task, sync_development))

@@ -2,25 +2,25 @@ from invoke.context import Context
 from invoke.tasks import task
 
 from .build import build_develop
-from .core import CommandRunner
+from .core import DockerRunner
 
 
 @task(pre=[build_develop])
 def translations(context: Context) -> None:
     """"""
-    CommandRunner(context).run_manage(command=["webapp_make_translations"])
+    DockerRunner.Command(context).run_manage(command=["webapp_make_translations"])
 
 
 @task(pre=[build_develop])
 def migrations(context: Context) -> None:
     """"""
-    CommandRunner(context).run_manage(command=["webapp_make_migrations"])
+    DockerRunner.Command(context).run_manage(command=["webapp_make_migrations"])
 
 
 @task(pre=[build_develop])
 def dumpdata(context: Context) -> None:
     """"""
-    CommandRunner(context).run_manage(
+    DockerRunner.Command(context).run_manage(
         command=[
             "dumpdata",
             "core",
@@ -37,4 +37,4 @@ def dumpdata(context: Context) -> None:
 @task(pre=[build_develop])
 def shell(context: Context) -> None:
     """"""
-    CommandRunner(context).execute(container="app", command=["bash"])
+    DockerRunner.Command(context).execute(container="app", command=["bash"])
