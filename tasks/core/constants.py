@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Final
 
-PROJECT_NAME = "wishlist"
+PROJECT_NAME = "wishlist-webapp"
 
 
 @dataclass(frozen=True)

@@ -1,7 +1,14 @@
 from typing import cast
 
 from invoke.collection import Collection
-from invoke.tasks import Task
+from invoke.context import Context
+from invoke.tasks import Task, task
+from invoke.util import helpline
+from rich import box
+from rich.console import Console
+from rich.padding import Padding
+from rich.table import Table
+from rich.text import Text
 
 from .build import (
     build_deploy,
@@ -28,6 +35,37 @@ from .manage import dumpdata, migrations, shell, translations
 from .run import down_deploy, down_develop, run, run_deploy, run_develop
 from .test import test, test_coverage, test_debug, test_down
 
+
+def get_tasks(collection: Collection, prefix: str = "") -> list[tuple[str, Task]]:
+    tasks = []
+    for task_name, task_obj in collection.tasks.items():
+        tasks.append((f"{prefix}{task_name}", task_obj))
+    for collection_name, collection_obj in collection.collections.items():
+        tasks.extend(get_tasks(collection_obj, prefix=f"{prefix}{collection_name}."))
+    return tasks
+
+
+@task(name="list", default=True)
+def list_tasks(context: Context) -> None:
+    """Lists all available tasks."""
+
+    tasks = get_tasks(collection=namespace)
+
+    style = "white on black"
+    table = Table(box=box.HORIZONTALS, style=style, header_style=style, row_styles=[style])
+    table.add_column("Name", justify="left", no_wrap=True)
+    table.add_column("Description", justify="left")
+    for index, (task_name, task_obj) in enumerate(tasks):
+        next_task_name, _ = tasks[index + 1] if index + 1 < len(tasks) else (None, None)
+        if next_task_name and task_name.rsplit(".", 1)[0] != next_task_name.rsplit(".", 1)[0]:
+            end_section = True
+        else:
+            end_section = False
+        table.add_row(Text(task_name, style="cyan"), helpline(task_obj), end_section=end_section)
+    console = Console()
+    console.print(Padding(table, 1))
+
+
 collection_build = Collection("build")
 collection_run = Collection("run")
 collection_test = Collection("test")
@@ -36,13 +74,14 @@ collection_manage = Collection("manage")
 collection_make = Collection("make")
 
 namespace = Collection(
-    collection_build,
-    collection_run,
-    collection_test,
-    collection_check,
-    collection_manage,
     collection_make,
+    collection_manage,
+    collection_build,
+    collection_check,
+    collection_test,
+    collection_run,
 )
+namespace.add_task(cast(Task, list_tasks))
 
 collection_build.add_task(cast(Task, build_develop))
 collection_build.add_task(cast(Task, build_deploy))

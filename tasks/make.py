@@ -76,15 +76,16 @@ def install_development(context: Context) -> None:
     printer.print_banner("🔧🔧🔧", "Installing\nDevelopment Dependencies")
     with printer.enumerator() as enumerator:
         enumerator.do("Installing development dependencies")
-        run_pip(
-            context,
-            [
-                "install",
-                "--upgrade",
-                "-r requirements.txt",
-                "-r requirements-development.txt",
-            ],
-        )
+        with printer.spinner():
+            run_pip(
+                context,
+                [
+                    "install",
+                    "--upgrade",
+                    "-r requirements.txt",
+                    "-r requirements-development.txt",
+                ],
+            )
         enumerator.done()
 
         enumerator.do("Checking installed dependencies")
@@ -99,14 +100,15 @@ def install_deployment(context: Context) -> None:
     printer.print_banner("🔧🔧🔧", "Installing\nDeployment Dependencies")
     with printer.enumerator() as enumerator:
         enumerator.do("Installing deployment dependencies")
-        run_pip(
-            context,
-            [
-                "install",
-                "--upgrade",
-                "-r requirements.txt",
-            ],
-        )
+        with printer.spinner():
+            run_pip(
+                context,
+                [
+                    "install",
+                    "--upgrade",
+                    "-r requirements.txt",
+                ],
+            )
         enumerator.done()
 
         enumerator.do("Checking installed dependencies")
@@ -121,13 +123,14 @@ def sync_development(context: Context) -> None:
     printer.print_banner("🔧🔧🔧", "Syncing\nDevelopment Dependencies")
     with printer.enumerator() as enumerator:
         enumerator.do("Syncing development dependencies")
-        run_piptools_sync(
-            context,
-            [
-                "requirements.txt",
-                "requirements-development.txt",
-            ],
-        )
+        with printer.spinner():
+            run_piptools_sync(
+                context,
+                [
+                    "requirements.txt",
+                    "requirements-development.txt",
+                ],
+            )
         enumerator.done()
 
 
@@ -138,42 +141,49 @@ def sync_deployment(context: Context) -> None:
     printer.print_banner("🔧🔧🔧", "Syncing\nDeployment Dependencies")
     with printer.enumerator() as enumerator:
         enumerator.do("Syncing deployment dependencies")
-        run_piptools_sync(
-            context,
-            [
-                "requirements.txt",
-            ],
-        )
+        with printer.spinner():
+            run_piptools_sync(
+                context,
+                [
+                    "requirements.txt",
+                ],
+            )
         enumerator.done()
 
 
-def _pin_or_update_development(context: Context, enumerator: Printer.Enumerator, update: bool) -> None:
+def _pin_or_update_development(
+    context: Context, printer: Printer, enumerator: Printer.Enumerator, update: bool
+) -> None:
     enumerator.do(f"{'Updating' if update else 'Pinning'} development dependencies")
-    run_piptools_compile(
-        context,
-        [
-            *["--upgrade"] * update,
-            "--extra build",
-            "--extra test",
-            "--extra check",
-            "--extra tool",
-            "--extra support",
-            "-o requirements-development.txt",
-            "pyproject.toml",
-        ],
-    )
+    with printer.spinner():
+        run_piptools_compile(
+            context,
+            [
+                *["--upgrade"] * update,
+                "--extra build",
+                "--extra test",
+                "--extra check",
+                "--extra tool",
+                "--extra support",
+                "-o requirements-development.txt",
+                "pyproject.toml",
+            ],
+        )
 
 
-def _pin_or_update_deployment(context: Context, enumerator: Printer.Enumerator, update: bool) -> None:
+def _pin_or_update_deployment(
+    context: Context, printer: Printer, enumerator: Printer.Enumerator, update: bool
+) -> None:
     enumerator.do(f"{'Updating' if update else 'Pinning'} deployment dependencies")
-    run_piptools_compile(
-        context,
-        [
-            *["--upgrade"] * update,
-            "-o requirements.txt",
-            "pyproject.toml",
-        ],
-    )
+    with printer.spinner():
+        run_piptools_compile(
+            context,
+            [
+                *["--upgrade"] * update,
+                "-o requirements.txt",
+                "pyproject.toml",
+            ],
+        )
 
 
 @task()
@@ -182,7 +192,7 @@ def pin_development(context: Context) -> None:
     printer = Printer()
     printer.print_banner("🔧🔧🔧", "Pinning\nDevelopment Dependencies")
     with printer.enumerator() as enumerator:
-        _pin_or_update_development(context, enumerator, update=False)
+        _pin_or_update_development(context, printer, enumerator, update=False)
         enumerator.done()
 
 
@@ -192,7 +202,7 @@ def pin_deployment(context: Context) -> None:
     printer = Printer()
     printer.print_banner("🔧🔧🔧", "Pinning\nDeployment Dependencies")
     with printer.enumerator() as enumerator:
-        _pin_or_update_deployment(context, enumerator, update=False)
+        _pin_or_update_deployment(context, printer, enumerator, update=False)
         enumerator.done()
 
 
@@ -202,9 +212,9 @@ def pin_dependencies(context: Context) -> None:
     printer = Printer()
     printer.print_banner("🔧🔧🔧", "Pinning\nDependencies")
     with printer.enumerator() as enumerator:
-        _pin_or_update_development(context, enumerator, update=False)
+        _pin_or_update_development(context, printer, enumerator, update=False)
         enumerator.done()
-        _pin_or_update_deployment(context, enumerator, update=False)
+        _pin_or_update_deployment(context, printer, enumerator, update=False)
         enumerator.done()
 
 
@@ -214,7 +224,7 @@ def update_development(context: Context) -> None:
     printer = Printer()
     printer.print_banner("🔧🔧🔧", "Updating\nDevelopment Dependencies")
     with printer.enumerator() as enumerator:
-        _pin_or_update_development(context, enumerator, update=True)
+        _pin_or_update_development(context, printer, enumerator, update=True)
         enumerator.done()
 
 
@@ -224,7 +234,7 @@ def update_deployment(context: Context) -> None:
     printer = Printer()
     printer.print_banner("🔧🔧🔧", "Updating\nDeployment Dependencies")
     with printer.enumerator() as enumerator:
-        _pin_or_update_deployment(context, enumerator, update=True)
+        _pin_or_update_deployment(context, printer, enumerator, update=True)
         enumerator.done()
 
 
@@ -234,7 +244,7 @@ def update_dependencies(context: Context) -> None:
     printer = Printer()
     printer.print_banner("🔧🔧🔧", "Updating\nDependencies")
     with printer.enumerator() as enumerator:
-        _pin_or_update_development(context, enumerator, update=True)
+        _pin_or_update_development(context, printer, enumerator, update=True)
         enumerator.done()
-        _pin_or_update_deployment(context, enumerator, update=True)
+        _pin_or_update_deployment(context, printer, enumerator, update=True)
         enumerator.done()
