@@ -39,7 +39,11 @@ from .test import test, test_coverage, test_debug, test_down
 def get_tasks(collection: Collection, prefix: str = "") -> list[tuple[str, Task]]:
     tasks = []
     for task_name, task_obj in collection.tasks.items():
-        tasks.append((f"{prefix}{task_name}", task_obj))
+        full_task_name = f"{prefix}{task_name}"
+        is_default = task_name == collection.default
+        if is_default and prefix:
+            full_task_name += f" ({prefix[:-1]})"
+        tasks.append((full_task_name, task_obj))
     for collection_name, collection_obj in collection.collections.items():
         tasks.extend(get_tasks(collection_obj, prefix=f"{prefix}{collection_name}."))
     return tasks
@@ -61,7 +65,11 @@ def list_tasks(context: Context) -> None:
             end_section = True
         else:
             end_section = False
-        table.add_row(Text(task_name, style="cyan"), helpline(task_obj), end_section=end_section)
+        if task_obj.is_default:
+            style = "yellow"
+        else:
+            style = "cyan"
+        table.add_row(Text(task_name, style=style), helpline(task_obj), end_section=end_section)
     console = Console()
     console.print(Padding(table, 1))
 
@@ -89,22 +97,22 @@ collection_build.add_task(cast(Task, build_release_patch))
 collection_build.add_task(cast(Task, build_release_minor))
 collection_build.add_task(cast(Task, build_release_major))
 
-collection_run.add_task(cast(Task, run_develop))
 collection_run.add_task(cast(Task, run))
+collection_run.add_task(cast(Task, run_develop))
 collection_run.add_task(cast(Task, down_develop))
 collection_run.add_task(cast(Task, run_deploy))
 collection_run.add_task(cast(Task, down_deploy))
 
-collection_test.add_task(cast(Task, test_down))
 collection_test.add_task(cast(Task, test))
-collection_test.add_task(cast(Task, test_coverage))
 collection_test.add_task(cast(Task, test_debug))
+collection_test.add_task(cast(Task, test_coverage))
+collection_test.add_task(cast(Task, test_down))
 
-collection_check.add_task(cast(Task, check_down))
 collection_check.add_task(cast(Task, check))
+collection_check.add_task(cast(Task, check_down))
 
-collection_manage.add_task(cast(Task, translations))
 collection_manage.add_task(cast(Task, migrations))
+collection_manage.add_task(cast(Task, translations))
 collection_manage.add_task(cast(Task, dumpdata))
 collection_manage.add_task(cast(Task, shell))
 
