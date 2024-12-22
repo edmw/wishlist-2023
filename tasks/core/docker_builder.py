@@ -1,9 +1,9 @@
 from invoke.context import Context
 
 from .bump import Bump
-from .constants import PROJECT_NAME
 from .mode import Mode
 from .printer import Printer
+from .project import CONFIGURATION
 from .scripts import make, make_build
 
 # region ⭐ Builder ⭐
@@ -14,7 +14,6 @@ class BuilderBase:
         self.context = context
 
         self.platform = platform
-        self.base_image = make.get_build_base_image()
 
     def print_build_result(self, build_result: dict[str, str]) -> None:
         data = [
@@ -44,15 +43,15 @@ class DockerBuilder:
             if mode in [Mode.DEVELOP, Mode.DEVELOP_DEBUG]:
                 build_result = make_build.build_develop(
                     platform=self.platform,
-                    base_image=self.base_image,
-                    build_name=PROJECT_NAME,
+                    base_image=CONFIGURATION.base_image_name,
+                    build_name=CONFIGURATION.build_image_name,
                     output=False,
                 )
             elif mode == Mode.DEPLOY:
                 build_result = make_build.build_deploy(
                     platform=self.platform,
-                    base_image=self.base_image,
-                    build_name=PROJECT_NAME,
+                    base_image=CONFIGURATION.base_image_name,
+                    build_name=CONFIGURATION.build_image_name,
                     output=False,
                 )
             else:
@@ -73,8 +72,8 @@ class DockerBuilder:
             build_result = make_build.release(
                 bump=str(bump),
                 platform=self.platform,
-                base_image=self.base_image,
-                build_name=PROJECT_NAME,
+                base_image=CONFIGURATION.base_image_name,
+                build_name=CONFIGURATION.build_image_name,
                 do_check=True,
             )
 

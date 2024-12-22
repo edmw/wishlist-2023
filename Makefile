@@ -360,16 +360,6 @@ console: build-develop --tool-banner.Executing_Console
 	@ $(MAKE_DOCKER_COMPOSE) $(RUN_WEBAPP_LOCAL) \
 		exec app $(MAKE_DOCKER_PYTHON) manage.py shell
 
-.PHONY: connect-database
-connect-database: --tool-banner.Connecting_Database
-	@ $(MAKE_DOCKER_COMPOSE) $(RUN_WEBAPP_LOCAL) \
-		exec database psql -U postgres
-
-.PHONY: connect-database
-connect-datastore: --tool-banner.Connecting_Datastore
-	@ $(MAKE_DOCKER_COMPOSE) $(RUN_WEBAPP_LOCAL) \
-		exec datastore redis-cli
-
 .PHONY: run-shell.%
 run-shell.%: --guard-shell.% build-develop --tool-banner.Running_Shell
 	$(RUN_DOCKER_LOCAL) run --rm --entrypoint="" $* bash

@@ -1,7 +1,9 @@
 from invoke.context import Context
 from invoke.tasks import task
 
-from .core import Bump, DockerBuilder, Mode
+from .core.bump import Bump
+from .core.docker_builder import DockerBuilder
+from .core.mode import Mode
 
 
 @task(name="develop")

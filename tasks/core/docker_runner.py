@@ -5,22 +5,30 @@ from typing import Final, Protocol
 import keyring
 from invoke.context import Context
 
-from .constants import PROJECT_NAME, Paths
 from .mode import Mode
 from .printer import Printer
+from .project import CONFIGURATION
 
 
 @dataclass(frozen=True)
 class Compose:
-    LOCAL: Final[str] = str(Paths.ENV_LOCAL / "docker-compose.yml")
-    LOCAL_DEBUG: Final[str] = str(Paths.ENV_LOCAL / "docker-compose.debug.yml")
-    LOCAL_DEPLOY: Final[str] = str(Paths.ENV_LOCAL_DEPLOY / "docker-compose.yml")
-    COMMON_DATABASE: Final[str] = str(Paths.ENV_COMMON / "docker-compose.database.yml")
-    COMMON_DATASTORE: Final[str] = str(Paths.ENV_COMMON / "docker-compose.datastore.yml")
-    COMMON_FILES: Final[str] = str(Paths.ENV_COMMON / "docker-compose.files.yml")
-    PRIVATE_LOCAL_ENV: Final[str] = str(Paths.ENV_PRIVATE_LOCAL / "docker-compose.env.yml")
-    PRIVATE_LOCAL_DEPLOY_ENV: Final[str] = str(Paths.ENV_PRIVATE_LOCAL_DEPLOY / "docker-compose.env.yml")
-    TESTING: Final[str] = str(Paths.ENV_TESTING / "docker-compose.yml")
+    LOCAL: Final[str] = str(CONFIGURATION.project_paths.ENV_LOCAL / "docker-compose.yml")
+    LOCAL_DEBUG: Final[str] = str(CONFIGURATION.project_paths.ENV_LOCAL / "docker-compose.debug.yml")
+    LOCAL_DEPLOY: Final[str] = str(CONFIGURATION.project_paths.ENV_LOCAL_DEPLOY / "docker-compose.yml")
+    COMMON_DATABASE: Final[str] = str(
+        CONFIGURATION.project_paths.ENV_COMMON / "docker-compose.database.yml"
+    )
+    COMMON_DATASTORE: Final[str] = str(
+        CONFIGURATION.project_paths.ENV_COMMON / "docker-compose.datastore.yml"
+    )
+    COMMON_FILES: Final[str] = str(CONFIGURATION.project_paths.ENV_COMMON / "docker-compose.files.yml")
+    PRIVATE_LOCAL_ENV: Final[str] = str(
+        CONFIGURATION.project_paths.ENV_PRIVATE_LOCAL / "docker-compose.env.yml"
+    )
+    PRIVATE_LOCAL_DEPLOY_ENV: Final[str] = str(
+        CONFIGURATION.project_paths.ENV_PRIVATE_LOCAL_DEPLOY / "docker-compose.env.yml"
+    )
+    TESTING: Final[str] = str(CONFIGURATION.project_paths.ENV_TESTING / "docker-compose.yml")
 
 
 # region ⭐ Runner ⭐
@@ -40,7 +48,7 @@ class RunnerBase:
         self.context = context
 
         self.options_project = [
-            f"--project-name {PROJECT_NAME}",
+            f"--project-name {CONFIGURATION.project_name}",
             '--project-directory "."',
         ]
 
@@ -65,6 +73,8 @@ class RunnerBase:
 
 
 class RunnerUsesManageCommandProtocol(RunnerProtocol):
+    service: str
+
     def build_run_manage_command(
         self: RunnerProtocol, command: list[str], python_options: list[str] | None = None
     ) -> str: ...
@@ -81,7 +91,7 @@ class RunnerUsesManageCommand(RunnerUsesManageCommandProtocol):
                 "--quiet-pull",
                 "--service-ports",
                 "--rm",
-                "app",
+                self.service,
                 "python",
                 "-Wignore::DeprecationWarning",
                 *(python_options if python_options else []),
@@ -91,7 +101,7 @@ class RunnerUsesManageCommand(RunnerUsesManageCommandProtocol):
         )
 
     def run_manage_command(self, command: list[str], python_options: list[str] | None = None) -> None:
-        message = f"Running Command\n{command[0]}"
+        message = f"Running Command on Container {self.container_name}\n{command[0]}"
         self.banner("🚀🚀🚀", message)
 
         self.context.run(
@@ -172,9 +182,9 @@ class DockerRunner:
 
     # endregion Application
 
-    # region Test
+    # region ApplicationTest
 
-    class Test(RunnerBase, RunnerUsesManageCommand):
+    class ApplicationTest(RunnerBase, RunnerUsesManageCommand):
 
         def start(self, spec: str | None = None, coverage: bool = False, debug: bool = False) -> None:
             command = ["webapp_test"]
@@ -191,25 +201,18 @@ class DockerRunner:
 
             self.context.run(command, pty=True)
 
-    # endregion Test
+    # endregion ApplicationTest
 
-    # region Command
+    # region ApplicationCommand
 
-    class Command(RunnerBase, RunnerUsesManageCommand):
+    class ApplicationCommand(RunnerBase, RunnerUsesManageCommand):
 
-        def __init__(self, context: Context, container: str = "app") -> None:
+        def __init__(
+            self, context: Context, service: str = CONFIGURATION.environment_local.service_app
+        ) -> None:
             super().__init__(context)
 
-            self.container = container
-
-        def execute(self, container: str, command: list[str]) -> None:
-            message = f"Executing Command\n{command[0]}"
-            self.banner("🚀🚀🚀", message)
-
-            self.context.run(
-                " ".join(["docker compose", *self.run_manage_options, "exec", container, *command]),
-                pty=True,
-            )
+            self.service = service
 
         def run_manage(self, command: list[str]) -> None:
             self.run_manage_command(command)
@@ -219,7 +222,32 @@ class DockerRunner:
 
             self.context.run(command, pty=True)
 
-    # endregion Command
+    # endregion ApplicationCommand
+
+    # region ShellCommand
+
+    class ShellCommand(RunnerBase):
+
+        def __init__(self, context: Context, container: str = "app") -> None:
+            super().__init__(context)
+
+            self.container = container
+
+        def execute(self, service: str, command: list[str]) -> None:
+            message = f"Executing Shell Command on Service <{service}>\n{command[0]}"
+            self.banner("🔧🔨🪛", message)
+
+            self.context.run(
+                " ".join(["docker compose", *self.run_manage_options, "exec", service, *command]),
+                pty=True,
+            )
+
+        def stop(self) -> None:
+            command = self.build_down_command()
+
+            self.context.run(command, pty=True)
+
+    # endregion ShellCommand
 
 
 # endregion ⭐ Runner ⭐
