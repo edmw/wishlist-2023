@@ -8,6 +8,8 @@ from rich.panel import Panel
 from rich.table import Table
 from rich.text import Text
 
+from .constants import Colors
+
 console = get_console()
 
 
@@ -29,6 +31,20 @@ class Printer:
                 title=Text(title, style="white on black"),
                 width=72,
                 style="white on black",
+            )
+        )
+        console.print()
+
+    @staticmethod
+    def print_error(title: str, message: str) -> None:
+        console.print()
+        console.print(
+            Panel(
+                Text.from_markup(message, justify="left"),
+                title=Text(f"🚨 {title} 🚨", no_wrap=True, style="white on black"),
+                width=72,
+                style="white on black",
+                box=box.DOUBLE,
             )
         )
         console.print()
@@ -93,3 +109,55 @@ class Printer:
 
 
 # endregion ⭐ Printer ⭐
+
+
+# region ⭐ Markup ⭐
+
+
+class Markup:
+    @staticmethod
+    def marks(string: str, marks: str) -> str:
+        match marks:
+            case "<":
+                return f"<{string}>"
+            case "[":
+                return f"[{string}]"
+            case "(":
+                return f"({string})"
+            case "{":
+                return f"{{{string}}}"
+            case "|":
+                return f"|{string}|"
+            case "'":
+                return f"'{string}'"
+            case '"':
+                return f'"{string}"'
+            case "`":
+                return f"`{string}`"
+            case "~":
+                return f"~{string}~"
+            case _:
+                return string
+
+    @staticmethod
+    def info(text: str, marks: str = "") -> str:
+        return Colors.TEXT_INFO.markup(Markup.marks(text, marks))
+
+    @staticmethod
+    def ok(text: str, marks: str = "") -> str:
+        return Colors.TEXT_OK.markup(Markup.marks(text, marks))
+
+    @staticmethod
+    def not_ok(text: str, marks: str = "") -> str:
+        return Colors.TEXT_NOT_OK.markup(Markup.marks(text, marks))
+
+    @staticmethod
+    def problematic(text: str, marks: str = "") -> str:
+        return Colors.TEXT_PROBLEMATIC.markup(Markup.marks(text, marks))
+
+    @staticmethod
+    def plain(text: str) -> str:
+        return Text.from_markup(text).plain
+
+
+# endregion ⭐ Markup ⭐

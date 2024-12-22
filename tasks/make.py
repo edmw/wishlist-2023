@@ -1,7 +1,9 @@
 from invoke.context import Context
 from invoke.tasks import task
 
-from .core import FilesCleaner, Paths, Printer
+from .core.files import FilesCleaner
+from .core.printer import Printer
+from .core.project import CONFIGURATION
 
 
 def run_pip(context: Context, arguments: list[str]) -> None:
@@ -58,14 +60,14 @@ def clean(context: Context) -> None:
 
         enumerator.do("Removing files")
         enumerator.do("Removing .coverage files")
-        cleaner.remove_files_in_directory(Paths.REPORTS_COVERAGE_HTML)
+        cleaner.remove_files_in_directory(CONFIGURATION.project_paths.REPORTS_COVERAGE_HTML)
         enumerator.done()
 
         enumerator.do("Removing caches")
         enumerator.do("Removing .cache directory")
-        cleaner.remove_directory(Paths.PROJECT / ".cache")
+        cleaner.remove_directory(CONFIGURATION.project_paths.PROJECT / ".cache")
         enumerator.do("Removing __pycache__ directories")
-        cleaner.find_directory_and_remove("__pycache__", Paths.PROJECT)
+        cleaner.find_directory_and_remove("__pycache__", CONFIGURATION.project_paths.PROJECT)
         enumerator.done()
 
 

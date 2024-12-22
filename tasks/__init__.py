@@ -4,7 +4,7 @@ from invoke.collection import Collection
 from invoke.context import Context
 from invoke.tasks import Task, task
 from invoke.util import helpline
-from rich import box
+from rich import box, inspect
 from rich.console import Console
 from rich.padding import Padding
 from rich.table import Table
@@ -18,6 +18,7 @@ from .build import (
     build_release_patch,
 )
 from .check import check, check_down
+from .core.project import CONFIGURATION
 from .make import (
     clean,
     install_deployment,
@@ -31,7 +32,15 @@ from .make import (
     update_deployment,
     update_development,
 )
-from .manage import dumpdata, migrations, shell, translations
+from .manage import (
+    connect_database,
+    connect_datastore,
+    console,
+    dumpdata,
+    migrations,
+    shell,
+    translations,
+)
 from .run import down_deploy, down_develop, run, run_deploy, run_develop
 from .test import test, test_coverage, test_debug, test_down
 
@@ -53,25 +62,42 @@ def get_tasks(collection: Collection, prefix: str = "") -> list[tuple[str, Task]
 def list_tasks(context: Context) -> None:
     """Lists all available tasks."""
 
+    # Get all tasks as tuples (task_name, task_obj).
     tasks = get_tasks(collection=namespace)
 
+    # Render the tasks in a table.
     style = "white on black"
     table = Table(box=box.HORIZONTALS, style=style, header_style=style, row_styles=[style])
     table.add_column("Name", justify="left", no_wrap=True)
     table.add_column("Description", justify="left")
     for index, (task_name, task_obj) in enumerate(tasks):
-        next_task_name, _ = tasks[index + 1] if index + 1 < len(tasks) else (None, None)
-        if next_task_name and task_name.rsplit(".", 1)[0] != next_task_name.rsplit(".", 1)[0]:
-            end_section = True
+        if task_name.startswith("_"):
+            # Skip hidden tasks (names of hidden tasks start with an underscore).
+            continue
         else:
-            end_section = False
-        if task_obj.is_default:
-            style = "yellow"
-        else:
-            style = "cyan"
-        table.add_row(Text(task_name, style=style), helpline(task_obj), end_section=end_section)
+            # Render the task name and description. If the next task is in a
+            # different section, add a separator. If the task is the default
+            # task of a collection, highlight it.
+            next_task_name, _ = tasks[index + 1] if index + 1 < len(tasks) else (None, None)
+            if next_task_name and task_name.rsplit(".", 1)[0] != next_task_name.rsplit(".", 1)[0]:
+                end_section = True
+            else:
+                end_section = False
+            if task_obj.is_default:
+                style = "yellow"
+            else:
+                style = "cyan"
+            table.add_row(Text(task_name, style=style), helpline(task_obj), end_section=end_section)
+
+    # Print the table with the tasks.
     console = Console()
     console.print(Padding(table, 1))
+
+
+@task(name="_configuration")
+def show_configuration(context: Context) -> None:
+    inspect(CONFIGURATION)
+    inspect(CONFIGURATION.environment_local)
 
 
 collection_build = Collection("build")
@@ -90,6 +116,7 @@ namespace = Collection(
     collection_run,
 )
 namespace.add_task(cast(Task, list_tasks))
+namespace.add_task(cast(Task, show_configuration))
 
 collection_build.add_task(cast(Task, build_develop))
 collection_build.add_task(cast(Task, build_deploy))
@@ -111,10 +138,13 @@ collection_test.add_task(cast(Task, test_down))
 collection_check.add_task(cast(Task, check))
 collection_check.add_task(cast(Task, check_down))
 
+collection_manage.add_task(cast(Task, console))
 collection_manage.add_task(cast(Task, migrations))
 collection_manage.add_task(cast(Task, translations))
 collection_manage.add_task(cast(Task, dumpdata))
 collection_manage.add_task(cast(Task, shell))
+collection_manage.add_task(cast(Task, connect_database))
+collection_manage.add_task(cast(Task, connect_datastore))
 
 collection_make.add_task(cast(Task, clean))
 collection_make.add_task(cast(Task, pin_development))

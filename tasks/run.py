@@ -2,7 +2,8 @@ from invoke.context import Context
 from invoke.tasks import task
 
 from .build import build_deploy, build_develop
-from .core import DockerRunner, Mode
+from .core.docker_runner import DockerRunner
+from .core.mode import Mode
 
 
 @task(name="develop", pre=[build_develop])
