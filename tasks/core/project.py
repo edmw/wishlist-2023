@@ -6,8 +6,7 @@ from typing import Any, Final
 
 import yaml
 
-from .printer import Markup as _
-from .printer import Printer
+from .printer import Markup, Printer
 
 PROJECT_DIRECTORY = Path(__file__).parent.parent.parent
 
@@ -35,18 +34,18 @@ class Environment:
                 return yaml.safe_load(file)
             except yaml.YAMLError as e:
                 message = f"Error reading docker-compose.yml at {path}: {str(e)}"
-                raise ConfigurationError(_.plain(message), message) from e
+                raise ConfigurationError(Markup.plain(message), message) from e
 
     def _get_docker_compose_value(self, keys: list[str]) -> Any:
         value = self._docker_compose
         for key in keys:
             if key not in value:
                 message = (
-                    f"Expected key {_.ok('.'.join(keys), '')} "
-                    f"in {_.info('docker-compose.yml')}, "
+                    f"Expected key {Markup.ok('.'.join(keys), '')} "
+                    f"in {Markup.info('docker-compose.yml')}, "
                     f"but it was not found."
                 )
-                raise ConfigurationError(_.plain(message), message)
+                raise ConfigurationError(Markup.plain(message), message)
             value = value[key]
         return value
 
@@ -54,12 +53,12 @@ class Environment:
         value = self._get_docker_compose_value(keys)
         if not isinstance(value, dict):
             message = (
-                f"Expected value of type {_.not_ok('dict', '<')} "
-                f"for key {_.ok('.'.join(keys), '')} in "
-                f"{_.info('docker-compose.yml')}, "
-                f"but got {_.not_ok(type(value).__name__, '<')}."
+                f"Expected value of type {Markup.not_ok('dict', '<')} "
+                f"for key {Markup.ok('.'.join(keys), '')} in "
+                f"{Markup.info('docker-compose.yml')}, "
+                f"but got {Markup.not_ok(type(value).__name__, '<')}."
             )
-            raise ConfigurationError(_.plain(message), message)
+            raise ConfigurationError(Markup.plain(message), message)
         return list(value.keys())
 
     def __init__(self, path: Path) -> None:
@@ -76,11 +75,11 @@ class Environment:
         if service in self.services:
             return service
         message = (
-            f"Expected service {_.ok(service, '')} "
-            f"in {_.info('docker-compose.yml')}, "
+            f"Expected service {Markup.ok(service, '')} "
+            f"in {Markup.info('docker-compose.yml')}, "
             f"but it was not found."
         )
-        raise ConfigurationError(_.plain(message), message)
+        raise ConfigurationError(Markup.plain(message), message)
 
 
 class ConfigurationError(Exception):
@@ -97,18 +96,18 @@ class Configuration:
                 return tomllib.loads(file.read())
             except tomllib.TOMLDecodeError as e:
                 message = f"Error reading pyproject.toml at {path}: {str(e)}"
-                raise ConfigurationError(_.plain(message), message) from e
+                raise ConfigurationError(Markup.plain(message), message) from e
 
     def _get_pyproject_value(self, keys: list[str]) -> Any:
         value = self._pyproject
         for key in keys:
             if key not in value:
                 message = (
-                    f"Expected key {_.ok('.'.join(keys), '')} "
-                    f"in {_.info('pyproject.toml')}, "
+                    f"Expected key {Markup.ok('.'.join(keys), '')} "
+                    f"in {Markup.info('pyproject.toml')}, "
                     f"but it was not found."
                 )
-                raise ConfigurationError(_.plain(message), message)
+                raise ConfigurationError(Markup.plain(message), message)
             value = value[key]
         return value
 
@@ -116,12 +115,12 @@ class Configuration:
         value = self._get_pyproject_value(keys)
         if not isinstance(value, str):
             message = (
-                f"Expected value of type {_.not_ok("str", "<")} "
-                f"for key {_.ok(".".join(keys), "'")} "
-                f"in {_.info("pyproject.toml")}, "
-                f"but got {_.not_ok(type(value).__name__, "<")}."
+                f"Expected value of type {Markup.not_ok("str", "<")} "
+                f"for key {Markup.ok(".".join(keys), "'")} "
+                f"in {Markup.info("pyproject.toml")}, "
+                f"but got {Markup.not_ok(type(value).__name__, "<")}."
             )
-            raise ConfigurationError(_.plain(message), message)
+            raise ConfigurationError(Markup.plain(message), message)
         return value
 
     def __init__(self) -> None:
