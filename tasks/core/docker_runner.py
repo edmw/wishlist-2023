@@ -101,7 +101,7 @@ class RunnerUsesManageCommand(RunnerUsesManageCommandProtocol):
         )
 
     def run_manage_command(self, command: list[str], python_options: list[str] | None = None) -> None:
-        message = f"Running Command on Container {self.container_name}\n{command[0]}"
+        message = f"Running Command on Service {self.service}\n{command[0]}"
         self.banner("🚀🚀🚀", message)
 
         self.context.run(
