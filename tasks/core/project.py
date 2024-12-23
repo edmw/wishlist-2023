@@ -1,6 +1,7 @@
 import sys
 import tomllib
 from dataclasses import dataclass
+from enum import Enum
 from pathlib import Path
 from typing import Any, Final
 
@@ -26,7 +27,19 @@ class _ProjectPaths:
     ENV_PRIVATE_LOCAL_DEPLOY: Final[Path] = ENV_PRIVATE / "local-deploy"
 
 
-class Environment:
+class Environment(Enum):
+    LOCAL = "local"
+    LOCAL_DEPLOY = "local-deploy"
+    TESTING = "testing"
+
+
+class ConfigurationError(Exception):
+    def __init__(self, message: str, rich_message: str):
+        super().__init__(message)
+        self.rich_message = message
+
+
+class _Environment:
 
     def _read_docker_compose(self, path: Path) -> dict:
         with open(path / "docker-compose.yml", "r") as file:
@@ -82,12 +95,6 @@ class Environment:
         raise ConfigurationError(Markup.plain(message), message)
 
 
-class ConfigurationError(Exception):
-    def __init__(self, message: str, rich_message: str):
-        super().__init__(message)
-        self.rich_message = message
-
-
 class Configuration:
 
     def _read_pyproject(self, path: Path) -> dict:
@@ -133,7 +140,11 @@ class Configuration:
         self.base_image_name = self._get_pyproject_string(["deployment", "base_image"])
         self.build_image_name = f"{self.project_name}-webapp"
 
-        self.environment_local = Environment(PROJECT_DIRECTORY / "environments" / "local")
+        self.environments = {
+            Environment.LOCAL: _Environment(PROJECT_DIRECTORY / "environments" / "local"),
+            Environment.LOCAL_DEPLOY: _Environment(PROJECT_DIRECTORY / "environments" / "local-deploy"),
+            Environment.TESTING: _Environment(PROJECT_DIRECTORY / "environments" / "testing"),
+        }
 
 
 try:

@@ -6,16 +6,16 @@ from .core.docker_builder import DockerBuilder
 from .core.mode import Mode
 
 
-@task(name="develop")
-def build_develop(context: Context) -> None:
+@task(name="development")
+def build_development(context: Context) -> None:
     """Builds the webapp for development mode and ARM64 architecture."""
     DockerBuilder.Development(context, "linux/arm64").build(mode=Mode.DEVELOP)
 
 
-@task(name="deploy")
-def build_deploy(context: Context) -> None:
-    """Builds the webapp for deployment mode and ARM64 architecture."""
-    DockerBuilder.Development(context, "linux/arm64").build(mode=Mode.DEPLOY)
+@task(name="production")
+def build_production(context: Context) -> None:
+    """Builds the webapp for production mode and ARM64 architecture."""
+    DockerBuilder.Development(context, "linux/arm64").build(mode=Mode.PRODUCTION)
 
 
 @task(name="release_patch")

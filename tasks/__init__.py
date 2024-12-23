@@ -11,26 +11,26 @@ from rich.table import Table
 from rich.text import Text
 
 from .build import (
-    build_deploy,
-    build_develop,
+    build_development,
+    build_production,
     build_release_major,
     build_release_minor,
     build_release_patch,
 )
 from .check import check, check_down
-from .core.project import CONFIGURATION
+from .core.project import CONFIGURATION, Environment
 from .make import (
     clean,
-    install_deployment,
     install_development,
+    install_production,
     pin_dependencies,
-    pin_deployment,
     pin_development,
-    sync_deployment,
+    pin_production,
     sync_development,
+    sync_production,
     update_dependencies,
-    update_deployment,
     update_development,
+    update_production,
 )
 from .manage import (
     connect_database,
@@ -41,7 +41,7 @@ from .manage import (
     shell,
     translations,
 )
-from .run import down_deploy, down_develop, run, run_deploy, run_develop
+from .run import down_development, down_production, run, run_development, run_production
 from .test import test, test_coverage, test_debug, test_down
 
 
@@ -95,9 +95,16 @@ def list_tasks(context: Context) -> None:
 
 
 @task(name="_configuration")
-def show_configuration(context: Context) -> None:
-    inspect(CONFIGURATION)
-    inspect(CONFIGURATION.environment_local)
+def show_configuration(context: Context, env: str | None = None) -> None:
+    match env:
+        case Environment.LOCAL.value:
+            inspect(CONFIGURATION.environments[Environment.LOCAL])
+        case Environment.LOCAL_DEPLOY.value:
+            inspect(CONFIGURATION.environments[Environment.LOCAL_DEPLOY])
+        case Environment.TESTING.value:
+            inspect(CONFIGURATION.environments[Environment.TESTING])
+        case None:
+            inspect(CONFIGURATION)
 
 
 collection_build = Collection("build")
@@ -118,17 +125,17 @@ namespace = Collection(
 namespace.add_task(cast(Task, list_tasks))
 namespace.add_task(cast(Task, show_configuration))
 
-collection_build.add_task(cast(Task, build_develop))
-collection_build.add_task(cast(Task, build_deploy))
+collection_build.add_task(cast(Task, build_development))
+collection_build.add_task(cast(Task, build_production))
 collection_build.add_task(cast(Task, build_release_patch))
 collection_build.add_task(cast(Task, build_release_minor))
 collection_build.add_task(cast(Task, build_release_major))
 
 collection_run.add_task(cast(Task, run))
-collection_run.add_task(cast(Task, run_develop))
-collection_run.add_task(cast(Task, down_develop))
-collection_run.add_task(cast(Task, run_deploy))
-collection_run.add_task(cast(Task, down_deploy))
+collection_run.add_task(cast(Task, run_development))
+collection_run.add_task(cast(Task, down_development))
+collection_run.add_task(cast(Task, run_production))
+collection_run.add_task(cast(Task, down_production))
 
 collection_test.add_task(cast(Task, test))
 collection_test.add_task(cast(Task, test_debug))
@@ -147,13 +154,13 @@ collection_manage.add_task(cast(Task, connect_database))
 collection_manage.add_task(cast(Task, connect_datastore))
 
 collection_make.add_task(cast(Task, clean))
-collection_make.add_task(cast(Task, pin_development))
-collection_make.add_task(cast(Task, pin_deployment))
 collection_make.add_task(cast(Task, pin_dependencies))
-collection_make.add_task(cast(Task, update_development))
-collection_make.add_task(cast(Task, update_deployment))
+collection_make.add_task(cast(Task, pin_development))
+collection_make.add_task(cast(Task, pin_production))
 collection_make.add_task(cast(Task, update_dependencies))
+collection_make.add_task(cast(Task, update_development))
+collection_make.add_task(cast(Task, update_production))
 collection_make.add_task(cast(Task, install_development))
-collection_make.add_task(cast(Task, install_deployment))
+collection_make.add_task(cast(Task, install_production))
 collection_make.add_task(cast(Task, sync_development))
-collection_make.add_task(cast(Task, sync_deployment))
+collection_make.add_task(cast(Task, sync_production))
