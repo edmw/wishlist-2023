@@ -1,7 +1,7 @@
 import sys
 import tomllib
 from dataclasses import dataclass
-from enum import Enum
+from enum import StrEnum
 from pathlib import Path
 from typing import Any, Final
 
@@ -27,7 +27,7 @@ class _ProjectPaths:
     ENV_PRIVATE_LOCAL_DEPLOY: Final[Path] = ENV_PRIVATE / "local-deploy"
 
 
-class Environment(Enum):
+class Environment(StrEnum):
     LOCAL = "local"
     LOCAL_DEPLOY = "local-deploy"
     TESTING = "testing"
