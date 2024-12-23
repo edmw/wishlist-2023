@@ -27,7 +27,7 @@ class Printer:
         console.print()
         console.print(
             Panel(
-                Text(message, justify="center"),
+                Text.from_markup(message, justify="center"),
                 title=Text(title, style="white on black"),
                 width=72,
                 style="white on black",
@@ -121,7 +121,7 @@ class Markup:
             case "<":
                 return f"<{string}>"
             case "[":
-                return f"[{string}]"
+                return f"\\[{string}]"
             case "(":
                 return f"({string})"
             case "{":

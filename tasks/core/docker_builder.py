@@ -36,7 +36,7 @@ class DockerBuilder:
             match mode:
                 case Mode.DEVELOP | Mode.DEVELOP_DEBUG:
                     message = "Building Webapp for Development"
-                case Mode.DEPLOY:
+                case Mode.PRODUCTION:
                     message = "Building Webapp for Deployment"
             Printer.print_banner("👷👷👷", message)
 
@@ -47,7 +47,7 @@ class DockerBuilder:
                     build_name=CONFIGURATION.build_image_name,
                     output=False,
                 )
-            elif mode == Mode.DEPLOY:
+            elif mode == Mode.PRODUCTION:
                 build_result = make_build.build_deploy(
                     platform=self.platform,
                     base_image=CONFIGURATION.base_image_name,

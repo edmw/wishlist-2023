@@ -96,12 +96,12 @@ def install_development(context: Context) -> None:
 
 
 @task()
-def install_deployment(context: Context) -> None:
-    """Installs deployment dependencies from requirements file into virtual environment."""
+def install_production(context: Context) -> None:
+    """Installs production dependencies from requirements file into virtual environment."""
     printer = Printer()
-    printer.print_banner("🔧🔧🔧", "Installing\nDeployment Dependencies")
+    printer.print_banner("🔧🔧🔧", "Installing\nProduction Dependencies")
     with printer.enumerator() as enumerator:
-        enumerator.do("Installing deployment dependencies")
+        enumerator.do("Installing production dependencies")
         with printer.spinner():
             run_pip(
                 context,
@@ -137,12 +137,12 @@ def sync_development(context: Context) -> None:
 
 
 @task()
-def sync_deployment(context: Context) -> None:
-    """Syncs deployment dependencies from requirements file into virtual environment."""
+def sync_production(context: Context) -> None:
+    """Syncs production dependencies from requirements file into virtual environment."""
     printer = Printer()
-    printer.print_banner("🔧🔧🔧", "Syncing\nDeployment Dependencies")
+    printer.print_banner("🔧🔧🔧", "Syncing\nProduction Dependencies")
     with printer.enumerator() as enumerator:
-        enumerator.do("Syncing deployment dependencies")
+        enumerator.do("Syncing production dependencies")
         with printer.spinner():
             run_piptools_sync(
                 context,
@@ -173,10 +173,10 @@ def _pin_or_update_development(
         )
 
 
-def _pin_or_update_deployment(
+def _pin_or_update_production(
     context: Context, printer: Printer, enumerator: Printer.Enumerator, update: bool
 ) -> None:
-    enumerator.do(f"{'Updating' if update else 'Pinning'} deployment dependencies")
+    enumerator.do(f"{'Updating' if update else 'Pinning'} production dependencies")
     with printer.spinner():
         run_piptools_compile(
             context,
@@ -199,16 +199,16 @@ def pin_development(context: Context) -> None:
 
 
 @task()
-def pin_deployment(context: Context) -> None:
-    """Pins deployment dependencies from project file into requirements file."""
+def pin_production(context: Context) -> None:
+    """Pins production dependencies from project file into requirements file."""
     printer = Printer()
-    printer.print_banner("🔧🔧🔧", "Pinning\nDeployment Dependencies")
+    printer.print_banner("🔧🔧🔧", "Pinning\nProduction Dependencies")
     with printer.enumerator() as enumerator:
-        _pin_or_update_deployment(context, printer, enumerator, update=False)
+        _pin_or_update_production(context, printer, enumerator, update=False)
         enumerator.done()
 
 
-@task()
+@task(name="pin")
 def pin_dependencies(context: Context) -> None:
     """Pins dependencies from project file into requirements files."""
     printer = Printer()
@@ -216,7 +216,7 @@ def pin_dependencies(context: Context) -> None:
     with printer.enumerator() as enumerator:
         _pin_or_update_development(context, printer, enumerator, update=False)
         enumerator.done()
-        _pin_or_update_deployment(context, printer, enumerator, update=False)
+        _pin_or_update_production(context, printer, enumerator, update=False)
         enumerator.done()
 
 
@@ -231,16 +231,16 @@ def update_development(context: Context) -> None:
 
 
 @task()
-def update_deployment(context: Context) -> None:
-    """Updates deployment dependencies from project file into requirements file."""
+def update_production(context: Context) -> None:
+    """Updates production dependencies from project file into requirements file."""
     printer = Printer()
-    printer.print_banner("🔧🔧🔧", "Updating\nDeployment Dependencies")
+    printer.print_banner("🔧🔧🔧", "Updating\nProduction Dependencies")
     with printer.enumerator() as enumerator:
-        _pin_or_update_deployment(context, printer, enumerator, update=True)
+        _pin_or_update_production(context, printer, enumerator, update=True)
         enumerator.done()
 
 
-@task()
+@task(name="update")
 def update_dependencies(context: Context) -> None:
     """Updates dependencies from project file into requirements files."""
     printer = Printer()
@@ -248,5 +248,5 @@ def update_dependencies(context: Context) -> None:
     with printer.enumerator() as enumerator:
         _pin_or_update_development(context, printer, enumerator, update=True)
         enumerator.done()
-        _pin_or_update_deployment(context, printer, enumerator, update=True)
+        _pin_or_update_production(context, printer, enumerator, update=True)
         enumerator.done()
