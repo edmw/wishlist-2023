@@ -139,8 +139,8 @@ class RunnerUsesManageCommand(RunnerUsesManageCommandProtocol):
     ) -> None:
         message = (
             f"Running Command {Markup.ok(command[0])} "
-            f"on Service {Markup.info(self.service, "<")} "
-            f"in Environment {Markup.info(environment.value, "[")}"
+            f"on Service {Markup.service(self.service)} "
+            f"in Environment {Markup.environment(environment)}"
         )
         self.banner("🚀🚀🚀", message)
 
@@ -267,8 +267,8 @@ class DockerRunner:
 
             message = (
                 f"Executing Command {Markup.ok(command[0])} "
-                f"on Service {Markup.info(service, "<")} "
-                f"in Environment {Markup.info(environment.value, "[")}"
+                f"on Service {Markup.service(service)} "
+                f"in Environment {Markup.environment(environment)}"
             )
             self.banner("🔧🔨🪛", message)
 

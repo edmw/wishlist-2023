@@ -1,5 +1,6 @@
 import time
 from contextlib import contextmanager
+from enum import StrEnum
 from typing import Generator
 
 from rich import box, get_console
@@ -158,6 +159,14 @@ class Markup:
     @staticmethod
     def plain(text: str) -> str:
         return Text.from_markup(text).plain
+
+    @staticmethod
+    def service(name: str) -> str:
+        return Markup.info(name, "<")
+
+    @staticmethod
+    def environment(environment: StrEnum) -> str:
+        return Markup.info(environment.value, "[")
 
 
 # endregion ⭐ Markup ⭐
