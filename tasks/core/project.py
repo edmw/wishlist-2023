@@ -1,10 +1,14 @@
+import os
+import stat
 import sys
+import tempfile
 import tomllib
 from dataclasses import dataclass
 from enum import StrEnum
 from pathlib import Path
-from typing import Any, Final
+from typing import Any, Callable, Final
 
+import semver
 import yaml
 
 from .printer import Markup, Printer
@@ -36,7 +40,7 @@ class Environment(StrEnum):
 class ConfigurationError(Exception):
     def __init__(self, message: str, rich_message: str):
         super().__init__(message)
-        self.rich_message = message
+        self.rich_message = rich_message
 
 
 class _Environment:
@@ -152,3 +156,37 @@ try:
 except ConfigurationError as e:
     Printer.print_error("Unable to Load Project Configuration", str(e))
     sys.exit(1)
+
+
+def get_version() -> semver.VersionInfo:
+    """Reads the current version from the version file.
+
+    Raises:
+        FileNotFoundError: If the version file is not found.
+        ValueError: If the version value is invalid.
+    """
+    with open("VERSION", "r") as f:
+        version_str = f.readline()
+        version = semver.VersionInfo.parse(version_str)
+        return version
+
+
+def write_version(version: semver.VersionInfo) -> None:
+    """Writes the given version to the version file.
+
+    Tries to be as robust as possible.
+    """
+    file_descriptor, file_name = tempfile.mkstemp(suffix=".bak", prefix="tmp", text=True)
+    try:
+        with os.fdopen(file_descriptor, "w") as f:
+            f.write(str(version))
+        os.chmod(file_name, stat.S_IREAD | stat.S_IWRITE | stat.S_IRGRP | stat.S_IROTH)
+        os.replace(file_name, "VERSION")
+        file_name = None
+    finally:
+        if file_name is not None:
+            try:
+                os.unlink(file_name)
+            # SECURITY: Nothing to do if unlink fails.
+            except BaseException:  # nosec
+                pass

@@ -1,15 +1,16 @@
 import time
 from contextlib import contextmanager
 from enum import StrEnum
-from typing import Generator
+from typing import Any, Generator
 
 from rich import box, get_console
-from rich.console import Console
+from rich.console import Console, Group
 from rich.panel import Panel
+from rich.pretty import Pretty
 from rich.table import Table
 from rich.text import Text
 
-from .constants import Colors
+from .constants import Color
 
 console = get_console()
 
@@ -32,6 +33,8 @@ class Printer:
                 title=Text(title, style="white on black"),
                 width=72,
                 style="white on black",
+                border_style=Color.BOX_H1.value,
+                box=box.ROUNDED,
             )
         )
         console.print()
@@ -45,7 +48,48 @@ class Printer:
                 title=Text(f"🚨 {title} 🚨", no_wrap=True, style="white on black"),
                 width=72,
                 style="white on black",
+                border_style=Color.BOX_H1.value,
                 box=box.DOUBLE,
+            )
+        )
+        console.print()
+
+    @staticmethod
+    def print_box(title: str, message: Any) -> None:
+        console.print()
+        console.print(
+            Panel(
+                Pretty(message),
+                title=Text(title, style="white on black"),
+                style="white on black",
+                border_style=Color.BOX_H2.value,
+                box=box.ROUNDED,
+            )
+        )
+        console.print()
+
+    @staticmethod
+    def print_boxes(title: str, titles_and_messages: list[tuple[str, Any]]) -> None:
+        console.print()
+        panels = []
+        for box_title, box_message in titles_and_messages:
+            panels.append(
+                Panel(
+                    Pretty(box_message),
+                    title=Text(box_title, style="white on black"),
+                    style="white on black",
+                    border_style=Color.BOX_H3.value,
+                    box=box.ROUNDED,
+                )
+            )
+        console.print(
+            Panel(
+                Group(*panels),
+                title=title,
+                title_align="left",
+                style="white on black",
+                border_style=Color.BOX_H2.value,
+                box=box.ROUNDED,
             )
         )
         console.print()
@@ -142,19 +186,19 @@ class Markup:
 
     @staticmethod
     def info(text: str, marks: str = "") -> str:
-        return Colors.TEXT_INFO.markup(Markup.marks(text, marks))
+        return Color.TEXT_INFO.markup(Markup.marks(text, marks))
 
     @staticmethod
     def ok(text: str, marks: str = "") -> str:
-        return Colors.TEXT_OK.markup(Markup.marks(text, marks))
+        return Color.TEXT_OK.markup(Markup.marks(text, marks))
 
     @staticmethod
     def not_ok(text: str, marks: str = "") -> str:
-        return Colors.TEXT_NOT_OK.markup(Markup.marks(text, marks))
+        return Color.TEXT_NOT_OK.markup(Markup.marks(text, marks))
 
     @staticmethod
     def problematic(text: str, marks: str = "") -> str:
-        return Colors.TEXT_PROBLEMATIC.markup(Markup.marks(text, marks))
+        return Color.TEXT_PROBLEMATIC.markup(Markup.marks(text, marks))
 
     @staticmethod
     def plain(text: str) -> str:
@@ -167,6 +211,10 @@ class Markup:
     @staticmethod
     def environment(environment: StrEnum) -> str:
         return Markup.info(environment.value, "[")
+
+    @staticmethod
+    def mode(mode: StrEnum) -> str:
+        return Markup.info(mode.value, "~")
 
 
 # endregion ⭐ Markup ⭐

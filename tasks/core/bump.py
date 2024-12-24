@@ -1,7 +1,7 @@
-from enum import Enum
+from enum import StrEnum
 
 
-class Bump(Enum):
+class Bump(StrEnum):
     PATCH = "patch"
     MINOR = "minor"
     MAJOR = "major"

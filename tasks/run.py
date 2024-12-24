@@ -6,16 +6,28 @@ from .core.docker_runner import DockerRunner
 from .core.mode import Mode
 
 
-@task(name="development", pre=[build_development])
-def run_development(context: Context) -> None:
+@task(pre=[build_development])
+def _run_development(context: Context) -> None:
+    simulation = getattr(context.config, "simulation", False)
+    DockerRunner.Application(context, simulation=simulation).start(mode=Mode.DEVELOP)
+
+
+@task(name="development", post=[_run_development])
+def run_development(context: Context, dry: bool = False) -> None:
     """Starts a local server and runs the webapp in development mode."""
-    DockerRunner.Application(context).start(mode=Mode.DEVELOP)
+    context.config.simulation = dry
 
 
-@task(name="development_debug", pre=[build_development], default=True)
-def run(context: Context) -> None:
+@task(pre=[build_development])
+def _run(context: Context) -> None:
+    simulation = getattr(context.config, "simulation", False)
+    DockerRunner.Application(context, simulation=simulation).start()
+
+
+@task(name="development_debug", post=[_run], default=True)
+def run(context: Context, dry: bool = False) -> None:
     """Starts a local server and runs the webapp in development mode with debugging enabled."""
-    DockerRunner.Application(context).start()
+    context.config.simulation = dry
 
 
 @task(name="development_down", pre=[build_development])
@@ -24,10 +36,16 @@ def down_development(context: Context) -> None:
     DockerRunner.Application(context).stop(mode=Mode.DEVELOP)
 
 
-@task(name="production", pre=[build_production])
-def run_production(context: Context) -> None:
+@task(pre=[build_production])
+def _run_production(context: Context) -> None:
+    simulation = getattr(context.config, "simulation", False)
+    DockerRunner.Application(context, simulation=simulation).start(mode=Mode.PRODUCTION)
+
+
+@task(name="production", post=[_run_production])
+def run_production(context: Context, dry: bool = False) -> None:
     """Starts a local server and runs the webapp in production mode."""
-    DockerRunner.Application(context).start(mode=Mode.PRODUCTION)
+    context.config.simulation = dry
 
 
 @task(name="production_down", pre=[build_production])

@@ -5,6 +5,7 @@ from typing import Final, Protocol
 import keyring
 from invoke.context import Context
 
+from .docker import DockerBase, DockerProtocol
 from .mode import Mode
 from .printer import Markup, Printer
 from .project import CONFIGURATION, Environment
@@ -34,23 +35,20 @@ class Compose:
 # region ⭐ Runner ⭐
 
 
-class RunnerProtocol(Protocol):
-    context: Context
+class RunnerProtocol(DockerProtocol):
     options_project: list[str]
     options_environment: dict[Environment, list[str]]
-
-    def banner(self, title: str, message: str) -> None: ...
 
     def get_webapp_key(self, mode: Mode) -> str | None: ...
 
     def get_command_options(self, environment: Environment) -> list[str]: ...
-    def build_down_command(self, environment: Environment) -> str: ...
+    def build_down_command(self, environment: Environment) -> list[str]: ...
 
 
-class RunnerBase:
+class RunnerBase(DockerBase):
 
-    def __init__(self, context: Context) -> None:
-        self.context = context
+    def __init__(self, context: Context, simulation: bool = False) -> None:
+        super().__init__(context, simulation)
 
         self.options_project = [
             f"--project-name {CONFIGURATION.project_name}",
@@ -80,9 +78,6 @@ class RunnerBase:
                 f'-f "{Compose.PRIVATE_LOCAL_DEPLOY_ENV}"'
             )
 
-    def banner(self, title: str, message: str) -> None:
-        Printer.print_banner(title, message)
-
     def get_webapp_key(self, mode: Mode) -> str | None:
         name = "local" if mode in [Mode.DEVELOP, Mode.DEVELOP_DEBUG] else "local-deploy"
         return keyring.get_password("wishlist-webapp_key", name)
@@ -90,14 +85,12 @@ class RunnerBase:
     def get_command_options(self, environment: Environment) -> list[str]:
         return self.options_project + self.options_environment[environment]
 
-    def build_down_command(self, environment: Environment) -> str:
-        return " ".join(
-            [
-                "docker compose",
-                *self.get_command_options(environment),
-                "down",
-            ]
-        )
+    def build_down_command(self, environment: Environment) -> list[str]:
+        return [
+            "docker compose",
+            *self.get_command_options(environment),
+            "down",
+        ]
 
 
 class RunnerUsesManageCommandProtocol(RunnerProtocol):
@@ -108,31 +101,29 @@ class RunnerUsesManageCommandProtocol(RunnerProtocol):
         environment: Environment,
         command: list[str],
         python_options: list[str] | None = None,
-    ) -> str: ...
+    ) -> list[str]: ...
 
 
 class RunnerUsesManageCommand(RunnerUsesManageCommandProtocol):
 
     def build_run_manage_command(
         self, environment: Environment, command: list[str], python_options: list[str] | None = None
-    ) -> str:
-        return " ".join(
-            [
-                "docker compose",
-                *self.get_command_options(environment),
-                "run",
-                "--quiet-pull",
-                "--service-ports",
-                "--rm",
-                "--entrypoint=''",
-                self.service,
-                "python",
-                "-Wignore::DeprecationWarning",
-                *(python_options if python_options else []),
-                "manage.py",
-                *command,
-            ]
-        )
+    ) -> list[str]:
+        return [
+            "docker compose",
+            *self.get_command_options(environment),
+            "run",
+            "--quiet-pull",
+            "--service-ports",
+            "--rm",
+            "--entrypoint=''",
+            self.service,
+            "python",
+            "-Wignore::DeprecationWarning",
+            *(python_options if python_options else []),
+            "manage.py",
+            *command,
+        ]
 
     def run_manage_command(
         self, environment: Environment, command: list[str], python_options: list[str] | None = None
@@ -142,12 +133,11 @@ class RunnerUsesManageCommand(RunnerUsesManageCommandProtocol):
             f"on Service {Markup.service(self.service)} "
             f"in Environment {Markup.environment(environment)}"
         )
-        self.banner("🚀🚀🚀", message)
+        self.print_banner("🚀🚀🚀", message)
 
-        self.context.run(
+        self.run_in_context(
             self.build_run_manage_command(environment, command, python_options=python_options),
             env={"WEBAPP_KEY": self.get_webapp_key(Mode.DEVELOP)},
-            pty=True,
         )
 
 
@@ -157,8 +147,8 @@ class DockerRunner:
 
     class Application(RunnerBase):
 
-        def __init__(self, context: Context) -> None:
-            super().__init__(context)
+        def __init__(self, context: Context, simulation: bool = False) -> None:
+            super().__init__(context, simulation)
 
             self.mode_options = {
                 Mode.DEVELOP: [],
@@ -168,7 +158,7 @@ class DockerRunner:
                 Mode.PRODUCTION: [],
             }
 
-        def build_command(self, mode: Mode, start: bool) -> str:
+        def build_command(self, mode: Mode, start: bool) -> list[str]:
             match mode:
                 case Mode.DEVELOP:
                     environment = Environment.LOCAL
@@ -176,14 +166,12 @@ class DockerRunner:
                     environment = Environment.LOCAL
                 case Mode.PRODUCTION:
                     environment = Environment.LOCAL_DEPLOY
-            return " ".join(
-                [
-                    "docker compose",
-                    *self.get_command_options(environment),
-                    *self.mode_options[mode],
-                    "up" if start is True else "down",
-                ]
-            )
+            return [
+                "docker compose",
+                *self.get_command_options(environment),
+                *self.mode_options[mode],
+                "up" if start is True else "down",
+            ]
 
         def start(self, mode: Mode = Mode.DEVELOP_DEBUG) -> None:
             match mode:
@@ -193,18 +181,14 @@ class DockerRunner:
                     message = "Running Webapp in Development Mode and Debugging Enabled"
                 case Mode.PRODUCTION:
                     message = "Running Webapp in Production Mode"
-            self.banner("🚀🚀🚀", message)
+            self.print_banner("🚀🚀🚀", message)
 
             command = self.build_command(mode, start=True)
-            self.context.run(
-                command,
-                env={"WEBAPP_KEY": self.get_webapp_key(mode)},
-                pty=True,
-            )
+            self.run_in_context(command, env={"WEBAPP_KEY": self.get_webapp_key(mode)})
 
         def stop(self, mode: Mode = Mode.DEVELOP_DEBUG) -> None:
             command = self.build_command(mode, start=False)
-            self.context.run(command, pty=True)
+            self.run_in_context(command)
 
     # endregion Application
 
@@ -229,7 +213,7 @@ class DockerRunner:
 
         def stop(self) -> None:
             command = self.build_down_command(Environment.TESTING)
-            self.context.run(command, pty=True)
+            self.run_in_context(command)
 
     # endregion ApplicationTest
 
@@ -249,7 +233,7 @@ class DockerRunner:
 
         def stop(self) -> None:
             command = self.build_down_command(Environment.LOCAL)
-            self.context.run(command, pty=True)
+            self.run_in_context(command)
 
     # endregion ApplicationCommand
 
@@ -270,24 +254,21 @@ class DockerRunner:
                 f"on Service {Markup.service(service)} "
                 f"in Environment {Markup.environment(environment)}"
             )
-            self.banner("🔧🔨🪛", message)
+            self.print_banner("🔧🔨🪛", message)
 
-            self.context.run(
-                " ".join(
-                    [
-                        "docker compose",
-                        *self.get_command_options(environment),
-                        "exec",
-                        service,
-                        *command,
-                    ]
-                ),
-                pty=True,
+            self.run_in_context(
+                [
+                    "docker compose",
+                    *self.get_command_options(environment),
+                    "exec",
+                    service,
+                    *command,
+                ]
             )
 
         def stop(self) -> None:
             command = self.build_down_command(Environment.LOCAL)
-            self.context.run(command, pty=True)
+            self.run_in_context(command)
 
     # endregion ShellCommand
 
