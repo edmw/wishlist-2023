@@ -1,13 +1,13 @@
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Final, Protocol
+from typing import Final
 
 import keyring
 from invoke.context import Context
 
 from .docker import DockerBase, DockerProtocol
 from .mode import Mode
-from .printer import Markup, Printer
+from .printer import Markup
 from .project import CONFIGURATION, Environment
 
 

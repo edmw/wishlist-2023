@@ -151,7 +151,7 @@ class BuilderBase(DockerBase):
                 base_image=base_image,
             )
 
-        run(
+        run(  # nosec
             command=command,
             environment=environment,
             verbose=verbose,
@@ -165,7 +165,7 @@ class BuilderBase(DockerBase):
             platform = f"{platform_os}/{platform_architecture}"
         except (ValueError, KeyError) as e:
             message = f"Inspecting image {Markup.ok(image_name, '"')}:\n  {Markup.not_ok(str(e))}"
-            raise BuildError(Markup.plain(message), message)
+            raise BuildError(Markup.plain(message), message) from e
 
         return BuildResult(
             target=target,
@@ -245,9 +245,9 @@ class BuilderBase(DockerBase):
 
         try:
             version = get_version()
-        except (FileNotFoundError, ValueError):
+        except (FileNotFoundError, ValueError) as e:
             message = "Error reading project version"
-            raise BuildError(Markup.plain(message), message)
+            raise BuildError(Markup.plain(message), message) from e
 
         match bump:
             case Bump.PATCH:
@@ -279,7 +279,7 @@ class BuilderBase(DockerBase):
         if self.simulation:
             print("SIMULATION: Would commit version file")
         else:
-            run(
+            run(  # nosec
                 [
                     "git",
                     "commit",
@@ -293,7 +293,7 @@ class BuilderBase(DockerBase):
         if self.simulation:
             print(f"SIMULATION: Would create tag for {Markup.info(build_result.image_tag)}")
         else:
-            run(
+            run(  # nosec
                 [
                     "git",
                     "tag",
@@ -355,7 +355,7 @@ class DockerBuilder:
                     f"Error while building image for development in mode {Markup.mode(mode)}:\n\n"
                     + e.rich_message
                 )
-                raise DockerBuilderError(Markup.plain(message), message)
+                raise DockerBuilderError(Markup.plain(message), message) from e
 
     # endregion Development
 
@@ -377,8 +377,8 @@ class DockerBuilder:
                 self.print_build_result(build_result._asdict())
 
             except (CheckError, BuildError) as e:
-                message = f"Error while building image for release:\n\n" + e.rich_message
-                raise DockerBuilderError(Markup.plain(message), message)
+                message = f"Error while building image for release:\n\n{e.rich_message}"
+                raise DockerBuilderError(Markup.plain(message), message) from e
 
     # endregion Release
 

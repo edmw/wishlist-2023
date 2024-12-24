@@ -1,8 +1,5 @@
-from invoke.context import Context
-from invoke.runners import Result
-
 from .docker import DockerBase
-from .printer import Markup, Printer
+from .printer import Markup
 from .project import CONFIGURATION, get_version
 
 
@@ -46,9 +43,9 @@ class DockerPusher:
 
             try:
                 version = get_version()
-            except (FileNotFoundError, ValueError):
+            except (FileNotFoundError, ValueError) as e:
                 message = "Error reading project version"
-                raise PushError(Markup.plain(message), message)
+                raise PushError(Markup.plain(message), message) from e
 
             command = self.build_tag_command(
                 version=str(version), build_name=CONFIGURATION.build_image_name
