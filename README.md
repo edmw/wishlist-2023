@@ -2,7 +2,7 @@
 
 [![Build, Check, Test](https://github.com/edmw/wishlist-2023/actions/workflows/main.yml/badge.svg)](https://github.com/edmw/wishlist-2023/actions/workflows/main.yml)
 
-Wishlist is a web application written in Python with Django framework for managing wish lists. It allows users to create lists of items they want most and share them with others.
+Wishlist is a web application written in Python with the Django framework for managing wish lists. It allows users to create lists of items they want most and share them with others.
 
 This is a rewrite of the [2019 Wishlist web application written in Swift](https://github.com/edmw/wishlist).
 
@@ -18,64 +18,66 @@ $ pyenv install 3.12
 $ pyenv virtualenv 3.12 wishlist-12
 $ pyenv local wishlist-12
 $ pyenv shell wishlist-12
-$ make dependencies-install-development
+$ python -m pip install --upgrade pip
+$ python -m pip install invoke semver keyring rich pyyaml
+$ inv make.install-development
 ```
 
 ## Run Development Server
 
-Django webserver is used to execute the web application for development. The server can be started with Django Debug Mode turned on or off and Debug Adapter Protocol activated or deactivated.
+The Django web server is used to execute the web application for development. The server can be started with Django Debug Mode turned on or off and Debug Adapter Protocol activated or deactivated.
 
 Run with Django Debug Mode turned **on** and Debug Adapter Protocol **activated**:
 
 ```
-$ make
+$ inv run
 ```
 
 Run with Django Debug Mode turned **off** and Debug Adapter Protocol **activated**:
 
 ```
-$ DJANGO_DEBUG=False make
+$ DJANGO_DEBUG=False inv run
 ```
 
 Run with Django Debug Mode turned **on** and Debug Adapter Protocol **deactivated**:
 
 ```
-$ make run-develop
+$ inv run.development
 ```
 
 Run with Django Debug Mode turned **off** and Debug Adapter Protocol **deactivated**:
 
 ```
-$ DJANGO_DEBUG=False make run-develop
+$ DJANGO_DEBUG=False inv run.development
 ```
 
-The development image contains several additional tools and libraries that enable development tasks and debugging.
+The development image contains several **additional tools and libraries** that enable development tasks and debugging.
 
-## Run Deployment Version
+## Run Production Version
 
 `Gunicorn` is used to execute the web application.
 
 ```
-$ make run-deploy
+$ inv run.production
 ```
 
-This uses the deployment image with only required tools and libraries installed.
+This uses the deployment image with only **required tools and libraries** installed and Django Debug Mode turned **off**.
 
 ## Release a new Version
 
 Release a new version of the project using either
 
 ```
-make release.patch
-make release.minor
-make release.major
+inv release.patch
+inv release.minor
+inv release.major
 ```
 
 which will bump the version number accordingly, build a new release image, commit a version tag, and push the new image to the registry.
 
 Note: To build a new release, `main` must be the current branch, `main` must be a tracking branch, `main` must be up-to-date, and `main` must not be dirty.
 
-Note: Currently, the history will not be updated. Best practice is to update the history file before running `make release.*`.
+Note: Currently, the history will not be updated. Best practice is to update the history file before running `inv release.*`.
 
 ## Make
 

@@ -41,6 +41,7 @@ from .manage import (
     shell,
     translations,
 )
+from .release import major, minor, patch
 from .run import down_development, down_production, run, run_development, run_production
 from .test import test, test_coverage, test_debug, test_down
 
@@ -107,51 +108,25 @@ def show_configuration(context: Context, env: str | None = None) -> None:
             inspect(CONFIGURATION)
 
 
-collection_build = Collection("build")
-collection_run = Collection("run")
-collection_test = Collection("test")
-collection_check = Collection("check")
-collection_manage = Collection("manage")
 collection_make = Collection("make")
+collection_manage = Collection("manage")
+collection_build = Collection("build")
+collection_release = Collection("release")
+collection_check = Collection("check")
+collection_test = Collection("test")
+collection_run = Collection("run")
 
 namespace = Collection(
     collection_make,
     collection_manage,
     collection_build,
+    collection_release,
     collection_check,
     collection_test,
     collection_run,
 )
 namespace.add_task(cast(Task, list_tasks))
 namespace.add_task(cast(Task, show_configuration))
-
-collection_build.add_task(cast(Task, build_development))
-collection_build.add_task(cast(Task, build_production))
-collection_build.add_task(cast(Task, build_release_patch))
-collection_build.add_task(cast(Task, build_release_minor))
-collection_build.add_task(cast(Task, build_release_major))
-
-collection_run.add_task(cast(Task, run))
-collection_run.add_task(cast(Task, run_development))
-collection_run.add_task(cast(Task, down_development))
-collection_run.add_task(cast(Task, run_production))
-collection_run.add_task(cast(Task, down_production))
-
-collection_test.add_task(cast(Task, test))
-collection_test.add_task(cast(Task, test_debug))
-collection_test.add_task(cast(Task, test_coverage))
-collection_test.add_task(cast(Task, test_down))
-
-collection_check.add_task(cast(Task, check))
-collection_check.add_task(cast(Task, check_down))
-
-collection_manage.add_task(cast(Task, console))
-collection_manage.add_task(cast(Task, migrations))
-collection_manage.add_task(cast(Task, translations))
-collection_manage.add_task(cast(Task, dumpdata))
-collection_manage.add_task(cast(Task, shell))
-collection_manage.add_task(cast(Task, connect_database))
-collection_manage.add_task(cast(Task, connect_datastore))
 
 collection_make.add_task(cast(Task, clean))
 collection_make.add_task(cast(Task, pin_dependencies))
@@ -164,3 +139,35 @@ collection_make.add_task(cast(Task, install_development))
 collection_make.add_task(cast(Task, install_production))
 collection_make.add_task(cast(Task, sync_development))
 collection_make.add_task(cast(Task, sync_production))
+
+collection_manage.add_task(cast(Task, console))
+collection_manage.add_task(cast(Task, migrations))
+collection_manage.add_task(cast(Task, translations))
+collection_manage.add_task(cast(Task, dumpdata))
+collection_manage.add_task(cast(Task, shell))
+collection_manage.add_task(cast(Task, connect_database))
+collection_manage.add_task(cast(Task, connect_datastore))
+
+collection_build.add_task(cast(Task, build_development))
+collection_build.add_task(cast(Task, build_production))
+collection_build.add_task(cast(Task, build_release_patch))
+collection_build.add_task(cast(Task, build_release_minor))
+collection_build.add_task(cast(Task, build_release_major))
+
+collection_release.add_task(cast(Task, patch))
+collection_release.add_task(cast(Task, minor))
+collection_release.add_task(cast(Task, major))
+
+collection_check.add_task(cast(Task, check))
+collection_check.add_task(cast(Task, check_down))
+
+collection_test.add_task(cast(Task, test))
+collection_test.add_task(cast(Task, test_debug))
+collection_test.add_task(cast(Task, test_coverage))
+collection_test.add_task(cast(Task, test_down))
+
+collection_run.add_task(cast(Task, run))
+collection_run.add_task(cast(Task, run_development))
+collection_run.add_task(cast(Task, down_development))
+collection_run.add_task(cast(Task, run_production))
+collection_run.add_task(cast(Task, down_production))

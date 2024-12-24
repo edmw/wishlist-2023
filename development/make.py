@@ -69,6 +69,7 @@ def subprocess_run(
     environment: dict[str, Any] | None = None,
     verbose: bool = False,
     debug: bool = False,
+    simulation: bool = False,
 ) -> None:
     """Runs the given command as subprocess.
 
@@ -78,14 +79,18 @@ def subprocess_run(
     """
     if not environment:
         environment = {}
+    if debug or simulation:
+        banner("COMMAND", char="-")
+        pprint(command)
+        banner("ENVIRONMENT", char="-")
+        pprint(environment)
+    if verbose:
+        print()
+
+    if simulation:
+        return
+
     try:
-        if debug:
-            banner("COMMAND", char="-")
-            pprint(command)
-            banner("ENVIRONMENT", char="-")
-            pprint(environment)
-        if verbose:
-            print()
         subprocess.run(  # nosec
             command,
             check=True,
