@@ -6,7 +6,7 @@ import tomllib
 from dataclasses import dataclass
 from enum import StrEnum
 from pathlib import Path
-from typing import Any, Callable, Final
+from typing import Any, Final
 
 import semver
 import yaml

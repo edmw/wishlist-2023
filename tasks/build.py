@@ -9,7 +9,7 @@ from .core.printer import Printer
 
 @task(name="development")
 def build_development(context: Context, dry: bool = False) -> None:
-    """Builds the webapp for development mode and ARM64 architecture."""
+    """Builds the webapp image for development mode and ARM64 architecture."""
     dry = getattr(context.config, "simulation", dry)
     try:
         DockerBuilder.Development(context, "linux/arm64", simulation=dry).build(mode=Mode.DEVELOP)
@@ -19,7 +19,7 @@ def build_development(context: Context, dry: bool = False) -> None:
 
 @task(name="production")
 def build_production(context: Context, dry: bool = False) -> None:
-    """Builds the webapp for production mode and ARM64 architecture."""
+    """Builds the webapp image for production mode and ARM64 architecture."""
     dry = getattr(context.config, "simulation", dry)
     try:
         DockerBuilder.Development(context, "linux/arm64", simulation=dry).build(mode=Mode.PRODUCTION)
@@ -29,7 +29,7 @@ def build_production(context: Context, dry: bool = False) -> None:
 
 @task(name="release_patch")
 def build_release_patch(context: Context, dry: bool = False) -> None:
-    """Builds the webapp for a patch release and AMD64 architecture."""
+    """Builds the webapp image for a patch release and AMD64 architecture."""
     dry = getattr(context.config, "simulation", dry)
     try:
         DockerBuilder.Release(context, "linux/amd64", simulation=dry).build(bump=Bump.PATCH)
@@ -39,7 +39,7 @@ def build_release_patch(context: Context, dry: bool = False) -> None:
 
 @task(name="release_minor")
 def build_release_minor(context: Context, dry: bool = False) -> None:
-    """Builds the webapp for a minor release and AMD64 architecture."""
+    """Builds the webapp image for a minor release and AMD64 architecture."""
     dry = getattr(context.config, "simulation", dry)
     try:
         DockerBuilder.Release(context, "linux/amd64", simulation=dry).build(bump=Bump.MINOR)
@@ -49,7 +49,7 @@ def build_release_minor(context: Context, dry: bool = False) -> None:
 
 @task(name="release_major")
 def build_release_major(context: Context, dry: bool = False) -> None:
-    """Builds the webapp for a major release and AMD64 architecture."""
+    """Builds the webapp image for a major release and AMD64 architecture."""
     dry = getattr(context.config, "simulation", dry)
     try:
         DockerBuilder.Release(context, "linux/amd64", simulation=dry).build(bump=Bump.MAJOR)
