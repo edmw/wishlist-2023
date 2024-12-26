@@ -147,8 +147,8 @@ class DockerRunner:
 
     class Application(RunnerBase):
 
-        def __init__(self, context: Context, simulation: bool = False) -> None:
-            super().__init__(context, simulation)
+        def __init__(self, context: Context) -> None:
+            super().__init__(context, context.config.get("simulation", False))
 
             self.mode_options = {
                 Mode.DEVELOP: [],
@@ -197,7 +197,7 @@ class DockerRunner:
     class ApplicationTest(RunnerBase, RunnerUsesManageCommand):
 
         def __init__(self, context: Context) -> None:
-            super().__init__(context)
+            super().__init__(context, context.config.get("simulation", False))
 
             self.service = CONFIGURATION.environments[Environment.LOCAL].service_app
 
@@ -222,9 +222,11 @@ class DockerRunner:
     class ApplicationCommand(RunnerBase, RunnerUsesManageCommand):
 
         def __init__(
-            self, context: Context, service: str = CONFIGURATION.environments[Environment.LOCAL].service_app
+            self,
+            context: Context,
+            service: str = CONFIGURATION.environments[Environment.LOCAL].service_app,
         ) -> None:
-            super().__init__(context)
+            super().__init__(context, context.config.get("simulation", False))
 
             self.service = service
 
@@ -241,8 +243,8 @@ class DockerRunner:
 
     class ShellCommand(RunnerBase):
 
-        def __init__(self, context: Context, container: str = "app") -> None:
-            super().__init__(context)
+        def __init__(self, context: Context, container: str = "app", simulation: bool = False) -> None:
+            super().__init__(context, context.config.get("simulation", False))
 
             self.container = container
 

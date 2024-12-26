@@ -247,78 +247,6 @@ release.%: --guard-release.% check build-release.%
 	@ $(MAKE_PYTHON) development/make_release.py --name "$(BUILD_IMAGE_NAME)" push
 
 
-########  ######## ########  ######## ##    ## ########  ######## ##    ##  ######  #### ########  ######
-##     ## ##       ##     ## ##       ###   ## ##     ## ##       ###   ## ##    ##  ##  ##       ##    ##
-##     ## ##       ##     ## ##       ####  ## ##     ## ##       ####  ## ##        ##  ##       ##
-##     ## ######   ########  ######   ## ## ## ##     ## ######   ## ## ## ##        ##  ######    ######
-##     ## ##       ##        ##       ##  #### ##     ## ##       ##  #### ##        ##  ##             ##
-##     ## ##       ##        ##       ##   ### ##     ## ##       ##   ### ##    ##  ##  ##       ##    ##
-########  ######## ##        ######## ##    ## ########  ######## ##    ##  ######  #### ########  ######
-
-.PHONY: --dependencies-banner.%
---dependencies-banner.%:
-	@ printf "\033[48;5;000m 🔗🔗🔗  " && echo "$(*)\c" | sed -r 's/_/ /g' && echo " \033[0m\n"
-
-.PHONY: check-venv
-check-venv:
-	@if [ -z "$$VIRTUAL_ENV" ]; then \
-		echo "No virtual environment is activated. Please activate a virtual environment first."; \
-		exit 1; \
-	fi
-
-.PHONY: dependencies-install-deployment
-dependencies-install-deployment: --dependencies-banner.Installing_Deployment check-venv
-	$(MAKE_PYTHON) -m pip --require-virtualenv --quiet install --upgrade -r requirements.txt
-	$(MAKE_PYTHON) -m pip --require-virtualenv --quiet check
-
-.PHONY: dependencies-install-development
-dependencies-install-development: --dependencies-banner.Installing_Development check-venv
-	$(MAKE_PYTHON) -m pip --require-virtualenv --quiet install --upgrade -r requirements.txt -r requirements-development.txt
-	$(MAKE_PYTHON) -m pip --require-virtualenv --quiet check
-
-.PHONY: dependencies-pin-deployment
-dependencies-pin-deployment: --dependencies-banner.Pinning_Deployment
-	$(MAKE_PYTHON) -m piptools compile --quiet --resolver=backtracking --generate-hashes --allow-unsafe --strip-extras \
-		-o requirements.txt \
-		pyproject.toml
-
-.PHONY: dependencies-pin-development
-dependencies-pin-development: --dependencies-banner.Pinning_Development
-	$(MAKE_PYTHON) -m piptools compile --quiet --resolver=backtracking --generate-hashes --allow-unsafe --strip-extras \
-		--extra build \
-		--extra test \
-		--extra check \
-		--extra tool \
-		--extra support \
-		-o requirements-development.txt \
-		pyproject.toml
-
-.PHONY: dependencies-pin-all
-dependencies-pin-all: dependencies-pin-deployment dependencies-pin-development
-
-.PHONY: dependencies-update-deployment
-dependencies-update-deployment: --dependencies-banner.Updating_Deployment environment-upgrade
-	$(MAKE_PYTHON) -m piptools compile --quiet --resolver backtracking --upgrade \
-		--annotation-style line --strip-extras \
-		-o requirements.txt \
-		pyproject.toml
-
-.PHONY: dependencies-update-development
-dependencies-update-development: --dependencies-banner.Updating_Deployment environment-upgrade
-	$(MAKE_PYTHON) -m piptools compile --quiet --resolver backtracking --upgrade \
-		--annotation-style line --strip-extras \
-		--extra build \
-		--extra test \
-		--extra check \
-		--extra tool \
-		--extra support \
-		-o requirements-development.txt \
-		pyproject.toml
-
-.PHONY: dependencies-update-all
-dependencies-update-all: dependencies-update-deployment dependencies-update-development
-
-
 ######## ##    ## ##     ## #### ########   #######  ##    ## ##     ## ######## ##    ## ########
 ##       ###   ## ##     ##  ##  ##     ## ##     ## ###   ## ###   ### ##       ###   ##    ##
 ##       ####  ## ##     ##  ##  ##     ## ##     ## ####  ## #### #### ##       ####  ##    ##
@@ -327,47 +255,6 @@ dependencies-update-all: dependencies-update-deployment dependencies-update-deve
 ##       ##   ###   ## ##    ##  ##    ##  ##     ## ##   ### ##     ## ##       ##   ###    ##
 ######## ##    ##    ###    #### ##     ##  #######  ##    ## ##     ## ######## ##    ##    ##
 
-.PHONY clean:
-clean:
-	@ rm -rf "$(MAKE_DIR).cache"
-	@ find "$(MAKE_DIR)" -depth -path "*" -type d -iname __pycache__ -exec rm -rf {} \;
-	@ find "$(MAKE_DIR)reports/coverage/html" -depth -path "*" -type f -maxdepth 1 ! -iname .gitignore -exec rm -f {} \;
-
 .PHONY: environment-upgrade
 environment-upgrade:
 	pip --require-virtualenv --quiet install --upgrade pip pip-tools wheel
-
-.PHONY: --tool-banner.%
---tool-banner.%:
-	@ printf "\033[48;5;000m 🔧🔨🪛  " && echo "$(*)\c" | sed -r 's/_/ /g' && echo " \033[0m\n"
-
---guard-shell.%:
-	@ if [ ! "$*" = "web" -a ! "$*" = "app" -a ! "$*" = "beat" -a ! "$*" = "worker" -a ! "$*" = "files" ]; then \
-		echo "shell: name must be either one of 'web', 'app', 'beat', 'worker', 'files' - not '$*'"; \
-		exit 1; \
-	fi
-
-.PHONY: shell.%
-shell.%: --guard-shell.% build-develop --tool-banner.Executing_Shell
-	@ $(MAKE_DOCKER_COMPOSE) $(RUN_WEBAPP_LOCAL) exec $* bash
-
-.PHONY: shell
-shell:
-	@ make shell.app
-
-.PHONY: console
-console: build-develop --tool-banner.Executing_Console
-	@ $(MAKE_DOCKER_COMPOSE) $(RUN_WEBAPP_LOCAL) \
-		exec app $(MAKE_DOCKER_PYTHON) manage.py shell
-
-.PHONY: run-shell.%
-run-shell.%: --guard-shell.% build-develop --tool-banner.Running_Shell
-	$(RUN_DOCKER_LOCAL) run --rm --entrypoint="" $* bash
-
-.PHONY: run-shell
-run-shell:
-	@ make run-shell.app
-
-.PHONY: run-console
-run-console: build-develop --tool-banner.Running_Console
-	$(RUN_DOCKER_LOCAL) $(RUN_DOCKER_RUN) $(MAKE_DOCKER_PYTHON) manage.py shell

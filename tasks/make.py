@@ -1,61 +1,64 @@
-from invoke.context import Context
-from invoke.tasks import task
+from functools import wraps
+from typing import Callable
 
+from invoke.context import Context
+from invoke.runners import Result
+
+from .core import run_in_context, task, task_banner
 from .core.files import FilesCleaner
-from .core.printer import Printer
+from .core.printer import Markup, Printer
 from .core.project import CONFIGURATION
 
 
 def run_pip(context: Context, arguments: list[str]) -> None:
-    context.run(
-        " ".join(
-            [
-                "python -m pip",
-                "--require-virtualenv",
-                "--quiet",
-                *arguments,
-            ]
-        )
+    run_in_context(
+        context,
+        [
+            "python -m pip",
+            "--require-virtualenv",
+            "--quiet",
+            *arguments,
+        ],
     )
 
 
 def run_piptools_compile(context: Context, arguments: list[str]) -> None:
-    context.run(
-        " ".join(
-            [
-                "python -m piptools",
-                "compile",
-                "--quiet",
-                "--resolver=backtracking",
-                "--generate-hashes",
-                "--strip-extras",
-                "--allow-unsafe",
-                *arguments,
-            ]
-        )
+    run_in_context(
+        context,
+        [
+            "python -m piptools",
+            "compile",
+            "--quiet",
+            "--resolver=backtracking",
+            "--generate-hashes",
+            "--strip-extras",
+            "--allow-unsafe",
+            *arguments,
+        ],
     )
 
 
 def run_piptools_sync(context: Context, arguments: list[str]) -> None:
-    context.run(
-        " ".join(
-            [
-                "python -m piptools",
-                "sync",
-                "--quiet",
-                *arguments,
-            ]
-        )
+    run_in_context(
+        context,
+        [
+            "python -m piptools",
+            "sync",
+            "--quiet",
+            *arguments,
+        ],
     )
 
 
 @task()
+@task_banner("🧹🧹🧹", "Cleaning\nProject")
 def clean(context: Context) -> None:
     """Cleans up files and directories."""
-    cleaner = FilesCleaner()
+    simulation = context.config.get("simulation", False)
+
+    cleaner = FilesCleaner(simulation)
 
     printer = Printer()
-    printer.print_banner("🧹🧹🧹", "Cleaning\nProject")
     with printer.enumerator() as enumerator:
 
         enumerator.do("Removing files")
@@ -67,15 +70,15 @@ def clean(context: Context) -> None:
         enumerator.do("Removing .cache directory")
         cleaner.remove_directory(CONFIGURATION.project_paths.PROJECT / ".cache")
         enumerator.do("Removing __pycache__ directories")
-        cleaner.find_directory_and_remove("__pycache__", CONFIGURATION.project_paths.PROJECT)
+        cleaner.find_and_remove_in_directory("__pycache__", CONFIGURATION.project_paths.PROJECT)
         enumerator.done()
 
 
 @task()
+@task_banner("🔧🔧🔧", "Installing\nDevelopment Dependencies")
 def install_development(context: Context) -> None:
     """Installs development dependencies from requirements file for development into virtual environment."""
     printer = Printer()
-    printer.print_banner("🔧🔧🔧", "Installing\nDevelopment Dependencies")
     with printer.enumerator() as enumerator:
         enumerator.do("Installing development dependencies")
         with printer.spinner():
@@ -91,15 +94,15 @@ def install_development(context: Context) -> None:
         enumerator.done()
 
         enumerator.do("Checking installed dependencies")
-        context.run("python -m pip --require-virtualenv --quiet check")
+        run_in_context(context, ["python", "-m pip", "--require-virtualenv", "--quiet check"])
         enumerator.done()
 
 
 @task()
+@task_banner("🔧🔧🔧", "Installing\nProduction Dependencies")
 def install_production(context: Context) -> None:
     """Installs production dependencies from requirements file into virtual environment."""
     printer = Printer()
-    printer.print_banner("🔧🔧🔧", "Installing\nProduction Dependencies")
     with printer.enumerator() as enumerator:
         enumerator.do("Installing production dependencies")
         with printer.spinner():
@@ -114,15 +117,15 @@ def install_production(context: Context) -> None:
         enumerator.done()
 
         enumerator.do("Checking installed dependencies")
-        context.run("python -m pip --require-virtualenv --quiet check")
+        run_in_context(context, ["python", "-m pip", "--require-virtualenv", "--quiet check"])
         enumerator.done()
 
 
 @task()
+@task_banner("🔧🔧🔧", "Syncing\nDevelopment Dependencies")
 def sync_development(context: Context) -> None:
     """Syncs development dependencies from requirements file for development into virtual environment."""
     printer = Printer()
-    printer.print_banner("🔧🔧🔧", "Syncing\nDevelopment Dependencies")
     with printer.enumerator() as enumerator:
         enumerator.do("Syncing development dependencies")
         with printer.spinner():
@@ -137,10 +140,10 @@ def sync_development(context: Context) -> None:
 
 
 @task()
+@task_banner("🔧🔧🔧", "Syncing\nProduction Dependencies")
 def sync_production(context: Context) -> None:
     """Syncs production dependencies from requirements file into virtual environment."""
     printer = Printer()
-    printer.print_banner("🔧🔧🔧", "Syncing\nProduction Dependencies")
     with printer.enumerator() as enumerator:
         enumerator.do("Syncing production dependencies")
         with printer.spinner():
@@ -189,30 +192,30 @@ def _pin_or_update_production(
 
 
 @task()
+@task_banner("🔧🔧🔧", "Pinning\nDevelopment Dependencies")
 def pin_development(context: Context) -> None:
     """Pins development dependencies from project file into requirements file for development."""
     printer = Printer()
-    printer.print_banner("🔧🔧🔧", "Pinning\nDevelopment Dependencies")
     with printer.enumerator() as enumerator:
         _pin_or_update_development(context, printer, enumerator, update=False)
         enumerator.done()
 
 
 @task()
+@task_banner("🔧🔧🔧", "Pinning\nProduction Dependencies")
 def pin_production(context: Context) -> None:
     """Pins production dependencies from project file into requirements file."""
     printer = Printer()
-    printer.print_banner("🔧🔧🔧", "Pinning\nProduction Dependencies")
     with printer.enumerator() as enumerator:
         _pin_or_update_production(context, printer, enumerator, update=False)
         enumerator.done()
 
 
 @task(name="pin")
+@task_banner("🔧🔧🔧", "Pinning\nDependencies")
 def pin_dependencies(context: Context) -> None:
     """Pins dependencies from project file into requirements files."""
     printer = Printer()
-    printer.print_banner("🔧🔧🔧", "Pinning\nDependencies")
     with printer.enumerator() as enumerator:
         _pin_or_update_development(context, printer, enumerator, update=False)
         enumerator.done()
@@ -221,30 +224,30 @@ def pin_dependencies(context: Context) -> None:
 
 
 @task()
+@task_banner("🔧🔧🔧", "Updating\nDevelopment Dependencies")
 def update_development(context: Context) -> None:
     """Updates development dependencies from project file into requirements file for development."""
     printer = Printer()
-    printer.print_banner("🔧🔧🔧", "Updating\nDevelopment Dependencies")
     with printer.enumerator() as enumerator:
         _pin_or_update_development(context, printer, enumerator, update=True)
         enumerator.done()
 
 
 @task()
+@task_banner("🔧🔧🔧", "Updating\nProduction Dependencies")
 def update_production(context: Context) -> None:
     """Updates production dependencies from project file into requirements file."""
     printer = Printer()
-    printer.print_banner("🔧🔧🔧", "Updating\nProduction Dependencies")
     with printer.enumerator() as enumerator:
         _pin_or_update_production(context, printer, enumerator, update=True)
         enumerator.done()
 
 
 @task(name="update")
+@task_banner("🔧🔧🔧", "Updating\nDependencies")
 def update_dependencies(context: Context) -> None:
     """Updates dependencies from project file into requirements files."""
     printer = Printer()
-    printer.print_banner("🔧🔧🔧", "Updating\nDependencies")
     with printer.enumerator() as enumerator:
         _pin_or_update_development(context, printer, enumerator, update=True)
         enumerator.done()

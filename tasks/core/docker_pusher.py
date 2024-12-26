@@ -1,3 +1,5 @@
+from invoke.context import Context
+
 from .docker import DockerBase
 from .printer import Markup
 from .project import CONFIGURATION, get_version
@@ -21,6 +23,9 @@ class DockerPusher:
     # region Application
 
     class Application(PusherBase):
+
+        def __init__(self, context: Context) -> None:
+            super().__init__(context, context.config.get("simulation", False))
 
         def build_tag_command(self, version: str, build_name: str) -> list[str]:
             return [
