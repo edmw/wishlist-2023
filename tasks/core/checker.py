@@ -1,8 +1,6 @@
 import subprocess
 
-from rich import print
-
-from .printer import Markup
+from .printer import Markup, Printer
 
 
 class CheckError(Exception):
@@ -47,7 +45,7 @@ class Checker:
             # git branch’s output does not match
             message = f"Current branch is not {Markup.not_ok(branchname, "'")}"
             if self.simulation:
-                print(f"SIMULATION: Would abort because: {message}")
+                Printer.simulation_would_abort(message)
                 return
             raise CheckError(Markup.plain(message), message)
 
@@ -63,7 +61,7 @@ class Checker:
             # git branch is out-of-date
             message = f"Current branch is {Markup.not_ok("not up-to-date")} with its upstream"
             if self.simulation:
-                print(f"SIMULATION: Would abort because: {message}")
+                Printer.simulation_would_abort(message)
                 return
             raise CheckError(Markup.plain(message), message)
 
@@ -76,6 +74,6 @@ class Checker:
             # git status’ output is not empty => working tree is dirty
             message = f"Working tree is {Markup.not_ok("dirty")}"
             if self.simulation:
-                print(f"SIMULATION: Would abort because: {message}")
+                Printer.simulation_would_abort(message)
                 return
             raise CheckError(Markup.plain(message), message)

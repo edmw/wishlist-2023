@@ -45,7 +45,7 @@ class Printer:
         console.print(
             Panel(
                 Text.from_markup(message, justify="left"),
-                title=Text(f"🚨 {title} 🚨", no_wrap=True, style="white on black"),
+                title=Text(f"🚨 {title.upper()} 🚨", no_wrap=True, style="white on black"),
                 width=72,
                 style="white on black",
                 border_style=Color.BOX_H1.value,
@@ -108,6 +108,19 @@ class Printer:
             ),
         )
         console.print()
+
+    @staticmethod
+    def simulation_would(message: str | list[str]) -> None:
+        if isinstance(message, str):
+            message = [message]
+        if message:
+            message_str = " ↩\n".join(message)
+            console.print(f"SIMULATION: Would {message_str}")
+
+    @staticmethod
+    def simulation_would_abort(message: str) -> None:
+        message = message[:1].lower() + message[1:] if message else ""
+        console.print(f"SIMULATION: Would abort because {message}")
 
     @contextmanager
     def spinner(self) -> Generator[None, None, None]:

@@ -4,7 +4,6 @@ from collections import namedtuple
 from typing import Any
 
 from invoke.context import Context
-from rich import print
 
 from .bump import Bump
 from .checker import Checker, CheckError
@@ -45,8 +44,8 @@ class DockerBuilderError(Exception):
 
 
 class BuilderBase(DockerBase):
-    def __init__(self, context: Context, platform: str, simulation: bool = False) -> None:
-        super().__init__(context=context, simulation=simulation)
+    def __init__(self, context: Context, platform: str) -> None:
+        super().__init__(context, context.config.get("simulation", False))
         self.platform = platform
 
     def docker_inspect(self, image_name: str) -> dict[str, Any]:
@@ -138,9 +137,8 @@ class BuilderBase(DockerBase):
             "DOCKER_SCAN_SUGGEST": "false",
         }
         if self.simulation:
-            Printer.print_boxes(
-                "SIMULATION", [("COMMAND", " ".join(command)), ("ENVIRONMENT", environment)]
-            )
+            Printer.simulation_would(["use environment", Markup.info(str(environment))])
+            Printer.simulation_would(["run command", Markup.info(" ".join(command))])
 
             return BuildResult(
                 target=target,
@@ -258,7 +256,7 @@ class BuilderBase(DockerBase):
                 version = version.bump_major()
 
         if self.simulation:
-            print(f"SIMULATION: Would write {Markup.info(str(version))} to version file")
+            Printer.simulation_would(f"write {Markup.info(str(version))} to version file")
         else:
             write_version(version)
 
@@ -277,7 +275,7 @@ class BuilderBase(DockerBase):
         )
 
         if self.simulation:
-            print("SIMULATION: Would commit version file")
+            Printer.simulation_would("commit version file")
         else:
             run(  # nosec
                 [
@@ -291,7 +289,7 @@ class BuilderBase(DockerBase):
             )
 
         if self.simulation:
-            print(f"SIMULATION: Would create tag for {Markup.info(build_result.image_tag)}")
+            Printer.simulation_would(f"create tag for {Markup.info(build_result.image_tag)}")
         else:
             run(  # nosec
                 [

@@ -1,7 +1,7 @@
 from invoke.context import Context
-from invoke.tasks import task
 
 from .build import build_development
+from .core import task
 from .core.docker_runner import DockerRunner
 
 

@@ -28,6 +28,6 @@ class DockerBase:
     def run_in_context(self, command: list[str], env: dict | None = None) -> Result | None:
         command_string = " ".join(command)
         if self.simulation:
-            Printer.print_boxes("SIMULATION", [("COMMAND", command_string)])
+            Printer.simulation_would(["run command", Markup.info(command_string)])
         else:
             self.context.run(command_string, env=env or {}, pty=True)
