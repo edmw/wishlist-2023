@@ -115,12 +115,12 @@ class Printer:
             message = [message]
         if message:
             message_str = " ↩\n".join(message)
-            console.print(f"SIMULATION: Would {message_str}")
+            console.print(f"[dim]SIMULATION:[/dim] Would {message_str}")
 
     @staticmethod
     def simulation_would_abort(message: str) -> None:
         message = message[:1].lower() + message[1:] if message else ""
-        console.print(f"SIMULATION: Would abort because {message}")
+        console.print(f"[dim]SIMULATION:[/dim] Would abort because {message}")
 
     @contextmanager
     def spinner(self) -> Generator[None, None, None]:
