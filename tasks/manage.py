@@ -9,25 +9,25 @@ from .core.docker_runner import DockerRunner
 
 @task(pre=[build_development])
 def console(context: Context) -> None:
-    """"""
+    """Starts a Python console for the Django app."""
     DockerRunner.ApplicationCommand(context).run_manage(command=["shell"])
 
 
 @task(pre=[build_development])
 def translations(context: Context) -> None:
-    """"""
+    """Creates or updates translations for the Django webapp."""
     DockerRunner.ApplicationCommand(context).run_manage(command=["webapp_make_translations"])
 
 
 @task(pre=[build_development])
 def migrations(context: Context) -> None:
-    """"""
+    """Creates or updates migrations for the Django webapp."""
     DockerRunner.ApplicationCommand(context).run_manage(command=["webapp_make_migrations"])
 
 
 @task(pre=[build_development])
 def dumpdata(context: Context) -> None:
-    """"""
+    """Dumps the data from the database of the Django webapp to a file."""
     DockerRunner.ApplicationCommand(context).run_manage(
         command=[
             "dumpdata",
@@ -62,8 +62,7 @@ def connect_database(context: Context) -> None:
 
 @task(pre=[build_development])
 def connect_datastore(context: Context) -> None:
-    """Connects to the datastore console of the local service container after the server has been
-    started."""
+    """Connects to the datastore console of the local service container after the server has been started."""  # noqa
     DockerRunner.ShellCommand(context).execute(
         service=CONFIGURATION.environments[Environment.LOCAL].service_datastore, command=["redis-cli"]
     )

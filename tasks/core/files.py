@@ -1,5 +1,6 @@
 import shutil
 from pathlib import Path
+from typing import Any
 
 from .printer import Markup, Printer
 
@@ -22,7 +23,7 @@ class FilesCleanerSimulation:
 
 class FilesCleaner:
 
-    def __new__(cls, simulation, *args, **kwargs):
+    def __new__(cls, simulation: bool, *args: Any, **kwargs: Any) -> object:
         if simulation:
             return FilesCleanerSimulation()
         return super(FilesCleaner, cls).__new__(cls)

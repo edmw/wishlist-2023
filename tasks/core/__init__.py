@@ -1,3 +1,4 @@
+from ast import Call
 from collections.abc import Callable
 from functools import update_wrapper, wraps
 from inspect import Parameter, signature
@@ -90,9 +91,9 @@ def task(*task_args: Any, **task_kwargs: Any) -> Callable:
 
 def task_banner(title: str, message: str) -> Callable:
 
-    def decorator(function):
+    def decorator(function: Callable[..., T]) -> Callable[..., T]:
         @wraps(function)
-        def wrapper(*args, **kwargs):
+        def wrapper(*args: Any, **kwargs: Any) -> T:
             context = args[0]
             simulation = context.config.get("simulation", False)
 
