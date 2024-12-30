@@ -14,6 +14,9 @@ from .core.printer import Printer
 EXIT_CODE = 10
 
 
+# region ⭐ Build Tasks ⭐
+
+
 @contextmanager
 def exit_on_docker_build_errors() -> Generator[None, None, None]:
     try:
@@ -60,3 +63,6 @@ def build_release_major(context: Context, dry: bool = False) -> None:
     dry = getattr(context.config, "simulation", dry)
     with exit_on_docker_build_errors():
         DockerBuilder.Release(context, "linux/amd64").build(bump=Bump.MAJOR)
+
+
+# endregion ⭐ Build Tasks ⭐

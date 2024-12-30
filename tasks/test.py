@@ -4,6 +4,8 @@ from .build import build_development
 from .core import task
 from .core.docker_runner import DockerRunner
 
+# region ⭐ Test Tasks ⭐
+
 
 @task(name="down", post=[build_development])
 def test_down(context: Context) -> None:
@@ -43,3 +45,6 @@ def test_coverage(context: Context, spec: str | None = None) -> None:
 def test_debug(context: Context, spec: str | None = None) -> None:
     """Runs tests for the webapp in development mode with debugging enabled."""
     DockerRunner.ApplicationTest(context).start(spec=spec, debug=True)
+
+
+# endregion ⭐ Test Tasks ⭐

@@ -5,6 +5,8 @@ from .core.files import FilesCleaner
 from .core.printer import Printer
 from .core.project import CONFIGURATION
 
+# region ⭐ Make Tasks ⭐
+
 
 def run_pip(context: Context, arguments: list[str]) -> None:
     run_in_context(
@@ -249,3 +251,6 @@ def update_dependencies(context: Context) -> None:
         enumerator.done()
         _pin_or_update_production(context, printer, enumerator, update=True)
         enumerator.done()
+
+
+# endregion ⭐ Make Tasks ⭐

@@ -36,6 +36,9 @@ class Environment(StrEnum):
     LOCAL_DEPLOY = "local-deploy"
     TESTING = "testing"
 
+    def __repr__(self) -> str:
+        return f"Environment.{self.name}"
+
 
 class ConfigurationError(Exception):
     def __init__(self, message: str, rich_message: str):
@@ -87,6 +90,9 @@ class _Environment:
         self.service_app = self.try_service("app")
         self.service_database = self.try_service("database")
         self.service_datastore = self.try_service("datastore")
+
+    def __repr__(self) -> str:
+        return f"_Environment({self.path!r})"
 
     def try_service(self, service: str) -> str:
         if service in self.services:
