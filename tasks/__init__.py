@@ -1,10 +1,10 @@
-from typing import cast
+from typing import NamedTuple, cast
 
 from invoke.collection import Collection
 from invoke.context import Context
 from invoke.tasks import Task, task
 from invoke.util import helpline
-from rich import box, inspect
+from rich import box, inspect, print
 from rich.console import Console
 from rich.padding import Padding
 from rich.table import Table
@@ -46,16 +46,32 @@ from .run import down_development, down_production, run, run_development, run_pr
 from .test import test, test_coverage, test_debug, test_down
 
 
-def get_tasks(collection: Collection, prefix: str = "") -> list[tuple[str, Task]]:
+class TaskSpec(NamedTuple):
+    name: str
+    task: Task
+
+
+def get_tasks(collection: Collection, prefix: str = "") -> list[TaskSpec]:
+    """Gets all tasks from a collection and its subcollections recursively.
+
+    Arguments:
+        collection: The collection to get tasks from.
+        prefix: The prefix to add to the task names of the collection.
+
+    Returns a list of tuples (name, task) for all tasks in the collection:
+    * If a task is a default task of a collection, its default name is appended
+      to the task name.
+    * If a task is in a subcollection, its name is prefixed with the
+      subcollection name separated by a dot.
+    """
     tasks = []
-    for task_name, task_obj in collection.tasks.items():
-        full_task_name = f"{prefix}{task_name}"
-        is_default = task_name == collection.default
-        if is_default and prefix:
-            full_task_name += f" ({prefix[:-1]})"
-        tasks.append((full_task_name, task_obj))
-    for collection_name, collection_obj in collection.collections.items():
-        tasks.extend(get_tasks(collection_obj, prefix=f"{prefix}{collection_name}."))
+    for task_name, task_instance in collection.tasks.items():
+        name = f"{prefix}{task_name}"
+        if task_instance.is_default and prefix:
+            name += f" ({collection.name})"
+        tasks.append(TaskSpec(name, task_instance))
+    for collection_name, collection_instance in collection.collections.items():
+        tasks.extend(get_tasks(collection_instance, prefix=f"{prefix}{collection_name}."))
     return tasks
 
 
@@ -63,7 +79,7 @@ def get_tasks(collection: Collection, prefix: str = "") -> list[tuple[str, Task]
 def list_tasks(context: Context) -> None:
     """Lists all available tasks."""
 
-    # Get all tasks as tuples (task_name, task_obj).
+    # Get all tasks as tuples (name, task).
     tasks = get_tasks(collection=namespace)
 
     # Render the tasks in a table.
@@ -71,7 +87,7 @@ def list_tasks(context: Context) -> None:
     table = Table(box=box.HORIZONTALS, style=style, header_style=style, row_styles=[style])
     table.add_column("Name", justify="left", no_wrap=True)
     table.add_column("Description", justify="left")
-    for index, (task_name, task_obj) in enumerate(tasks):
+    for index, (task_name, task_instance) in enumerate(tasks):
         if task_name.startswith("_"):
             # Skip hidden tasks (names of hidden tasks start with an underscore).
             continue
@@ -79,16 +95,16 @@ def list_tasks(context: Context) -> None:
             # Render the task name and description. If the next task is in a
             # different section, add a separator. If the task is the default
             # task of a collection, highlight it.
-            next_task_name, _ = tasks[index + 1] if index + 1 < len(tasks) else (None, None)
-            if next_task_name and task_name.rsplit(".", 1)[0] != next_task_name.rsplit(".", 1)[0]:
+            peek = tasks[index + 1] if index + 1 < len(tasks) else None
+            if peek and task_name.rsplit(".", 1)[0] != peek.name.rsplit(".", 1)[0]:
                 end_section = True
             else:
                 end_section = False
-            if task_obj.is_default:
+            if task_instance.is_default:
                 style = "yellow"
             else:
                 style = "cyan"
-            table.add_row(Text(task_name, style=style), helpline(task_obj), end_section=end_section)
+            table.add_row(Text(task_name, style=style), helpline(task_instance), end_section=end_section)
 
     # Print the table with the tasks.
     console = Console()
@@ -97,6 +113,7 @@ def list_tasks(context: Context) -> None:
 
 @task(name="_configuration")
 def show_configuration(context: Context, env: str | None = None) -> None:
+    """Special task to show the configuration of the project."""
     match env:
         case Environment.LOCAL.value:
             inspect(CONFIGURATION.environments[Environment.LOCAL])
@@ -106,7 +123,13 @@ def show_configuration(context: Context, env: str | None = None) -> None:
             inspect(CONFIGURATION.environments[Environment.TESTING])
         case None:
             inspect(CONFIGURATION)
+            print("To inspect local environment, use: inv _configuration --env local")
+            print("To inspect local deploy environment, use: inv _configuration --env local-deploy")
+            print("To inspect testing environment, use: inv _configuration --env testing")
+    print()
 
+
+# region ⭐ Collections ⭐
 
 collection_make = Collection("make")
 collection_manage = Collection("manage")
@@ -171,3 +194,5 @@ collection_run.add_task(cast(Task, run_development))
 collection_run.add_task(cast(Task, down_development))
 collection_run.add_task(cast(Task, run_production))
 collection_run.add_task(cast(Task, down_production))
+
+# endregion ⭐ Collections ⭐

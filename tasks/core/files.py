@@ -1,13 +1,20 @@
 import shutil
 from pathlib import Path
-from typing import Any
+from typing import Any, Protocol
 
 from .printer import Markup, Printer
 
 # region ⭐ Files ⭐
 
 
-class FilesCleanerSimulation:
+class FilesCleanerProtocol(Protocol):
+
+    def remove_directory(self, directory: Path) -> None: ...
+    def remove_files_in_directory(self, directory: Path) -> None: ...
+    def find_and_remove_in_directory(self, name: str, directory: Path) -> None: ...
+
+
+class FilesCleanerSimulation(FilesCleanerProtocol):
 
     def remove_directory(self, directory: Path) -> None:
         Printer.simulation_would(["remove directory", Markup.info(str(directory))])
@@ -21,9 +28,9 @@ class FilesCleanerSimulation:
         )
 
 
-class FilesCleaner:
+class FilesCleaner(FilesCleanerProtocol):
 
-    def __new__(cls, simulation: bool, *args: Any, **kwargs: Any) -> object:
+    def __new__(cls, simulation: bool, *args: Any, **kwargs: Any) -> FilesCleanerProtocol:
         if simulation:
             return FilesCleanerSimulation()
         return super(FilesCleaner, cls).__new__(cls)

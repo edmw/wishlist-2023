@@ -4,6 +4,8 @@ from .build import build_development
 from .core import task
 from .core.docker_runner import DockerRunner
 
+# region ⭐ Check Tasks ⭐
+
 
 @task(name="down", pre=[build_development])
 def check_down(context: Context) -> None:
@@ -15,3 +17,6 @@ def check_down(context: Context) -> None:
 def check(context: Context) -> None:
     """Runs checks for the webapp in development mode."""
     DockerRunner.ApplicationCommand(context).run_manage(command=["webapp_check"])
+
+
+# endregion ⭐ Check Tasks ⭐

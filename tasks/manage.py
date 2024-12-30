@@ -6,6 +6,8 @@ from .build import build_development
 from .core import task
 from .core.docker_runner import DockerRunner
 
+# region ⭐ Manage Tasks ⭐
+
 
 @task(pre=[build_development])
 def console(context: Context) -> None:
@@ -66,3 +68,6 @@ def connect_datastore(context: Context) -> None:
     DockerRunner.ShellCommand(context).execute(
         service=CONFIGURATION.environments[Environment.LOCAL].service_datastore, command=["redis-cli"]
     )
+
+
+# endregion ⭐ Manage Tasks ⭐

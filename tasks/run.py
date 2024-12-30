@@ -5,6 +5,8 @@ from .core import task
 from .core.docker_runner import DockerRunner
 from .core.mode import Mode
 
+# region ⭐ Run Tasks ⭐
+
 
 @task(name="development", pre=[build_development])
 def run_development(context: Context) -> None:
@@ -34,3 +36,6 @@ def run_production(context: Context) -> None:
 def down_production(context: Context) -> None:
     """Stops the local server and tears down the webapp from production mode."""
     DockerRunner.Application(context).stop(mode=Mode.PRODUCTION)
+
+
+# endregion ⭐ Run Tasks ⭐
