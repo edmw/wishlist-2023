@@ -8,7 +8,7 @@ This is a rewrite of the [2019 Wishlist web application written in Swift](https:
 
 ## Development Environment
 
-The application is built and run with Docker containers for development.
+The application is built and run using Docker containers for development.
 
 ### Setup Environment on Host
 
@@ -79,77 +79,61 @@ Note: To build a new release, `main` must be the current branch, `main` must be 
 
 Note: Currently, the history will not be updated. Best practice is to update the history file before running `inv release.*`.
 
-## Make
+## Test the Application
 
-### Webapp
-
-```
-$ make webapp-translations
-$ make webapp-migrations
-$ make webapp-dumpdata
-```
-
-### Testing
+* `pytest` -- unittest runner
+* `coverage` -- code coverage reporter
 
 ```
-$ make test
-$ make debugtest
-$ make test-coverage
-$ make test-down
+inv test
 ```
 
-### Checking
-
 ```
-$ make check
-$ make check-down
+inv test.debug
 ```
 
-### Building
-
 ```
-$ make build-develop
-$ make build-deploy
-$ make build-release.patch
-$ make build-release.minor
-$ make build-release.major
+inv test.coverage
 ```
 
-### Releasing
+## Check the Application
+
+* `ruff` -- static code analyzer
+* `bandit` -- security issue linter
 
 ```
-$ make release.patch
-$ make release.minor
-$ make release.major
-$ make release-push
+inv check
 ```
 
-### Dependencies
+## Manage the Application
 
-```
-$ make dependencies-install-deployment
-$ make dependencies-install-development
-$ make dependencies-pin-deployment
-$ make dependencies-pin-development
-$ make dependencies-pin-all
-$ make dependencies-update-deployment
-$ make dependencies-update-development
-$ make dependencies-update-all
-```
+* `inv manage.console`
+  * Start a Python console for the web application.
+* `inv manage.migrations`
+  * Create or update migrations for the web application.
+* `inv manage.translations`
+  * Create or update translations for the web application.
+* `inv manage.dumpdata`
+  * Dump the data from the database of the web application to a file.
+* `inv manage.shell`
+  * Start a shell in a local service container (default: app) after the server has been started.
+* `inv manage.connect-database`
+  * Connect to the database console of the local service container after the server has been started.
+* `inv manage.connect-datastore`
+  * Connect to the datastore console of the local service container after the server has been started.
 
-### Environment
+## Make the Environment
 
-```
-$ make clean
-
-$ make environment-upgrade
-
-$ make shell.%s
-$ make shell  # make shell.app
-$ make console
-$ make connect-database
-$ make connect-datastore
-$ make run-shell.%
-$ make run-shell  # make run-shell.app
-$ make run-console
-```
+* `inv`
+  * List and describe all available tasks.
+* `inv make.clean`
+* `inv make.pin`
+* `inv make.pin-development`
+* `inv make.pin-production`
+* `inv make.update`
+* `inv make.update-development`
+* `inv make.update-production`
+* `inv make.install-development`
+* `inv make.install-production`
+* `inv make.sync-development`
+* `inv make.sync-production`

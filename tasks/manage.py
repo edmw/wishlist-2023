@@ -11,7 +11,7 @@ from .core.docker_runner import DockerRunner
 
 @task(pre=[build_development])
 def console(context: Context) -> None:
-    """Starts a Python console for the Django app."""
+    """Starts a Python console for the Django webapp."""
     DockerRunner.ApplicationCommand(context).run_manage(command=["shell"])
 
 

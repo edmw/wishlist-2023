@@ -77,7 +77,7 @@ def get_tasks(collection: Collection, prefix: str = "") -> list[TaskSpec]:
 
 @task(name="list", default=True)
 def list_tasks(context: Context) -> None:
-    """Lists all available tasks."""
+    """Lists and describes all available tasks."""
 
     # Get all tasks as tuples (name, task).
     tasks = get_tasks(collection=namespace)
