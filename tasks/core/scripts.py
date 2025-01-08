@@ -24,6 +24,7 @@ def import_module_from_path(module_name: str, module_path: str) -> ModuleType:
         sys.path.pop(0)
         exc_type, exc_value, _ = sys.exc_info()
         if exc_type is not None:
+            assert exc_value is not None
             raise exc_value
 
 
