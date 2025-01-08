@@ -1,7 +1,7 @@
-from enum import Enum
+from enum import StrEnum
 
 
-class Mode(Enum):
+class Mode(StrEnum):
     DEVELOP = "develop"
     DEVELOP_DEBUG = "develop_debug"
-    DEPLOY = "deploy"
+    PRODUCTION = "deploy"

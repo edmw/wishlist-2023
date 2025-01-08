@@ -1,26 +1,36 @@
 from invoke.context import Context
-from invoke.tasks import task
 
-from .build import build_develop
-from .core import DockerRunner
+from tasks.core.project import CONFIGURATION, Environment
+
+from .build import build_development
+from .core import task
+from .core.docker_runner import DockerRunner
+
+# region ⭐ Manage Tasks ⭐
 
 
-@task(pre=[build_develop])
+@task(pre=[build_development])
+def console(context: Context) -> None:
+    """Starts a Python console for the Django webapp."""
+    DockerRunner.ApplicationCommand(context).run_manage(command=["shell"])
+
+
+@task(pre=[build_development])
 def translations(context: Context) -> None:
-    """"""
-    DockerRunner.Command(context).run_manage(command=["webapp_make_translations"])
+    """Creates or updates translations for the Django webapp."""
+    DockerRunner.ApplicationCommand(context).run_manage(command=["webapp_make_translations"])
 
 
-@task(pre=[build_develop])
+@task(pre=[build_development])
 def migrations(context: Context) -> None:
-    """"""
-    DockerRunner.Command(context).run_manage(command=["webapp_make_migrations"])
+    """Creates or updates migrations for the Django webapp."""
+    DockerRunner.ApplicationCommand(context).run_manage(command=["webapp_make_migrations"])
 
 
-@task(pre=[build_develop])
+@task(pre=[build_development])
 def dumpdata(context: Context) -> None:
-    """"""
-    DockerRunner.Command(context).run_manage(
+    """Dumps the data from the database of the Django webapp to a file."""
+    DockerRunner.ApplicationCommand(context).run_manage(
         command=[
             "dumpdata",
             "core",
@@ -34,7 +44,30 @@ def dumpdata(context: Context) -> None:
     )
 
 
-@task(pre=[build_develop])
-def shell(context: Context) -> None:
-    """"""
-    DockerRunner.Command(context).execute(container="app", command=["bash"])
+@task(pre=[build_development])
+def shell(
+    context: Context, service: str = CONFIGURATION.environments[Environment.LOCAL].service_app
+) -> None:
+    """Starts a shell in a local service container (default: app) after the server has been started."""
+    CONFIGURATION.environments[Environment.LOCAL].try_service(service)
+    DockerRunner.ShellCommand(context).execute(service=service, command=["bash"])
+
+
+@task(pre=[build_development])
+def connect_database(context: Context) -> None:
+    """Connects to the database console of the local service container after the server has been started."""
+    DockerRunner.ShellCommand(context).execute(
+        service=CONFIGURATION.environments[Environment.LOCAL].service_database,
+        command=["psql", "-U", "postgres"],
+    )
+
+
+@task(pre=[build_development])
+def connect_datastore(context: Context) -> None:
+    """Connects to the datastore console of the local service container after the server has been started."""  # noqa
+    DockerRunner.ShellCommand(context).execute(
+        service=CONFIGURATION.environments[Environment.LOCAL].service_datastore, command=["redis-cli"]
+    )
+
+
+# endregion ⭐ Manage Tasks ⭐
