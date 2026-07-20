@@ -11,6 +11,9 @@ class WebappConfig(AppConfig):
 
     verbose_name = "Webapp"
 
+    def ready(self) -> None:
+        import webapp.signals
+
 
 class StaticFilesConfig(staticfiles_apps.StaticFilesConfig):
     ignore_patterns = [".*", "*~", "root"]
