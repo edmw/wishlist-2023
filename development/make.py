@@ -200,7 +200,7 @@ def write_version(version: semver.VersionInfo) -> None:
 # region build base
 
 
-def get_build_base_image() -> int:
+def get_build_base_image() -> str:
     with open("pyproject.toml", "rb") as f:
         pyproject_data = tomllib.load(f)
 

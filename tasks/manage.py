@@ -1,3 +1,5 @@
+import shlex
+
 from invoke.context import Context
 
 from tasks.core.project import CONFIGURATION, Environment
@@ -11,11 +13,14 @@ from .core.docker_runner import DockerRunner
 
 @task(name="run", pre=[build_development], default=True)
 def run_command(context: Context, command: str | None = None) -> None:
-    """"""
+    """Runs a Django management command in the webapp container.
+
+    If no command is provided, starts the interactive management command menu.
+    """
     if command is None:
         DockerRunner.ApplicationCommand(context).run_manage(command=["webapp_commands"])
     else:
-        DockerRunner.ApplicationCommand(context).run_manage(command=[command])
+        DockerRunner.ApplicationCommand(context).run_manage(command=[shlex.quote(command)])
 
 
 @task(pre=[build_development])

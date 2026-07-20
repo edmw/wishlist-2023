@@ -40,6 +40,8 @@ class FilesCleaner(FilesCleanerProtocol):
             shutil.rmtree(directory)
 
     def remove_files_in_directory(self, directory: Path) -> None:
+        if not directory.exists():
+            return
         for item in directory.iterdir():
             if item.is_file() and item.name != ".gitignore":
                 item.unlink()
