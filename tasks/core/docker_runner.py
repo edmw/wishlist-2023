@@ -1,3 +1,4 @@
+import shlex
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Final
@@ -208,7 +209,7 @@ class DockerRunner:
             if debug:
                 command.append("--debug")
             if spec:
-                command.append(f'"{spec}"')
+                command.append(shlex.quote(spec))
             self.run_manage_command(Environment.TESTING, command, python_options=["-Xfrozen_modules=off"])
 
         def stop(self) -> None:

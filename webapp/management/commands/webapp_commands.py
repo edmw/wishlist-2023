@@ -28,12 +28,12 @@ class Command(WebappBaseCommand):
                 commands_by_app[app].append(command)
 
         for app in commands_by_app.keys():
-            print(f"{app}")
+            self.print(f"{app}")
             for command in commands_by_app[app]:
                 if commands[command] == app:
-                    print(f"  {command}")
+                    self.print(f"  {command}")
                     command_class = load_command_class(app, command)
-                    print(f"    {command_class.help}")
-            print()
+                    self.print(f"    {command_class.help}")
+            self.print("")
 
         self.check_exit(0)

@@ -14,7 +14,6 @@ def run(
 
     If `verbose` is false (the default), captures all output from the command
     and prints the output only if the command fails.
-    If `debug` is true (default is false), prints the command and environment.
     """
     if not environment:
         environment = {}
