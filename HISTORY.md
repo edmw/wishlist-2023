@@ -2,6 +2,12 @@
 
 ## [x.x.x]
 
+## [1.9.1]
+
+* 🪛 fix potential race condtion when generating photos
+
+## [1.9.0]
+
 * 🖼️ always show the button to mark a wish as received and display an error
   message if the button is clicked for a wish that cannot be flagged
 * 🛠️ switch from Makefile to Invoke
