@@ -142,7 +142,7 @@ convention = "pep257"
 [tool.pyright]
 typeCheckingMode = "standard"
 stubPath = ".python-typings"
-exclude = ["core/migrations/*"]
+exclude = ["core/migrations/*",".venv/**"]
 ignore = ["~/.pyenv/**", ".pyenv/**", ".python-typings"]
 
 [tool.bandit]
