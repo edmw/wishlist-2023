@@ -2,9 +2,13 @@
 
 ## [x.x.x]
 
+## [1.9.2]
+
+* 🪛 fix import order which led to missing Celery configuration
+
 ## [1.9.1]
 
-* 🪛 fix potential race condtion when generating photos
+* 🪛 fix potential race condition when generating photos
 
 ## [1.9.0]
 
