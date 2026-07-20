@@ -5,6 +5,7 @@
 * 🖼️ always show the button to mark a wish as received and display an error
   message if the button is clicked for a wish that cannot be flagged
 * 🛠️ switch from Makefile to Invoke
+* 🛠️ update Dockerfile to use Node setup script
 * 🛠️ improve typing
 * 🛠️ improve tooling
 

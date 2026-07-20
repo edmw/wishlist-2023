@@ -9,6 +9,15 @@ from .core.docker_runner import DockerRunner
 # region ⭐ Manage Tasks ⭐
 
 
+@task(name="run", pre=[build_development], default=True)
+def run_command(context: Context, command: str | None = None) -> None:
+    """"""
+    if command is None:
+        DockerRunner.ApplicationCommand(context).run_manage(command=["webapp_commands"])
+    else:
+        DockerRunner.ApplicationCommand(context).run_manage(command=[command])
+
+
 @task(pre=[build_development])
 def console(context: Context) -> None:
     """Starts a Python console for the Django webapp."""

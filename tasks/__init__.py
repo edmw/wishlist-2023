@@ -38,6 +38,7 @@ from .manage import (
     console,
     dumpdata,
     migrations,
+    run_command,
     shell,
     translations,
 )
@@ -163,6 +164,7 @@ collection_make.add_task(cast(Task, install_production))
 collection_make.add_task(cast(Task, sync_development))
 collection_make.add_task(cast(Task, sync_production))
 
+collection_manage.add_task(cast(Task, run_command))
 collection_manage.add_task(cast(Task, console))
 collection_manage.add_task(cast(Task, migrations))
 collection_manage.add_task(cast(Task, translations))
