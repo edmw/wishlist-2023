@@ -3,7 +3,6 @@
 import logging
 from http import HTTPStatus
 
-from django.http import HttpRequest, HttpResponse
 from rest_framework.decorators import (
     api_view,
     authentication_classes,

@@ -1,7 +1,7 @@
 import asyncio
 import logging
 from contextlib import contextmanager
-from typing import Callable, Iterator
+from typing import Callable, Generator
 
 import structlog
 from django.http import HttpRequest, HttpResponse
@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 
 
 @contextmanager
-def logging_for_request(request: HttpRequest) -> Iterator[None]:
+def logging_for_request(request: HttpRequest) -> Generator[None, None, None]:
     structlog.contextvars.bind_contextvars(request=request)
     structlog.contextvars.bind_contextvars(request_id=RequestService.get_request_id(request=request))
 
