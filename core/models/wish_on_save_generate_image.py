@@ -5,7 +5,7 @@ from django.db import transaction
 
 from core.models._typing import HasModelState, HasPrimaryKey, IsSaveable
 
-logger = logging.Logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class ModelSupportsSave(HasPrimaryKey, HasModelState, Protocol):
