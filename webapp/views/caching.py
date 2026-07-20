@@ -1,9 +1,11 @@
 """Caching services for views."""
+
 from __future__ import annotations
 
 from typing import Any, Protocol, Type
 
-from django.http import HttpRequest, HttpResponse
+from django.http import HttpRequest
+from django.http.response import HttpResponseBase
 from django.utils.cache import add_never_cache_headers
 from django.views.decorators.cache import cache_page
 from django.views.generic.base import View
@@ -12,7 +14,7 @@ from django.views.generic.base import View
 class ViewCallable(Protocol):
     """Typing stub for a callable view function."""
 
-    def __call__(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+    def __call__(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponseBase:
         """Handles request, returns response."""
         ...
 
@@ -36,7 +38,7 @@ class CacheMixin(View):
 class AddNeverCacheMixin(View):
     """Adds never caching cache control headers to GET requests."""
 
-    def dispatch(self: View, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+    def dispatch(self: View, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponseBase:
         """Adds never caching cache control headers to GET requests."""
         response = super().dispatch(request, *args, **kwargs)
         if request.method and request.method.upper() == "GET":

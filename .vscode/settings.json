@@ -3,15 +3,16 @@
         "*.html": "django-html"
     },
     "editor.rulers": [
-        80,108
+        80,
+        108
     ],
     "[python]": {
+        "editor.defaultFormatter": "ms-python.black-formatter",
         "editor.formatOnSave": true,
         "editor.codeActionsOnSave": {
             "source.organizeImports": "explicit"
         }
     },
-    "python.formatting.provider": "black",
     "black-formatter.importStrategy": "useBundled",
     "black-formatter.args": [
         "--line-length=108"
@@ -20,12 +21,6 @@
         "--profile",
         "black"
     ],
-    "python.linting.banditArgs": [
-        "-c pyproject.yaml"
-    ],
-    "python.analysis.autoSearchPaths": false,
     "python.analysis.diagnosticMode": "workspace",
-    "python.analysis.ignore": [
-        "~/.pyenv/**"
-    ]
+    "pylint.enabled": false
 }

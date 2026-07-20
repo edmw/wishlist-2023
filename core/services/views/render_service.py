@@ -5,7 +5,7 @@ from datetime import datetime
 
 from bs4 import BeautifulSoup
 from django.utils.html import escape
-from django.utils.safestring import SafeText, mark_safe
+from django.utils.safestring import SafeString, mark_safe
 from markdown_it import MarkdownIt
 from markdown_it.renderer import RendererHTML
 from markdown_it.token import Token
@@ -24,7 +24,7 @@ class RenderService:
     """Render service: The render service provides functions for rendering html."""
 
     @staticmethod
-    def render_datetime(*, value: datetime) -> SafeText:
+    def render_datetime(*, value: datetime) -> SafeString:
         """Renders the specified `datetime` to its safe text representation.
 
         Arguments:
@@ -48,7 +48,7 @@ class RenderService:
         )
 
     @staticmethod
-    def render_markdown(*, value: str) -> SafeText:
+    def render_markdown(*, value: str) -> SafeString:
         """Renders the specified markdown text to its safe text representation
         using HTML elements for formatting.
 
@@ -64,7 +64,7 @@ class RenderService:
         return mark_safe(html)  # nosec
 
     @staticmethod
-    def render_markdown_to_text(*, value: str) -> SafeText:
+    def render_markdown_to_text(*, value: str) -> SafeString:
         """Renders the specified markdown text to its safe text representation
         without formatting.
 

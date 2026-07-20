@@ -31,7 +31,7 @@
                             <td class="wl-title" data-label="{% translate 'Name' %}">
                                 <a href="{{ favorite.wishlist.get_absolute_url }}">{{ favorite.wishlist.name }}</a>
                             </td>
-                            <td class="wl-count" data-label="{% translate 'Wishes' %}">{{ favorite.wishlist.wishes_count }}</td>
+                            <td class="wl-count" data-label="{% translate 'Wishes' %}">{{ favorite.wishlist.wishes_count_not_archived }}</td>
                             <td class="wl-owner" data-label="{% translate 'Owner' %}">{{ favorite.wishlist.owner }}</td>
                             <td class="wl-actions wl-actions-right" data-label="">
                                 <div class="btn-group" role="group">

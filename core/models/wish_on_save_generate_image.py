@@ -1,9 +1,11 @@
 import logging
 from typing import Any, Iterable, Protocol, cast
 
+from django.db import transaction
+
 from core.models._typing import HasModelState, HasPrimaryKey, IsSaveable
 
-logger = logging.Logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class ModelSupportsSave(HasPrimaryKey, HasModelState, Protocol):
@@ -53,9 +55,13 @@ class OnSaveGenerateImageMixin(IsSaveable):
         if updated_reference_photo:
             from core.tasks.wish import generate_image_for_reference_photo
 
-            generate_image_for_reference_photo.apply_async(
-                kwargs={
-                    "wish_id": wish.id,
-                },
-                countdown=0.1,
-            )  # type:ignore
+            wish_id = wish.id
+            transaction.on_commit(
+                lambda: generate_image_for_reference_photo.apply_async(
+                    kwargs={
+                        "wish_id": wish_id,
+                    },
+                    countdown=0.1,
+                ),
+                using=using,
+            )

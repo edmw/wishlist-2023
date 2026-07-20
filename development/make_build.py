@@ -33,6 +33,9 @@ def _project_has_invalid_version() -> list[str]:
     return ["VERSION INVALID", "Version file must contain valid value"]
 
 
+# region Docker
+
+
 def docker_inspect(image_name: str) -> dict[str, Any]:
     """Returns Docker‘s information about the specified image."""
     result = subprocess.run(  # nosec
@@ -48,12 +51,13 @@ def docker_inspect(image_name: str) -> dict[str, Any]:
     raise ValueError()
 
 
-def docker_build_command(platform: str, target: str, image_name: str) -> list[str]:
+def docker_build_command(platform: str, target: str, base_image: str, image_name: str) -> list[str]:
     """Returns the Docker command used to build the images for this project.
 
     Arguments:
         platform: The platform to build for.
         target: The target to be built, one of "develop" or "deploy".
+        base_image: The name of the base image to build upon.
         image_name: The name and optionally the tag for the image to be built.
 
     Returns:
@@ -62,6 +66,8 @@ def docker_build_command(platform: str, target: str, image_name: str) -> list[st
     return [
         "docker",
         "build",
+        "--progress",
+        "plain",
         "--target",
         target,
         "--file",
@@ -70,12 +76,18 @@ def docker_build_command(platform: str, target: str, image_name: str) -> list[st
         platform,
         "--pull",
         "--build-arg",
+        f"BASE_IMAGE={base_image}",
+        "--build-arg",
         "BUILDKIT_INLINE_CACHE=1",
         "--tag",
         image_name,
         ".",
     ]
 
+
+# endregion
+
+# region BuildResult
 
 # A collection of values that are the results of building a Docker image.
 BuildResult = namedtuple(
@@ -86,23 +98,32 @@ BuildResult = namedtuple(
         "image_name",
         "image_size",
         "platform",
+        "base_image",
     ],
 )
+
+
+# endregion
+
+# region Docker Build
 
 
 def docker_build(
     platform: str,
     target: str,
+    base_image: str,
     image_name: str,
     image_tag: str,
     verbose: bool = False,
     debug: bool = False,
+    simulation: bool = False,
 ) -> BuildResult:
     """Build a Docker image for the project.
 
     Arguments:
         platform: The platform to build for.
         target: The target to be built, one of "develop" or "deploy".
+        base_image: The name of the base image to build upon.
         image_name: The name to use for the resulting image.
         image_tag: The tag to append to the image name.
         verbose: If true, prints the output of the command.
@@ -115,14 +136,29 @@ def docker_build(
     """
     image_name = f"{image_name}-{target}:{image_tag}"
     make.subprocess_run(
-        command=docker_build_command(platform=platform, target=target, image_name=image_name),
+        command=docker_build_command(
+            platform=platform, target=target, base_image=base_image, image_name=image_name
+        ),
         environment={
             "DOCKER_BUILDKIT": "1",
+            "DOCKER_CLI_HINTS": "false",
             "DOCKER_SCAN_SUGGEST": "false",
         },
         verbose=verbose,
         debug=debug,
+        simulation=simulation,
     )
+
+    if simulation:
+        return BuildResult(
+            target=target,
+            image_tag=image_tag,
+            image_name=image_name,
+            image_size=0,
+            platform=platform,
+            base_image=base_image,
+        )
+
     try:
         image_info = docker_inspect(image_name=image_name)
         image_size = image_info["Size"]
@@ -138,6 +174,7 @@ def docker_build(
         image_name=image_name,
         image_size=image_size,
         platform=platform,
+        base_image=base_image,
     )
 
 
@@ -150,12 +187,29 @@ def docker_build_result(result: BuildResult) -> None:
             f"Image name: {result.image_name}",
             f"Image size: {make.sizeof_fmt(result.image_size)}",
             f"Platform: {result.platform}",
+            f"Base image: {result.base_image}",
         ],
         char="=",
     )
 
 
-def release(args: argparse.Namespace) -> int:
+# endregion
+
+# region Release
+
+
+def release(
+    bump: str,
+    platform: str,
+    base_image: str,
+    build_name: str,
+    verbose: bool = False,
+    quiet: bool = False,
+    debug: bool = False,
+    output: bool = True,
+    do_check: bool = True,
+    simulation: bool = False,
+) -> BuildResult:
     """Builds the release version of this project.
 
     - Checks preconditions.
@@ -166,106 +220,188 @@ def release(args: argparse.Namespace) -> int:
     Returns:
         Exit code.
     """
-    make.banner("BUILD RELEASE", "👷")
+    if output:
+        make.banner("BUILD RELEASE", "👷")
 
-    if args.check:
-        check.git_branch_is("main", or_exit_using=_project_has_bad_git_branch)
+    if do_check:
+        check.git_branch_is("main", or_exit_using=_project_has_bad_git_branch, simulation=simulation)
         if check.git_branch_is_tracking("main"):
-            check.git_branch_is_uptodate(or_exit_using=_project_has_outdated_git_branch)
-        check.git_status_is_clean(or_exit_using=_project_has_dirty_git_status)
+            check.git_branch_is_uptodate(
+                or_exit_using=_project_has_outdated_git_branch, simulation=simulation
+            )
+        check.git_status_is_clean(or_exit_using=_project_has_dirty_git_status, simulation=simulation)
 
     version = make.get_version(or_exit_using=_project_has_invalid_version)
-    match args.bump:
+    match bump:
         case "minor":
             version = version.bump_minor()
         case "major":
             version = version.bump_major()
         case _:
             version = version.bump_patch()
-    make.write_version(version)
+    if simulation:
+        print(f"SIMULATION: Would write VERSION {version}")
+    else:
+        make.write_version(version)
 
-    platform = args.platform
-    build_name = args.build_name
+    platform = platform
+    base_image = base_image
+    build_name = build_name
     build_target = "deploy"
     image_tag = str(version)
     build_result = docker_build(
         platform=platform,
         target=build_target,
+        base_image=base_image,
         image_name=build_name,
         image_tag=image_tag,
-        verbose=not args.quiet,
-        debug=args.debug,
+        verbose=not quiet,
+        debug=debug,
+        simulation=simulation,
     )
-    docker_build_result(build_result)
+    if output:
+        docker_build_result(build_result)
 
-    make.subprocess_run(
-        [
-            "git",
-            "commit",
-            "VERSION",
-            "--message",
-            f"[make_build] build release version {build_result.image_name}",
-        ],
-        verbose=args.verbose,
+    if simulation:
+        print("SIMULATION: Skipping git commit VERSION")
+    else:
+        make.subprocess_run(
+            [
+                "git",
+                "commit",
+                "VERSION",
+                "--message",
+                f"[make_build] build release version {build_result.image_name}",
+            ],
+            verbose=verbose,
+            debug=debug,
+        )
+
+    if simulation:
+        print("SIMULATION: Skipping git tag VERSION")
+    else:
+        make.subprocess_run(
+            [
+                "git",
+                "tag",
+                "--annotate",
+                build_result.image_tag,
+                "--message",
+                f"[make_build] build release version {build_result.image_name}",
+            ],
+            verbose=verbose,
+            debug=debug,
+        )
+
+    return build_result
+
+
+def _release(args: argparse.Namespace) -> int:
+    _ = release(
+        bump=args.bump,
+        platform=args.platform,
+        base_image=args.base_image,
+        build_name=args.build_name,
+        quiet=args.quiet,
         debug=args.debug,
+        do_check=args.check,
     )
-
-    make.subprocess_run(
-        [
-            "git",
-            "tag",
-            "--annotate",
-            build_result.image_tag,
-            "--message",
-            f"[make_build] build release version {build_result.image_name}",
-        ],
-        verbose=args.verbose,
-        debug=args.debug,
-    )
-
     return 0
 
 
-def build_develop(args: argparse.Namespace) -> int:
-    """Builds the project‘s image for development."""
-    make.banner("BUILD FOR DEVELOPMENT", "👷")
+# endregion
 
-    platform = args.platform
-    build_name = args.build_name
+# region Build Develop
+
+
+def build_develop(
+    platform: str,
+    base_image: str,
+    build_name: str,
+    quiet: bool = False,
+    debug: bool = False,
+    output: bool = True,
+) -> BuildResult:
+    """Builds the project‘s image for development."""
+    if output:
+        make.banner("BUILD FOR DEVELOPMENT", "👷")
+
     build_target = "develop"
     image_tag = "local"
     build_result = docker_build(
         platform=platform,
         target=build_target,
+        base_image=base_image,
         image_name=build_name,
         image_tag=image_tag,
-        verbose=not args.quiet,
+        verbose=not quiet,
+        debug=debug,
+    )
+    if output:
+        docker_build_result(build_result)
+
+    return build_result
+
+
+def _build_develop(args: argparse.Namespace) -> int:
+    _ = build_develop(
+        platform=args.platform,
+        base_image=args.base_image,
+        build_name=args.build_name,
+        quiet=args.quiet,
         debug=args.debug,
     )
-    docker_build_result(build_result)
-
     return 0
 
 
-def build_deploy(args: argparse.Namespace) -> int:
-    """Builds the project‘s image for deployment."""
-    make.banner("BUILD FOR DEPLOYMENT", "👷")
+# endregion
 
-    platform = args.platform
-    build_name = args.build_name
+# region Build Deploy
+
+
+def build_deploy(
+    platform: str,
+    base_image: str,
+    build_name: str,
+    quiet: bool = False,
+    debug: bool = False,
+    output: bool = True,
+) -> BuildResult:
+    """Builds the project‘s image for deployment."""
+    if output:
+        make.banner("BUILD FOR DEPLOYMENT", "👷")
+
     build_target = "deploy"
     image_tag = "local"
     build_result = docker_build(
         platform=platform,
         target=build_target,
+        base_image=base_image,
         image_name=build_name,
         image_tag=image_tag,
-        verbose=not args.quiet,
+        verbose=not quiet,
+        debug=debug,
+    )
+    if output:
+        docker_build_result(build_result)
+
+    return build_result
+
+
+def _build_deploy(args: argparse.Namespace) -> int:
+    _ = build_deploy(
+        platform=args.platform,
+        base_image=args.base_image,
+        build_name=args.build_name,
+        quiet=args.quiet,
         debug=args.debug,
     )
-    docker_build_result(build_result)
-
     return 0
+
+
+# endregion
+
+# region main
 
 
 def main(argv: Sequence[str] | None = None) -> int:
@@ -296,6 +432,12 @@ def main(argv: Sequence[str] | None = None) -> int:
         required=True,
     )
     parser.add_argument(
+        "--base",
+        help="name of base image to build upon",
+        dest="base_image",
+        required=True,
+    )
+    parser.add_argument(
         "-d",
         "--debug",
         help="enable debug output",
@@ -315,13 +457,13 @@ def main(argv: Sequence[str] | None = None) -> int:
         "develop",
         help="Execute build workflow for developing this project",
     )
-    parser_develop.set_defaults(func=build_develop)
+    parser_develop.set_defaults(func=_build_develop)
 
     parser_deploy = subparsers.add_parser(
         "deploy",
         help="Execute build workflow for deploying this project",
     )
-    parser_deploy.set_defaults(func=build_deploy)
+    parser_deploy.set_defaults(func=_build_deploy)
 
     parser_release = subparsers.add_parser(
         "release",
@@ -334,7 +476,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         choices=["patch", "minor", "major"],
         default="patch",
     )
-    parser_release.set_defaults(func=release)
+    parser_release.set_defaults(func=_release)
 
     args = parser.parse_args(argv)
 
@@ -347,3 +489,6 @@ if __name__ == "__main__":
     # get the ball rolling
 
     raise SystemExit(main())
+
+
+# endregion

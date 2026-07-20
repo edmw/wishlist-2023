@@ -486,6 +486,9 @@ msgstr ""
 msgid "The wish has been successfully marked as received."
 msgstr ""
 
+msgid "This wish can not be received. May be it is not reserved yet."
+msgstr ""
+
 #, python-format
 msgid ""
 "... you want to <span class=\"text-danger\">delete</span> the reservation "

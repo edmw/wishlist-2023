@@ -1,14 +1,18 @@
 """Helper functions for Maker Scripts."""
 
+import argparse
 import os
 import stat
 import subprocess
 import sys
 import tempfile
+import tomllib
 from pprint import pprint
-from typing import Any, Callable
+from typing import Any, Callable, Sequence, TextIO
 
 import semver
+
+# region banner
 
 
 def banner(
@@ -17,6 +21,7 @@ def banner(
     char: str = "#",
     lf: str = "\n",
     fail: bool = False,
+    file: TextIO = sys.stdout,
 ) -> None:
     """Prints a banner to console.
 
@@ -51,7 +56,12 @@ def banner(
             out += [f"{left} {line.center(width)} {right}", lf]
         out += [out[1]]
 
-    sys.stdout.writelines(out)
+    file.writelines(out)
+
+
+# endregion
+
+# region subprocess
 
 
 def subprocess_run(
@@ -59,6 +69,7 @@ def subprocess_run(
     environment: dict[str, Any] | None = None,
     verbose: bool = False,
     debug: bool = False,
+    simulation: bool = False,
 ) -> None:
     """Runs the given command as subprocess.
 
@@ -68,14 +79,18 @@ def subprocess_run(
     """
     if not environment:
         environment = {}
+    if debug or simulation:
+        banner("COMMAND", char="-")
+        pprint(command)
+        banner("ENVIRONMENT", char="-")
+        pprint(environment)
+    if verbose:
+        print()
+
+    if simulation:
+        return
+
     try:
-        if debug:
-            banner("COMMAND", char="-")
-            pprint(command)
-            banner("ENVIRONMENT", char="-")
-            pprint(environment)
-        if verbose:
-            print()
         subprocess.run(  # nosec
             command,
             check=True,
@@ -91,6 +106,11 @@ def subprocess_run(
             print(cpe.stderr)
         banner(["COMMAND FAILED", " ".join(command)], fail=True)
         raise
+
+
+# endregion
+
+# region sizeof_fmt
 
 
 def sizeof_fmt(
@@ -133,6 +153,11 @@ def sizeof_fmt(
     return fmt.format(num, plus, prec, separator, unit, suffix)
 
 
+# endregion
+
+# region version
+
+
 def get_version(or_exit_using: Callable) -> semver.VersionInfo:
     """Reads the current version from the version file.
 
@@ -168,3 +193,77 @@ def write_version(version: semver.VersionInfo) -> None:
             # SECURITY: Nothing to do if unlink fails.
             except BaseException:  # nosec
                 pass
+
+
+# endregion
+
+# region build base
+
+
+def get_build_base_image() -> str:
+    with open("pyproject.toml", "rb") as f:
+        pyproject_data = tomllib.load(f)
+
+    if base_image := pyproject_data.get("deployment", {}).get("base_image"):
+        return base_image
+    else:
+        banner(
+            [
+                "MAKE:",
+                "Unable to get docker base image",
+                "You may need to add '[development]/base_image'",
+                "to your pyproject.toml.",
+            ],
+            fail=True,
+            file=sys.stderr,
+        )
+        sys.exit(1)
+
+
+def _get_build_base_image(args: argparse.Namespace) -> int:
+    print(get_build_base_image())
+    return 0
+
+
+# endregion
+
+# region main
+
+
+def main(argv: Sequence[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(description="Make Helper -- provides project specific helper")
+    parser.add_argument(
+        "-v",
+        "--verbose",
+        help="increase output verbosity",
+        action="store_true",
+    )
+    parser.add_argument(
+        "-q",
+        "--quiet",
+        help="decrease output verbosity",
+        action="store_true",
+    )
+
+    subparsers = parser.add_subparsers(title="helper", required=True)
+
+    parser_develop = subparsers.add_parser(
+        "get_build_base_image",
+        help="Read docker base image for builds from pyproject.toml",
+    )
+    parser_develop.set_defaults(func=_get_build_base_image)
+
+    args = parser.parse_args(argv)
+
+    result = args.func(args)
+    print()
+    return result
+
+
+if __name__ == "__main__":
+    # get the ball rolling
+
+    raise SystemExit(main())
+
+
+# endregion

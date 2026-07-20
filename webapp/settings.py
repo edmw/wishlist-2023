@@ -7,6 +7,7 @@ import re
 from enum import StrEnum
 from pathlib import Path
 from urllib.parse import urljoin
+from warnings import filterwarnings
 
 import environs
 import structlog
@@ -170,6 +171,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "csp.middleware.CSPMiddleware",
+    "allauth.account.middleware.AccountMiddleware",
     "webapp.middlewares.request_middleware.request_middleware",
     "webapp.middlewares.logging_middleware.logging_middleware",
     "webapp.middlewares.language_middleware.language_middleware",
@@ -185,6 +187,11 @@ STORAGES = {
         "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
     },
 }
+
+# Silence deprecation warning for URLField default scheme.
+# see https://adamj.eu/tech/2023/12/07/django-fix-urlfield-assume-scheme-warnings/
+filterwarnings("ignore", "The FORMS_URLFIELD_ASSUME_HTTPS transitional setting is deprecated.")
+FORMS_URLFIELD_ASSUME_HTTPS = True
 
 # endregion DJANGO
 

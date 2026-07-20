@@ -1,4 +1,5 @@
 """Tests for encoding bytes to strings and decoding strings to bytes."""
+
 from uuid import UUID
 
 import pytest
@@ -86,7 +87,7 @@ def test_decode_raises() -> None:
         Base62Service.decode(from_string="00Lp4i5fOQ8Rlp9Аjg5SC")
 
 
-@pytest.fixture()
+@pytest.fixture
 def uuid_base62_map() -> list[tuple[str, str]]:
     """Fixture for a mapping from UUID to its base62-encoded representation."""
     return [

@@ -84,13 +84,20 @@ class WishlistMixin(SupportsViewSetup):
         self.wishlist_id = kwargs.get(constants.LIST_ID_KEY)
 
 
-class WishModelMixin(WishlistMixin):
+class WishModelMixin(WishlistMixin, django.views.generic.base.ContextMixin):
     model = Wish
     pk_url_kwarg = constants.ITEM_ID_KEY
+    context_object_name = "wish"
 
     def get_queryset(self) -> django.db.models.QuerySet[Wish]:
         wishlist = self.try_wishlist()
         return WishLens.view().by_wishlist(list=wishlist).for_listing().queryset.all()
+
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        if self.context_object_name not in context:
+            context[self.context_object_name] = None
+        return context
 
 
 class WishMixin(SupportsViewSetup):

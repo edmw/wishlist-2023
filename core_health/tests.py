@@ -32,7 +32,7 @@ def test_adding_healthchecks() -> None:
     assert all(isinstance(r, HealthCheckResult) for r in results)
 
 
-@pytest.fixture()
+@pytest.fixture
 def report() -> list[HealthCheckResult]:
     """Defines test check results."""
     return [
@@ -41,7 +41,7 @@ def report() -> list[HealthCheckResult]:
     ]
 
 
-@pytest.fixture()
+@pytest.fixture
 def render_context() -> dict:
     """Defines render context for testing renderers."""
     return {"response": Response(status=HTTPStatus.OK)}

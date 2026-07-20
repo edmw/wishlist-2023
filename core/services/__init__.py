@@ -6,7 +6,12 @@ from .adapter.serialization_service import SerializationService
 from .framework.formatting_service import FormattingService
 from .framework.notification_service import NotificationService
 from .framework.permission_service import PermissionService
-from .library.image_service import ImageRetrieveTimeoutError, ImageService
+from .library.image_service import (
+    ImageService,
+    ImageServiceRetrieveConnectionError,
+    ImageServiceRetrieveTimeoutError,
+    ImageServiceUnidentifiedImageError,
+)
 from .library.url_service import URLService
 from .models.favorite_service import FavoriteService
 from .models.reservation_service import (

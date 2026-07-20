@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Self
 
-from django.db.models import Count
+from django.db.models import Count, Q
 
 from core.models._base import LensBase, LensHasOrderMixin
 from core.models.user import User
@@ -128,7 +128,13 @@ class WishlistLens(LensHasOrderMixin, LensBase[Wishlist]):
         match self.annotate_wishes_count:
             case False:
                 self.annotate_wishes_count = True
-                self.queryset = self.queryset.annotate(wishes_count=Count(Wishlist.Fields.WISHES))
+                self.queryset = self.queryset.annotate(
+                    wishes_count=Count(Wishlist.Fields.WISHES),
+                    wishes_count_not_archived=Count(
+                        Wishlist.Fields.WISHES,
+                        filter=Q(wishes__archived=False),
+                    ),
+                )
                 return self
             case _:
                 return self

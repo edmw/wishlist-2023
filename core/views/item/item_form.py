@@ -3,6 +3,7 @@ from typing import Any
 
 from django.forms import ModelForm, Select, Textarea, TextInput
 from django.http import HttpRequest, HttpResponse
+from django.http.response import HttpResponseBase
 from django.utils.translation import gettext as _
 from django.utils.translation import gettext_noop
 
@@ -114,7 +115,7 @@ class ItemCreateView(
         "Please delete some wishes before you add new ones."
     )
 
-    def dispatch(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+    def dispatch(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponseBase:
         if wishlist := self.try_wishlist():
             if wishlist.wishes_count >= Wish.MAXIMUM_NUMBER_OF_WISHES_PER_WISHLIST:
                 return self.redirect_back_with_error_message(_(self.error_message_too_many_wishes))
