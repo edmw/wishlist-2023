@@ -43,7 +43,11 @@ dependencies = [
 
 [project.optional-dependencies]
 build = [
+  "pip-tools",
   "semver",
+  "invoke",
+  "keyring",
+  "SecretStorage",
 ]
 test = [
   "pytest",
@@ -142,6 +146,7 @@ exclude = ["core/migrations/*"]
 ignore = ["~/.pyenv/**", ".pyenv/**", ".python-typings"]
 
 [tool.bandit]
+exclude_dirs = ["./.python-typings"]
 skips = ["B404"]
 
 [tool.bandit.assert_used]

@@ -2,15 +2,17 @@
 
 [![Build, Check, Test](https://github.com/edmw/wishlist-2023/actions/workflows/main.yml/badge.svg)](https://github.com/edmw/wishlist-2023/actions/workflows/main.yml)
 
-Wishlist is a web application written in Python with Django framework for managing wish lists. It allows users to create lists of items they want most and share them with others.
+Wishlist is a web application written in Python with the Django framework for managing wish lists. It allows users to create lists of items they want most and share them with others.
 
 This is a rewrite of the [2019 Wishlist web application written in Swift](https://github.com/edmw/wishlist).
 
 ## Development Environment
 
-The application is built and run with Docker containers for development.
+The application is built and run using Docker containers for development.
 
 ### Setup Environment on Host
+
+The following instructions create a virtual environment for the project using Python 3.12, install `invoke` with dependencies into that environment, and, finally, perform all necessary steps to obtain a working development environment (pyenv must be available).
 
 ```
 $ cd <PROJECT_DIRECTORY>
@@ -18,136 +20,140 @@ $ pyenv install 3.12
 $ pyenv virtualenv 3.12 wishlist-12
 $ pyenv local wishlist-12
 $ pyenv shell wishlist-12
-$ make dependencies-install-development
+$ python -m pip install --upgrade pip
+$ python -m pip install invoke semver keyring rich pyyaml
+$ inv make.install-development
+```
+
+Alternatively, it is also possible to install `invoke` globally for use in multiple projects using pipx:
+
+```
+$ pipx install invoke
+$ pipx inject invoke semver keyring rich pyyaml
+```
+
+Of course, a separate virtual environment should still be created for the project:
+
+```
+$ cd <PROJECT_DIRECTORY>
+$ pyenv install 3.12
+$ pyenv virtualenv 3.12 wishlist-12
+$ pyenv local wishlist-12
+$ pyenv shell wishlist-12
+$ inv make.install-development
 ```
 
 ## Run Development Server
 
-Django webserver is used to execute the web application for development. The server can be started with Django Debug Mode turned on or off and Debug Adapter Protocol activated or deactivated.
+The Django web server is used to execute the web application for development. The server can be started with Django Debug Mode turned on or off and Debug Adapter Protocol activated or deactivated.
 
 Run with Django Debug Mode turned **on** and Debug Adapter Protocol **activated**:
 
 ```
-$ make
+$ inv run
 ```
 
 Run with Django Debug Mode turned **off** and Debug Adapter Protocol **activated**:
 
 ```
-$ DJANGO_DEBUG=False make
+$ DJANGO_DEBUG=False inv run
 ```
 
 Run with Django Debug Mode turned **on** and Debug Adapter Protocol **deactivated**:
 
 ```
-$ make run-develop
+$ inv run.development
 ```
 
 Run with Django Debug Mode turned **off** and Debug Adapter Protocol **deactivated**:
 
 ```
-$ DJANGO_DEBUG=False make run-develop
+$ DJANGO_DEBUG=False inv run.development
 ```
 
-The development image contains several additional tools and libraries that enable development tasks and debugging.
+The development image contains several **additional tools and libraries** that enable development tasks and debugging.
 
-## Run Deployment Version
+## Run Production Version
 
 `Gunicorn` is used to execute the web application.
 
 ```
-$ make run-deploy
+$ inv run.production
 ```
 
-This uses the deployment image with only required tools and libraries installed.
+This uses the deployment image with only **required tools and libraries** installed and Django Debug Mode turned **off**.
 
 ## Release a new Version
 
 Release a new version of the project using either
 
 ```
-make release.patch
-make release.minor
-make release.major
+inv release.patch
+inv release.minor
+inv release.major
 ```
 
 which will bump the version number accordingly, build a new release image, commit a version tag, and push the new image to the registry.
 
 Note: To build a new release, `main` must be the current branch, `main` must be a tracking branch, `main` must be up-to-date, and `main` must not be dirty.
 
-Note: Currently, the history will not be updated. Best practice is to update the history file before running `make release.*`.
+Note: Currently, the history will not be updated. Best practice is to update the history file before running `inv release.*`.
 
-## Make
+## Test the Application
 
-### Webapp
-
-```
-$ make webapp-translations
-$ make webapp-migrations
-$ make webapp-dumpdata
-```
-
-### Testing
+* `pytest` -- unittest runner
+* `coverage` -- code coverage reporter
 
 ```
-$ make test
-$ make debugtest
-$ make test-coverage
-$ make test-down
+inv test
 ```
 
-### Checking
-
 ```
-$ make check
-$ make check-down
+inv test.debug
 ```
 
-### Building
-
 ```
-$ make build-develop
-$ make build-deploy
-$ make build-release.patch
-$ make build-release.minor
-$ make build-release.major
+inv test.coverage
 ```
 
-### Releasing
+## Check the Application
+
+* `ruff` -- static code analyzer
+* `bandit` -- security issue linter
 
 ```
-$ make release.patch
-$ make release.minor
-$ make release.major
-$ make release-push
+inv check
 ```
 
-### Dependencies
+## Manage the Application
 
-```
-$ make dependencies-install-deployment
-$ make dependencies-install-development
-$ make dependencies-pin-deployment
-$ make dependencies-pin-development
-$ make dependencies-pin-all
-$ make dependencies-update-deployment
-$ make dependencies-update-development
-$ make dependencies-update-all
-```
+* `inv manage.console`
+  * Start a Python console for the web application.
+* `inv manage.migrations`
+  * Create or update migrations for the web application.
+* `inv manage.translations`
+  * Create or update translations for the web application.
+* `inv manage.dumpdata`
+  * Dump the data from the database of the web application to a file.
+* `inv manage.shell`
+  * Start a shell in a local service container (default: app) after the server has been started.
+* `inv manage.connect-database`
+  * Connect to the database console of the local service container after the server has been started.
+* `inv manage.connect-datastore`
+  * Connect to the datastore console of the local service container after the server has been started.
 
-### Environment
+## Make the Environment
 
-```
-$ make clean
-
-$ make environment-upgrade
-
-$ make shell.%s
-$ make shell  # make shell.app
-$ make console
-$ make connect-database
-$ make connect-datastore
-$ make run-shell.%
-$ make run-shell  # make run-shell.app
-$ make run-console
-```
+* `inv`
+  * List and describe all available tasks.
+* `inv make.clean`
+* `inv make.pin`
+* `inv make.pin-development`
+* `inv make.pin-production`
+* `inv make.update`
+* `inv make.update-development`
+* `inv make.update-production`
+* `inv make.install-development`
+* `inv make.install-production`
+* `inv make.sync-development`
+* `inv make.sync-production`

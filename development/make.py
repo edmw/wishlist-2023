@@ -12,6 +12,8 @@ from typing import Any, Callable, Sequence, TextIO
 
 import semver
 
+# region banner
+
 
 def banner(
     lines: str | list[str],
@@ -57,11 +59,17 @@ def banner(
     file.writelines(out)
 
 
+# endregion
+
+# region subprocess
+
+
 def subprocess_run(
     command: list[str],
     environment: dict[str, Any] | None = None,
     verbose: bool = False,
     debug: bool = False,
+    simulation: bool = False,
 ) -> None:
     """Runs the given command as subprocess.
 
@@ -71,14 +79,18 @@ def subprocess_run(
     """
     if not environment:
         environment = {}
+    if debug or simulation:
+        banner("COMMAND", char="-")
+        pprint(command)
+        banner("ENVIRONMENT", char="-")
+        pprint(environment)
+    if verbose:
+        print()
+
+    if simulation:
+        return
+
     try:
-        if debug:
-            banner("COMMAND", char="-")
-            pprint(command)
-            banner("ENVIRONMENT", char="-")
-            pprint(environment)
-        if verbose:
-            print()
         subprocess.run(  # nosec
             command,
             check=True,
@@ -94,6 +106,11 @@ def subprocess_run(
             print(cpe.stderr)
         banner(["COMMAND FAILED", " ".join(command)], fail=True)
         raise
+
+
+# endregion
+
+# region sizeof_fmt
 
 
 def sizeof_fmt(
@@ -136,6 +153,11 @@ def sizeof_fmt(
     return fmt.format(num, plus, prec, separator, unit, suffix)
 
 
+# endregion
+
+# region version
+
+
 def get_version(or_exit_using: Callable) -> semver.VersionInfo:
     """Reads the current version from the version file.
 
@@ -173,13 +195,17 @@ def write_version(version: semver.VersionInfo) -> None:
                 pass
 
 
-def get_build_base_image(args: argparse.Namespace) -> int:
+# endregion
+
+# region build base
+
+
+def get_build_base_image() -> str:
     with open("pyproject.toml", "rb") as f:
         pyproject_data = tomllib.load(f)
 
     if base_image := pyproject_data.get("deployment", {}).get("base_image"):
-        print(base_image)
-        return 0
+        return base_image
     else:
         banner(
             [
@@ -192,6 +218,16 @@ def get_build_base_image(args: argparse.Namespace) -> int:
             file=sys.stderr,
         )
         sys.exit(1)
+
+
+def _get_build_base_image(args: argparse.Namespace) -> int:
+    print(get_build_base_image())
+    return 0
+
+
+# endregion
+
+# region main
 
 
 def main(argv: Sequence[str] | None = None) -> int:
@@ -215,7 +251,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         "get_build_base_image",
         help="Read docker base image for builds from pyproject.toml",
     )
-    parser_develop.set_defaults(func=get_build_base_image)
+    parser_develop.set_defaults(func=_get_build_base_image)
 
     args = parser.parse_args(argv)
 
@@ -228,3 +264,6 @@ if __name__ == "__main__":
     # get the ball rolling
 
     raise SystemExit(main())
+
+
+# endregion

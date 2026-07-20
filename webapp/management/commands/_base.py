@@ -17,14 +17,14 @@ class WebappBaseCommand(BaseCommand):
     Provides utility functions and can be extended by Mixins.
     """
 
-    suppressed_base_arguments = [
+    suppressed_base_arguments = {
         "--verbosity",
         "--pythonpath",
         "--settings",
         "--traceback",
         "--no-color",
         "--force-color",
-    ]
+    }
 
     def create_parser(self, prog_name: str, subcommand: str, **kwargs: Any) -> CommandParser:
         kwargs["add_help"] = False
