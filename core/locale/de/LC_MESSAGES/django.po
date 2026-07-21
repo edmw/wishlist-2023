@@ -788,6 +788,10 @@ msgstr ""
 msgid "Edit items"
 msgstr "Wünsche bearbeiten"
 
+#, python-format
+msgid "shared by %(ownername)s"
+msgstr "geteilt von %(ownername)s"
+
 msgid "Export list"
 msgstr "Wunschzettel exportieren"
 

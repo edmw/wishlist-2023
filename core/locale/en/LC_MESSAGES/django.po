@@ -693,6 +693,10 @@ msgstr ""
 msgid "Edit items"
 msgstr ""
 
+#, python-format
+msgid "shared by %(ownername)s"
+msgstr ""
+
 msgid "Export list"
 msgstr ""
 
