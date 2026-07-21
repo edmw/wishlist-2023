@@ -26,5 +26,10 @@ from .models.wish_service import (
     WishService,
     WishServiceError,
 )
+from .models.wishlist_collaboration_service import (
+    WishlistCollaborationOwnerAsEditorError,
+    WishlistCollaborationPrivateWishlistError,
+    WishlistCollaborationService,
+)
 from .models.wishlist_service import WishlistService
 from .views.render_service import RenderService

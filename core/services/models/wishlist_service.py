@@ -14,15 +14,15 @@ class WishlistService:
 
     @staticmethod
     def count_wishlists_for_user(*, user: User) -> int:
-        """Counts the number of wish lists whose owner is the specified user.
+        """Counts the number of wish lists editable by the specified user.
 
         Arguments:
-            user:  Owner of the lists to count.
+            user: User for which editable lists are to be counted.
 
         Returns:
             Number of wish lists found.
         """
-        return WishlistLens.view().by_owner(user=user).queryset.count()
+        return WishlistLens.view().editable_by(user=user).queryset.count()
 
     @staticmethod
     def get_wishlist(id: WishlistID) -> Wishlist:

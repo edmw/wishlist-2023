@@ -7,6 +7,7 @@ from django.urls import reverse
 
 from core import constants
 from core.models import UserID
+from core.services import WishlistCollaborationService
 from core.tests._base import AssertLoggingMixin
 from core.tests.conftest import CoreFixture
 
@@ -30,6 +31,17 @@ class TestListsView(AssertLoggingMixin):
         """Alice requesting alice’s wish lists."""
         client.force_login(core.user_alice)
         assert self._get(client, core.user_alice.id).status_code == HTTPStatus.OK
+
+    def test_lists_view_contains_collaborated_wishlist(self, core: CoreFixture, client: Client) -> None:
+        client.force_login(core.user_bob)
+        WishlistCollaborationService.add_editor(wishlist=core.list_alice, user=core.user_bob)
+
+        response = self._get(client, core.user_bob.id)
+
+        assert response.status_code == HTTPStatus.OK
+        assert "Wishes for Bob" in response.content.decode("utf-8")
+        assert "Wishes for Alice" in response.content.decode("utf-8")
+        assert "Editor" in response.content.decode("utf-8")
 
     def test_lists_view_not_allowed(
         self, core: CoreFixture, client: Client, caplog: pytest.LogCaptureFixture

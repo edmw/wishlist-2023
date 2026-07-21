@@ -9,6 +9,7 @@ from django.urls import reverse
 from core import constants
 from core.models import UserID, Wishlist, WishlistID
 from core.models.types import ItemOrdering, Visibility
+from core.services import WishlistCollaborationService, WishlistService
 from core.tests._base import AssertLoggingMixin
 from core.tests.conftest import CoreFixture
 
@@ -60,6 +61,19 @@ class TestListCreateView(AssertLoggingMixin):
         assert self._get_create(client, core.user_alice.id).status_code == HTTPStatus.FOUND
         assert self._post_create(client, core.user_alice.id).status_code == HTTPStatus.FOUND
 
+    def test_list_create_view_limit_uses_total_count(
+        self, core: CoreFixture, client: Client, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        client.force_login(core.user_alice)
+        monkeypatch.setattr(
+            WishlistService,
+            "count_wishlists_for_user",
+            staticmethod(lambda *, user: Wishlist.MAXIMUM_NUMBER_OF_WISHLISTS_PER_USER),
+        )
+
+        assert self._get_create(client, core.user_alice.id).status_code == HTTPStatus.FOUND
+        assert Wishlist.objects.filter(name_field="A new wish list").count() == 0
+
 
 @pytest.mark.django_db
 class TestListUpdateView(AssertLoggingMixin):
@@ -94,6 +108,35 @@ class TestListUpdateView(AssertLoggingMixin):
         assert self._get_update(client, user_id, list_id).status_code == HTTPStatus.OK
         assert self._post_update(client, user_id, list_id).status_code == HTTPStatus.FOUND
         assert Wishlist.objects.get(pk=list_id).name == "A changed wish list"
+
+    def test_list_update_view_private_visibility_error_rendered_in_form(
+        self, core: CoreFixture, client: Client
+    ) -> None:
+        """Alice reducing visibility on a collaborated list gets a form error."""
+        client.force_login(core.user_alice)
+        WishlistCollaborationService.add_editor(wishlist=core.list_alice, user=core.user_bob)
+
+        response = client.post(
+            reverse(
+                constants.VIEW_LIST_UPDATE,
+                kwargs={
+                    constants.USER_ID_KEY: core.user_alice.id,
+                    constants.LIST_ID_KEY: core.list_alice.id,
+                },
+            ),
+            data={
+                Wishlist.Fields.NAME: core.list_alice.name,
+                Wishlist.Fields.VISIBILITY: Visibility.PRIVATE,
+                Wishlist.Fields.ITEM_ORDERING: core.list_alice.item_ordering,
+                Wishlist.Fields.MASK_RESERVATIONS: core.list_alice.mask_reservations,
+            },
+        )
+
+        assert response.status_code == HTTPStatus.OK
+        assert response.context["form"].errors[Wishlist.Fields.VISIBILITY] == [
+            'Visibility cannot be changed to "Only you" while editors still have access to this list.'
+        ]
+        assert Wishlist.objects.get(pk=core.list_alice.id).visibility == Visibility.PUBLIC
 
     def test_list_update_view_other_list(self, core: CoreFixture, client: Client) -> None:
         """Alice updating a wish list from bob’s wish lists."""

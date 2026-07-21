@@ -74,6 +74,16 @@ msgstr ""
 msgid "Public"
 msgstr ""
 
+msgid "Editor"
+msgstr ""
+
+msgid ""
+"Visibility cannot be changed to \"Only you\" while editors still have access"
+" to this list."
+msgstr ""
+"Visibility cannot be changed to \"Only you\" while editors still have access"
+" to this list."
+
 msgid "just now"
 msgstr ""
 

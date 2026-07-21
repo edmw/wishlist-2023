@@ -8,12 +8,16 @@ Items on a wish list have a sort order.
 from __future__ import annotations
 
 import logging
+from typing import Iterable
 
 from django.conf import settings as django_settings
+from django.core.exceptions import ValidationError
 from django.db import models
+from django.utils.translation import gettext_lazy
 
 from core.models import concerns, fields, types
 from core.models._base import IDMixin
+from core.models.types import Visibility
 
 from .wishlist_types import TypesMixin
 from .wishlist_urls import URLMixin
@@ -53,6 +57,7 @@ class Wishlist(
     # Relations
 
     wishes: models.QuerySet  # relation
+    collaboration_memberships: models.QuerySet  # relation
     wishes_count: int  # annotation
     wishes_count_not_archived: int  # annotation
 
@@ -114,3 +119,37 @@ class Wishlist(
             Preview text.
         """
         return self.description
+
+    def clean(self) -> None:
+        super().clean()
+
+        if self.pk and self.visibility == Visibility.PRIVATE:
+            current_visibility = (
+                Wishlist.objects.filter(pk=self.pk)
+                .values_list(Wishlist.Fields.VISIBILITY, flat=True)
+                .first()
+            )
+            if current_visibility != Visibility.PRIVATE and self.collaboration_memberships.exists():
+                raise ValidationError(
+                    {
+                        Wishlist.Fields.VISIBILITY: gettext_lazy(
+                            'Visibility cannot be changed to "Only you" while editors still have access to this list.'
+                        )
+                    }
+                )
+
+    def save(
+        self,
+        force_insert: bool = False,
+        force_update: bool = False,
+        using: str | None = None,
+        update_fields: Iterable[str] | None = None,
+    ) -> None:
+        self.full_clean()
+
+        super().save(
+            force_insert=force_insert,
+            force_update=force_update,
+            using=using,
+            update_fields=update_fields,
+        )

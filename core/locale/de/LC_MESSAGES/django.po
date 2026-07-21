@@ -76,6 +76,18 @@ msgstr "alle Nutzer"
 msgid "Public"
 msgstr "Öffentlich"
 
+#, fuzzy
+#| msgid "Edit"
+msgid "Editor"
+msgstr "Bearbeiten"
+
+msgid ""
+"Visibility cannot be changed to \"Only you\" while editors still have access"
+" to this list."
+msgstr ""
+"Die Sichtbarkeit kann nicht auf \"nur Du\" geändert werden, solange es noch "
+"Bearbeiter für diese Liste gibt."
+
 msgid "just now"
 msgstr "gerade eben"
 

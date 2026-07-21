@@ -38,7 +38,7 @@ class ItemMoveForm(ModelForm):
         wishlist_field = cast(ModelChoiceField, self.base_fields[Wish.Fields.WISHLIST])
         wishlist_field.queryset = (
             WishlistLens.view()
-            .by_owner(user=user)
+            .editable_by(user=user)
             .without_lists(lists=[instance.wishlist])
             .for_listing()
             .queryset.all()

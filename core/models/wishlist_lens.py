@@ -2,11 +2,22 @@ from __future__ import annotations
 
 from typing import Self
 
-from django.db.models import Count, Q
+from django.db.models import (
+    BooleanField,
+    Case,
+    CharField,
+    Count,
+    OuterRef,
+    Q,
+    Subquery,
+    Value,
+    When,
+)
 
 from core.models._base import LensBase, LensHasOrderMixin
 from core.models.user import User
 from core.models.wishlist import Wishlist
+from core.models.wishlist_membership import WishlistMembership
 
 
 class WishlistLens(LensHasOrderMixin, LensBase[Wishlist]):
@@ -19,8 +30,44 @@ class WishlistLens(LensHasOrderMixin, LensBase[Wishlist]):
         pass
 
     filter_for_owner: int | None = None
+    filter_for_editable_by: int | None = None
     exclude_for_lists: list[int] | None = None
     annotate_wishes_count: bool = False
+
+    def editable_by(self, *, user: User) -> Self:
+        """Narrows the view to wishlists the user can edit.
+
+        Includes owner lists and collaboration memberships.
+        """
+        match self.filter_for_editable_by:
+            case None:
+                self.filter_for_editable_by = user.pk
+                membership_role = WishlistMembership.objects.filter(
+                    wishlist_id=OuterRef("pk"),
+                    user=user,
+                ).values(WishlistMembership.Fields.ROLE)[:1]
+                self.queryset = (
+                    self.queryset.filter(
+                        Q(owner=user) | Q(collaboration_memberships__user=user),
+                    )
+                    .annotate(
+                        collaboration_role=Subquery(
+                            membership_role,
+                            output_field=CharField(),
+                        ),
+                        is_collaboration=Case(
+                            When(owner=user, then=Value(False)),
+                            default=Value(True),
+                            output_field=BooleanField(),
+                        ),
+                    )
+                    .distinct()
+                )
+                return self
+            case _ if self.filter_for_editable_by == user.pk:
+                return self
+            case _:
+                raise WishlistLens.ViewAlreadyNarrowedDownToOwnerError
 
     def by_owner(self, *, user: User) -> Self:
         """Narrows the view of this lens to all wish lists which are owned by

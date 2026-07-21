@@ -45,4 +45,5 @@ from .wish_lens import WishLens
 from .wish_serializer import WishSerializer
 from .wishlist import Wishlist
 from .wishlist_lens import WishlistLens
+from .wishlist_membership import WishlistMembership
 from .wishlist_serializer import WishlistSerializer
