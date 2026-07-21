@@ -60,3 +60,19 @@ _Avoid_: Owner as editor, mirrored owner membership
 **Single Membership Constraint**:
 At most one collaboration membership exists per pair of wishlist and user.
 _Avoid_: Duplicate memberships, parallel role rows
+
+**Deletion Collaboration Warning**:
+When deleting a collaborated wishlist, the warning states the number of editors but does not identify them by name.
+_Avoid_: Unqualified collaboration warning, editor name disclosure in delete flow
+
+**Combined Deletion Warning Block**:
+If a wishlist has wishes and editors, both deletion risks are shown together in one warning block while the name confirmation remains tied only to existing wishes.
+_Avoid_: Collapsed single-risk wording, confirmation tied to editor presence alone
+
+**Pluralized Editor Warning**:
+The deletion warning distinguishes between one editor and multiple editors.
+_Avoid_: Flat editor-count wording
+
+**Explicit Access-Loss Deletion Warning**:
+The deletion warning states explicitly that editors lose access when the wishlist is deleted.
+_Avoid_: Abstract collaboration warning without consequence

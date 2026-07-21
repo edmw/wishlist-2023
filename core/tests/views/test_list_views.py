@@ -226,6 +226,44 @@ class TestListDeleteView(AssertLoggingMixin):
         assert self._post_delete(client, user_id, list_id).status_code == HTTPStatus.FOUND
         assert Wishlist.objects.filter(pk=list_id).count() == 0
 
+    def test_list_delete_view_warns_about_multiple_collaborators_and_wishes(
+        self, core: CoreFixture, client: Client
+    ) -> None:
+        client.force_login(core.user_alice)
+        WishlistCollaborationService.add_editor(wishlist=core.list_alice, user=core.user_bob)
+        WishlistCollaborationService.add_editor(wishlist=core.list_alice, user=core.user_carol)
+
+        response = self._get_delete(client, core.user_alice.id, core.list_alice.id)
+        content = response.content.decode("utf-8")
+
+        assert response.status_code == HTTPStatus.OK
+        assert "There are still 3 wishes on your wish list." in content
+        assert (
+            "This wish list is shared with 2 editors. If you proceed to delete the list, "
+            "these editors will lose access to it."
+        ) in content
+        assert "name_confirmation" in content
+
+    def test_list_delete_view_warns_about_single_collaborator_without_wishes(
+        self, core: CoreFixture, client: Client
+    ) -> None:
+        client.force_login(core.user_alice)
+        WishlistCollaborationService.add_editor(wishlist=core.list_alice_empty, user=core.user_bob)
+
+        response = self._get_delete(client, core.user_alice.id, core.list_alice_empty.id)
+        content = response.content.decode("utf-8")
+
+        assert response.status_code == HTTPStatus.OK
+        assert (
+            "This wish list is shared with one editor. If you proceed to delete the list, "
+            "this editor will lose access to it."
+        ) in content
+        assert "name_confirmation" not in content
+        assert (
+            self._post_delete(client, core.user_alice.id, core.list_alice_empty.id).status_code
+            == HTTPStatus.FOUND
+        )
+
     def test_list_delete_view_other_list(self, core: CoreFixture, client: Client) -> None:
         """Alice deleting a wish list from bob’s wish lists."""
         client.force_login(core.user_alice)

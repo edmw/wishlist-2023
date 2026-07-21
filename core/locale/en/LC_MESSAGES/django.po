@@ -608,6 +608,16 @@ msgid ""
 "deleted."
 msgstr ""
 
+#, python-format
+msgid ""
+"This wish list is shared with one editor. If you proceed to delete the list,"
+" this editor will lose access to it."
+msgid_plural ""
+"This wish list is shared with %(counter)s editors. If you proceed to delete "
+"the list, these editors will lose access to it."
+msgstr[0] ""
+msgstr[1] ""
+
 msgid ""
 "If you really want to do this, please confirm by entering the name of the "
 "list again:"

@@ -84,3 +84,9 @@ class ListDeleteView(
         else:
             kwargs[ListDeleteForm.WISHLIST_NAME_ARG] = ""
         return kwargs
+
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        wishlist = cast(Wishlist, self.get_object())
+        context["collaboration_memberships_count"] = wishlist.collaboration_memberships.count()
+        return context
