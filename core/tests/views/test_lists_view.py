@@ -41,7 +41,7 @@ class TestListsView(AssertLoggingMixin):
         assert response.status_code == HTTPStatus.OK
         assert "Wishes for Bob" in response.content.decode("utf-8")
         assert "Wishes for Alice" in response.content.decode("utf-8")
-        assert "Editor" in response.content.decode("utf-8")
+        assert "shared by alice" in response.content.decode("utf-8")
 
     def test_lists_view_not_allowed(
         self, core: CoreFixture, client: Client, caplog: pytest.LogCaptureFixture
