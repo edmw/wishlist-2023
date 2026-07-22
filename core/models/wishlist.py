@@ -57,9 +57,10 @@ class Wishlist(
     # Relations
 
     wishes: models.QuerySet  # relation
-    collaboration_memberships: models.QuerySet  # relation
     wishes_count: int  # annotation
     wishes_count_not_archived: int  # annotation
+
+    collaboration_memberships: models.QuerySet  # relation
 
     # Lifecycle
 

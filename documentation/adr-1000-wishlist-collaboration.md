@@ -1,4 +1,4 @@
-# 1000. Wishlist collaboration membership model
+# 1000. Wishlist collaboration
 
 Date: 2026-07-21
 

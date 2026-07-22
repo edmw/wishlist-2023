@@ -26,6 +26,9 @@ class WishlistLens(LensHasOrderMixin, LensBase[Wishlist]):
     class ViewAlreadyNarrowedDownToOwnerError(LensBase.StateError):
         pass
 
+    class ViewAlreadyNarrowedDownToEditorsError(LensBase.StateError):
+        pass
+
     class ViewAlreadyPurgedOfListsError(LensBase.StateError):
         pass
 
@@ -67,7 +70,7 @@ class WishlistLens(LensHasOrderMixin, LensBase[Wishlist]):
             case _ if self.filter_for_editable_by == user.pk:
                 return self
             case _:
-                raise WishlistLens.ViewAlreadyNarrowedDownToOwnerError
+                raise WishlistLens.ViewAlreadyNarrowedDownToEditorsError
 
     def by_owner(self, *, user: User) -> Self:
         """Narrows the view of this lens to all wish lists which are owned by
