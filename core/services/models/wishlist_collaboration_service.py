@@ -24,6 +24,10 @@ class WishlistCollaborationService:
     """Service for managing collaboration memberships on wishlists."""
 
     @staticmethod
+    def count_memberships(*, wishlist: Wishlist) -> int:
+        return WishlistMembership.objects.filter(wishlist=wishlist).count()
+
+    @staticmethod
     def is_editor(*, wishlist: Wishlist, user: User) -> bool:
         return WishlistMembership.objects.filter(
             wishlist=wishlist,

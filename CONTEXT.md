@@ -76,3 +76,11 @@ _Avoid_: Flat editor-count wording
 **Explicit Access-Loss Deletion Warning**:
 The deletion warning states explicitly that editors lose access when the wishlist is deleted.
 _Avoid_: Abstract collaboration warning without consequence
+
+**View-Service Persistence Boundary**:
+Views do not execute model or database-related logic directly, including relation counts; all such logic is delegated to service calls.
+_Avoid_: Direct queryset or related-manager access in views for business data
+
+**Membership Count Semantics**:
+Deletion warnings use a role-agnostic membership count (`count_memberships`) because membership type does not change delete-risk communication.
+_Avoid_: Role-specific counting for delete warnings

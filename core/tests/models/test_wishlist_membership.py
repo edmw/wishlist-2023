@@ -13,6 +13,23 @@ from core.tests.conftest import CoreFixture
 
 @pytest.mark.django_db
 class TestWishlistMembership:
+    def test_count_memberships_returns_zero_for_list_without_collaborators(self, core: CoreFixture) -> None:
+        list_alice_empty = Wishlist.objects.get(pk=core.list_alice_empty.pk)
+
+        count = WishlistCollaborationService.count_memberships(wishlist=list_alice_empty)
+
+        assert count == 0
+
+    def test_count_memberships_counts_all_memberships_role_agnostic(self, core: CoreFixture) -> None:
+        list_alice = Wishlist.objects.get(pk=core.list_alice.pk)
+
+        WishlistCollaborationService.add_editor(wishlist=list_alice, user=core.user_bob)
+        WishlistCollaborationService.add_editor(wishlist=list_alice, user=core.user_carol)
+
+        count = WishlistCollaborationService.count_memberships(wishlist=list_alice)
+
+        assert count == 2
+
     def test_add_editor_idempotent(self, core: CoreFixture) -> None:
         list_alice = Wishlist.objects.get(pk=core.list_alice.pk)
 

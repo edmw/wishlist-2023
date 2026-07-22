@@ -9,6 +9,7 @@ from django.utils.translation import gettext_noop
 
 from core.models import Name, Wishlist
 from core.models.wishlist_lens import WishlistLens
+from core.services import WishlistCollaborationService
 from core.views._base import DeleteView, LoginRequiredMixin, WishlistModelMixin
 from core.views._forms import (
     AriaDescribedByMixin,
@@ -88,5 +89,7 @@ class ListDeleteView(
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
         wishlist = cast(Wishlist, self.get_object())
-        context["collaboration_memberships_count"] = wishlist.collaboration_memberships.count()
+        context["collaboration_memberships_count"] = WishlistCollaborationService.count_memberships(
+            wishlist=wishlist
+        )
         return context
