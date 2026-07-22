@@ -14,7 +14,7 @@ class TestWishlistCollaborationCommand:
         out = StringIO()
 
         call_command(
-            "wishlist_collaboration",
+            "manage_wishlist_collaboration",
             "add-editor",
             "--wishlist-id",
             str(core.list_alice.id),
@@ -30,7 +30,7 @@ class TestWishlistCollaborationCommand:
         out = StringIO()
 
         call_command(
-            "wishlist_collaboration",
+            "manage_wishlist_collaboration",
             "add-editor",
             "--wishlist-id",
             str(core.list_alice.id),
@@ -39,7 +39,7 @@ class TestWishlistCollaborationCommand:
             stdout=out,
         )
         call_command(
-            "wishlist_collaboration",
+            "manage_wishlist_collaboration",
             "add-editor",
             "--wishlist-id",
             str(core.list_alice.id),
@@ -55,7 +55,7 @@ class TestWishlistCollaborationCommand:
         out = StringIO()
 
         call_command(
-            "wishlist_collaboration",
+            "manage_wishlist_collaboration",
             "remove-editor",
             "--wishlist-id",
             str(core.list_alice.id),
@@ -66,7 +66,7 @@ class TestWishlistCollaborationCommand:
         assert "was not assigned" in out.getvalue()
 
         call_command(
-            "wishlist_collaboration",
+            "manage_wishlist_collaboration",
             "add-editor",
             "--wishlist-id",
             str(core.list_alice.id),
@@ -75,7 +75,7 @@ class TestWishlistCollaborationCommand:
             stdout=out,
         )
         call_command(
-            "wishlist_collaboration",
+            "manage_wishlist_collaboration",
             "remove-editor",
             "--wishlist-id",
             str(core.list_alice.id),
@@ -90,7 +90,7 @@ class TestWishlistCollaborationCommand:
     def test_reject_owner_as_editor(self, core: CoreFixture) -> None:
         with pytest.raises(CommandError):
             call_command(
-                "wishlist_collaboration",
+                "manage_wishlist_collaboration",
                 "add-editor",
                 "--wishlist-id",
                 str(core.list_alice.id),
@@ -105,7 +105,7 @@ class TestWishlistCollaborationCommand:
 
         with pytest.raises(CommandError):
             call_command(
-                "wishlist_collaboration",
+                "manage_wishlist_collaboration",
                 "add-editor",
                 "--wishlist-id",
                 str(list_alice.id),
