@@ -22,7 +22,7 @@ class FavoriteService:
         Returns:
             Number of favorites found.
         """
-        return FavoriteLens.view().by_user(user=user).queryset.count()
+        return FavoriteLens.view().by_user(user=user).count()
 
     @staticmethod
     def get_favorite(id: FavoriteID) -> Favorite:
@@ -39,7 +39,7 @@ class FavoriteService:
         Raises:
             Favorite.DoesNotExist
         """
-        return FavoriteLens.view().queryset.get(id_field=id)
+        return FavoriteLens.view().by_id(id=id).one()
 
     @staticmethod
     def is_favorite(*, user: User, wishlist: Wishlist) -> bool:
@@ -53,4 +53,4 @@ class FavoriteService:
         Returns:
             True, if the specified wish list is a favorite, otherwise False.
         """
-        return FavoriteLens.view().by_user(user=user).by_wishlist(wishlist=wishlist).queryset.exists()
+        return FavoriteLens.view().by_user(user=user).by_wishlist(wishlist=wishlist).exists()

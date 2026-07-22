@@ -2,6 +2,7 @@
 
 ## [x.x.x]
 
+* 🖼️ add wishlist collaboration; users can be editors for other lists
 * 🛠️ add grilling skills from https://www.aihero.dev/grill-with-docs
 
 ## [1.9.2]

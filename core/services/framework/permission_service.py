@@ -21,6 +21,7 @@ from core.services.models import (
     FavoriteService,
     ReservationService,
     UserService,
+    WishlistCollaborationService,
     WishlistService,
     WishService,
 )
@@ -31,17 +32,19 @@ logger = logging.getLogger(__name__)
 def _log_critical(
     message: str,
     requesting: User,
-    requested: User
-    | UserID
-    | Wishlist
-    | WishlistID
-    | Wish
-    | WishID
-    | Favorite
-    | FavoriteID
-    | Reservation
-    | ReservationID
-    | None = None,
+    requested: (
+        User
+        | UserID
+        | Wishlist
+        | WishlistID
+        | Wish
+        | WishID
+        | Favorite
+        | FavoriteID
+        | Reservation
+        | ReservationID
+        | None
+    ) = None,
 ) -> None:
     # Because request user may be wrapped in a proxy object,
     # make a copy which will return the actual user instance.
@@ -66,6 +69,16 @@ def _log_critical(
 
 
 class PermissionService:
+    @staticmethod
+    def can_edit_wishlist(*, requesting_user: User, wishlist_object: Wishlist) -> bool:
+        if requesting_user == wishlist_object.owner:
+            return True
+
+        return WishlistCollaborationService.is_editor(
+            wishlist=wishlist_object,
+            user=requesting_user,
+        )
+
     @staticmethod
     def assert_user_object(*, requesting_user: User, user_object: User) -> User:
         if requesting_user == user_object:
@@ -119,6 +132,21 @@ class PermissionService:
             raise PermissionDenied()
 
     @staticmethod
+    def assert_wishlist_editable(*, requesting_user: User, wishlist_object: Wishlist) -> Wishlist:
+        if PermissionService.can_edit_wishlist(
+            requesting_user=requesting_user,
+            wishlist_object=wishlist_object,
+        ):
+            return wishlist_object
+
+        _log_critical(
+            "Authenticated user requesting list edit without permission.",
+            requesting_user,
+            wishlist_object,
+        )
+        raise PermissionDenied()
+
+    @staticmethod
     def assert_wishlist_object_by_id(
         *, requesting_user: User, wishlist_object_id: WishlistID | None
     ) -> Wishlist:
@@ -146,18 +174,37 @@ class PermissionService:
             raise PermissionDenied() from wdne
 
     @staticmethod
-    def assert_wish_object(*, requesting_user: User, wish_object: Wish) -> Wish:
-        # Requesting user must match the item’s list owner!
-        if requesting_user == wish_object.wishlist.owner:
-            return wish_object
-
-        else:
+    def assert_wishlist_editable_by_id(
+        *, requesting_user: User, wishlist_object_id: WishlistID | None
+    ) -> Wishlist:
+        if not wishlist_object_id:
             _log_critical(
-                "Authenticated user requesting other user’s items.",
+                "Authenticated user requesting no list.",
                 requesting_user,
-                wish_object,
             )
             raise PermissionDenied()
+
+        try:
+            list_object = WishlistService.get_wishlist(id=wishlist_object_id)
+            return PermissionService.assert_wishlist_editable(
+                requesting_user=requesting_user,
+                wishlist_object=list_object,
+            )
+        except Wishlist.DoesNotExist as wdne:
+            _log_critical(
+                "Authenticated user requesting unknown list.",
+                requesting_user,
+                wishlist_object_id,
+            )
+            raise PermissionDenied() from wdne
+
+    @staticmethod
+    def assert_wish_object(*, requesting_user: User, wish_object: Wish) -> Wish:
+        PermissionService.assert_wishlist_editable(
+            requesting_user=requesting_user,
+            wishlist_object=wish_object.wishlist,
+        )
+        return wish_object
 
     @staticmethod
     def assert_wish_object_by_id(*, requesting_user: User, wish_object_id: WishID | None) -> Wish:
@@ -227,9 +274,9 @@ class PermissionService:
 
     @staticmethod
     def assert_wishlist(*, requesting_user: User, wishlist: Wishlist) -> Wishlist:
-        if requesting_user == wishlist.owner or (
-            wishlist.visibility == Visibility.USERS or wishlist.visibility == Visibility.PUBLIC
-        ):
+        if PermissionService.can_edit_wishlist(
+            requesting_user=requesting_user, wishlist_object=wishlist
+        ) or (wishlist.visibility == Visibility.USERS or wishlist.visibility == Visibility.PUBLIC):
             return wishlist
 
         else:

@@ -1,11 +1,11 @@
 from __future__ import annotations
 
-from core.models._base import LensBase, LensHasOrderMixin
+from core.models._base import LensBase, LensHasIdMixin, LensHasOrderMixin
 from core.models.reservation import Reservation
 from core.models.user import User
 
 
-class ReservationLens(LensHasOrderMixin, LensBase[Reservation]):
+class ReservationLens(LensHasIdMixin, LensHasOrderMixin, LensBase[Reservation]):
     model = Reservation
 
     class ViewAlreadyNarrowedDownToHolderError(LensBase.StateError):
@@ -30,6 +30,7 @@ class ReservationLens(LensHasOrderMixin, LensBase[Reservation]):
             ReservationLens.OwnerAlreadyQueriedError if the lens was already
             narrowed down to another user.
         """
+        self._assert_not_consumed()
         match self.filter_for_user:
             case None:
                 self.filter_for_user = user.pk

@@ -1,4 +1,5 @@
 """Models are build using fields defined here."""
+
 from .description import DescriptionField
 from .email_enabled import EmailEnabledField
 from .favorite_id import FavoriteIDField
@@ -18,3 +19,4 @@ from .visibility import VisibilityField
 from .wish_id import WishIDField
 from .wish_image import WishImageField, WishImageFieldFile
 from .wishlist_id import WishlistIDField
+from .wishlist_membership_id import WishlistMembershipIDField
