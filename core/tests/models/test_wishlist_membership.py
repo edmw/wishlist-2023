@@ -30,6 +30,23 @@ class TestWishlistMembership:
 
         assert count == 2
 
+    def test_is_editor_true_for_matching_wishlist_and_user(self, core: CoreFixture) -> None:
+        list_alice = Wishlist.objects.get(pk=core.list_alice.pk)
+
+        WishlistCollaborationService.add_editor(wishlist=list_alice, user=core.user_bob)
+
+        assert WishlistCollaborationService.is_editor(wishlist=list_alice, user=core.user_bob) is True
+
+    def test_is_editor_false_when_other_memberships_exist(self, core: CoreFixture) -> None:
+        list_alice = Wishlist.objects.get(pk=core.list_alice.pk)
+        list_bob = Wishlist.objects.get(pk=core.list_bob.pk)
+
+        WishlistCollaborationService.add_editor(wishlist=list_alice, user=core.user_bob)
+        WishlistCollaborationService.add_editor(wishlist=list_bob, user=core.user_alice)
+
+        assert WishlistCollaborationService.is_editor(wishlist=list_alice, user=core.user_carol) is False
+        assert WishlistCollaborationService.is_editor(wishlist=list_bob, user=core.user_bob) is False
+
     def test_add_editor_idempotent(self, core: CoreFixture) -> None:
         list_alice = Wishlist.objects.get(pk=core.list_alice.pk)
 

@@ -2,7 +2,7 @@
 
 import logging
 
-from core.models import User, Wishlist, WishlistMembership
+from core.models import User, Wishlist, WishlistMembership, WishlistMembershipLens
 from core.models.types import Visibility, WishlistMembershipRole
 
 logger = logging.getLogger(__name__)
@@ -25,15 +25,17 @@ class WishlistCollaborationService:
 
     @staticmethod
     def count_memberships(*, wishlist: Wishlist) -> int:
-        return WishlistMembership.objects.filter(wishlist=wishlist).count()
+        return WishlistMembershipLens.view().by_wishlist(wishlist=wishlist).queryset.count()
 
     @staticmethod
     def is_editor(*, wishlist: Wishlist, user: User) -> bool:
-        return WishlistMembership.objects.filter(
-            wishlist=wishlist,
-            user=user,
-            role_field=WishlistMembershipRole.EDITOR,
-        ).exists()
+        return (
+            WishlistMembershipLens.view()
+            .by_wishlist(wishlist=wishlist)
+            .by_user(user=user)
+            .editors_only()
+            .queryset.exists()
+        )
 
     @staticmethod
     def add_editor(*, wishlist: Wishlist, user: User) -> bool:

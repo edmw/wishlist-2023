@@ -84,3 +84,15 @@ _Avoid_: Direct queryset or related-manager access in views for business data
 **Membership Count Semantics**:
 Deletion warnings use a role-agnostic membership count (`count_memberships`) because membership type does not change delete-risk communication.
 _Avoid_: Role-specific counting for delete warnings
+
+**Lens-Based Read Convention**:
+Read-side collaboration queries in services are composed through a membership lens instead of direct model manager/queryset access.
+_Avoid_: Inline read queries on membership model classes inside services
+
+**Editor-Only Membership Filter**:
+Membership selection for edit capability is role-based via an explicit `editors_only` filter.
+_Avoid_: Capability-named lens filters that blur data selection and policy interpretation
+
+**Composable Membership Lens Filters**:
+Membership reads are composed from `by_wishlist`, `by_user`, and `editors_only` as needed per service use case.
+_Avoid_: Single-purpose combined filters that hide query intent
