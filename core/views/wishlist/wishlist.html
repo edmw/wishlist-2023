@@ -15,7 +15,7 @@
         <div class="h2">
             <h2>
                 {{ wishlist.name }}
-                {% if user == wishlist.owner %}
+                {% if wishlist_is_editable %}
                     <a class="btn btn-link d-flex float-right" href="{{ wishlist.get_absolute_items_url }}" title="{% translate 'Edit list' %}" aria-description="{% translate 'Edit this wish list.' %}"><span class="btn-label">{% translate "Edit" %}</span> {% icon "edit-2" %}</a>
                 {% endif %}
             </h2>

@@ -24,7 +24,7 @@ class StartView(UserMixin, AddNeverCacheMixin, TemplateView):
         if self.user:
             context["your_wishlists_count"] = WishlistService.count_wishlists_for_user(user=self.user)
             context["your_wishlists"] = (
-                WishlistLens.view().by_owner(user=self.user).for_listing().queryset.all()
+                WishlistLens.view().editable_by(user=self.user).for_listing().queryset.all()
             )
             context["your_favorites_count"] = FavoriteService.count_favorites_for_user(user=self.user)
             context["your_favorites"] = (

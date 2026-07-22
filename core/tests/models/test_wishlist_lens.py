@@ -1,6 +1,7 @@
 import pytest
 
 from core.models import WishlistLens
+from core.services import WishlistCollaborationService
 from core.tests.conftest import CoreFixture
 
 
@@ -119,3 +120,20 @@ def test_lens_for_listing(core: CoreFixture) -> None:
     assert wishlists[0].wishes_count == 0
     assert wishlists[1].wishes_count == 3
     assert wishlists[2].wishes_count == 1
+
+
+@pytest.mark.django_db
+def test_lens_editable_by_includes_collaboration(core: CoreFixture) -> None:
+    WishlistCollaborationService.add_editor(wishlist=core.list_alice, user=core.user_bob)
+
+    lens = WishlistLens.view().editable_by(user=core.user_bob).for_listing()
+    wishlists = list(lens.queryset.all())
+
+    assert len(wishlists) == 2
+    assert [list.name for list in wishlists] == ["Wishes for Alice", "Wishes for Bob"]
+
+    alice_list = [list for list in wishlists if list.id == core.list_alice.id][0]
+    bob_list = [list for list in wishlists if list.id == core.list_bob.id][0]
+
+    assert alice_list.is_collaboration is True
+    assert bob_list.is_collaboration is False

@@ -185,7 +185,9 @@ class DockerRunner:
             self.print_banner("🚀🚀🚀", message)
 
             command = self.build_command(mode, start=True)
-            self.run_in_context(command, env={"WEBAPP_KEY": self.get_webapp_key(mode)})
+            self.run_in_context(
+                command, env={"WEBAPP_KEY": self.get_webapp_key(mode), "COMPOSE_MENU": "false"}
+            )
 
         def stop(self, mode: Mode = Mode.DEVELOP_DEBUG) -> None:
             command = self.build_command(mode, start=False)
