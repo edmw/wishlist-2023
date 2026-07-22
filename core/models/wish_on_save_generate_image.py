@@ -53,11 +53,11 @@ class OnSaveGenerateImageMixin(IsSaveable):
         )
 
         if updated_reference_photo:
-            from core.tasks.wish import generate_image_for_reference_photo
+            from core.tasks.wish import generate_image_from_reference_photo
 
             wish_id = wish.id
             transaction.on_commit(
-                lambda: generate_image_for_reference_photo.apply_async(
+                lambda: generate_image_from_reference_photo.apply_async(
                     kwargs={
                         "wish_id": wish_id,
                     },

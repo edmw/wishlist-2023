@@ -99,3 +99,39 @@ def test_lens_for_listing(core: CoreFixture) -> None:
     # counting wishes
     assert favorites[0].wishlist.wishes_count == 0
     assert favorites[1].wishlist.wishes_count == 3
+
+
+@pytest.mark.django_db
+def test_consumed_lens_rejects_builder_terminal_and_qs(core: CoreFixture) -> None:
+    lens = FavoriteLens.view().by_user(user=core.user_alice)
+
+    assert lens.count() == 1
+
+    with pytest.raises(FavoriteLens.LensAlreadyConsumedError):
+        lens.exists()
+
+    with pytest.raises(FavoriteLens.LensAlreadyConsumedError):
+        lens.by_wishlist(wishlist=core.list_alice)
+
+    with pytest.raises(FavoriteLens.LensAlreadyConsumedError):
+        lens.qs()
+
+
+@pytest.mark.django_db
+def test_qs_is_non_consuming_before_terminal(core: CoreFixture) -> None:
+    lens = FavoriteLens.view().by_user(user=core.user_alice)
+
+    queryset = lens.qs()
+
+    assert queryset.count() == 1
+    assert lens.by_wishlist(wishlist=core.list_alice).exists() is True
+
+
+@pytest.mark.django_db
+def test_consumed_error_takes_precedence_over_other_state_errors(core: CoreFixture) -> None:
+    lens = FavoriteLens.view().by_user(user=core.user_alice)
+
+    assert lens.exists() is True
+
+    with pytest.raises(FavoriteLens.LensAlreadyConsumedError):
+        lens.by_user(user=core.user_bob)

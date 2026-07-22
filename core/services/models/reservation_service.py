@@ -39,7 +39,7 @@ class ReservationService:
         Raises:
             Reservation.DoesNotExist
         """
-        return ReservationLens.view().queryset.get(id_field=id)
+        return ReservationLens.view().by_id(id=id).one()
 
     @staticmethod
     def complete(*, reservation: Reservation, save: bool = True) -> None:

@@ -10,7 +10,7 @@ from django.core.management.base import CommandParser
 from core.models import WishID, WishLens
 from core.models.types.wishlist_id import WishlistID
 from core.services import WishlistService, WishService
-from core.tasks.wish import generate_image_for_reference_photo
+from core.tasks.wish import generate_image_from_reference_photo
 
 from ._base import CoreBaseCommand
 
@@ -80,14 +80,14 @@ class Command(CoreBaseCommand):
         for wish in wishes:
             if foreground:
                 try:
-                    generate_image_for_reference_photo(wish_id=wish.id)
+                    generate_image_from_reference_photo(wish_id=wish.id)
                 except celery_exceptions.Retry:
                     # Retry is not an error, so ignore it. If running in
                     # foreground the will no retry, intentionally.
                     pass
             else:
                 self.print(f"Scheduling: Wish {wish!r}")
-                generate_image_for_reference_photo.apply_async(
+                generate_image_from_reference_photo.apply_async(
                     kwargs={
                         "wish_id": wish.id,
                     },
