@@ -1,2 +1,2 @@
 from .fields import IDMixin
-from .lens import LensBase, LensHasOrderMixin
+from .lens import LensBase, LensHasIdMixin, LensHasOrderMixin

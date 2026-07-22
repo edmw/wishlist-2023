@@ -22,7 +22,7 @@ class WishlistService:
         Returns:
             Number of wish lists found.
         """
-        return WishlistLens.view().editable_by(user=user).queryset.count()
+        return WishlistLens.view().editable_by(user=user).count()
 
     @staticmethod
     def get_wishlist(id: WishlistID) -> Wishlist:
@@ -39,4 +39,4 @@ class WishlistService:
         Raises:
             Wishlist.DoesNotExist
         """
-        return WishlistLens.view().counting_wishes().queryset.get(id_field=id)
+        return WishlistLens.view().counting_wishes().by_id(id=id).one()

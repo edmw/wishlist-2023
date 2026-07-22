@@ -25,7 +25,7 @@ class WishlistCollaborationService:
 
     @staticmethod
     def count_memberships(*, wishlist: Wishlist) -> int:
-        return WishlistMembershipLens.view().by_wishlist(wishlist=wishlist).queryset.count()
+        return WishlistMembershipLens.view().by_wishlist(wishlist=wishlist).count()
 
     @staticmethod
     def is_editor(*, wishlist: Wishlist, user: User) -> bool:
@@ -34,7 +34,7 @@ class WishlistCollaborationService:
             .by_wishlist(wishlist=wishlist)
             .by_user(user=user)
             .editors_only()
-            .queryset.exists()
+            .exists()
         )
 
     @staticmethod

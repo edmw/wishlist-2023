@@ -40,7 +40,7 @@ class WishService:
         Raises:
             Wish.DoesNotExist
         """
-        return WishLens.view().queryset.get(id_field=id)
+        return WishLens.view().by_id(id=id).one()
 
     @staticmethod
     def archive(*, wish: Wish, save: bool = True) -> None:

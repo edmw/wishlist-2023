@@ -14,13 +14,13 @@ from django.db.models import (
     When,
 )
 
-from core.models._base import LensBase, LensHasOrderMixin
+from core.models._base import LensBase, LensHasIdMixin, LensHasOrderMixin
 from core.models.user import User
 from core.models.wishlist import Wishlist
 from core.models.wishlist_membership import WishlistMembership
 
 
-class WishlistLens(LensHasOrderMixin, LensBase[Wishlist]):
+class WishlistLens(LensHasIdMixin, LensHasOrderMixin, LensBase[Wishlist]):
     model = Wishlist
 
     class ViewAlreadyNarrowedDownToOwnerError(LensBase.StateError):
@@ -42,6 +42,7 @@ class WishlistLens(LensHasOrderMixin, LensBase[Wishlist]):
 
         Includes owner lists and collaboration memberships.
         """
+        self._assert_not_consumed()
         match self.filter_for_editable_by:
             case None:
                 self.filter_for_editable_by = user.pk
@@ -88,6 +89,7 @@ class WishlistLens(LensHasOrderMixin, LensBase[Wishlist]):
             WishlistLens.OwnerAlreadyQueriedError if the lens was already
             narrowed down to another user.
         """
+        self._assert_not_consumed()
         match self.filter_for_owner:
             case None:
                 self.filter_for_owner = user.pk
@@ -114,6 +116,7 @@ class WishlistLens(LensHasOrderMixin, LensBase[Wishlist]):
             WishlistLens.ListsAlreadyExcludedError if the lens is already
             omitting another set of wish lists.
         """
+        self._assert_not_consumed()
         if not lists:
             return self
         ids = [list.pk for list in lists]
@@ -175,6 +178,7 @@ class WishlistLens(LensHasOrderMixin, LensBase[Wishlist]):
             This lens with a view where the lists have an attribute set with
             the count of their wishes.
         """
+        self._assert_not_consumed()
         match self.annotate_wishes_count:
             case False:
                 self.annotate_wishes_count = True

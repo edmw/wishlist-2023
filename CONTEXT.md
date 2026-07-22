@@ -96,3 +96,31 @@ _Avoid_: Capability-named lens filters that blur data selection and policy inter
 **Composable Membership Lens Filters**:
 Membership reads are composed from `by_wishlist`, `by_user`, and `editors_only` as needed per service use case.
 _Avoid_: Single-purpose combined filters that hide query intent
+
+**Lens Scope-Building Boundary**:
+Lens methods using `by_`, `without_`, `for_`, and ordering names only narrow or shape scope and never execute queries.
+_Avoid_: Scope methods that materialize or count results
+
+**Lens Terminal Operation Boundary**:
+Lens terminal methods execute queries (`count`, `exists`, `one`, `first_or_none`) while `qs` only exposes the current scope without executing.
+_Avoid_: Direct `queryset` access in service read paths
+
+**Consumed Lens After Terminal**:
+After any terminal lens operation, the lens instance is consumed and must not be narrowed or reshaped further.
+_Avoid_: Reusing the same lens instance for additional scope changes after terminal execution
+
+**Single-Use Terminal Lens Instance**:
+Once a terminal operation is executed, no further operations are allowed on that lens instance, including additional terminal calls.
+_Avoid_: Chaining multiple terminal reads on one consumed lens instance
+
+**Non-Consuming Queryset Escape Hatch**:
+`qs()` exposes the current scope without consuming the lens instance, but it is unavailable once the lens is consumed by a terminal operation.
+_Avoid_: Treating `qs()` as terminal while also reusing consumed lens instances
+
+**Explicit Consumed-Lens Error**:
+Operations on a consumed lens fail with a dedicated consumed-state error derived from lens state errors.
+_Avoid_: Reusing unrelated state-conflict errors for consumed-lens violations
+
+**Central Consumption Guard**:
+Consumption checks are centralized in LensBase and are required at the start of every scope-building method.
+_Avoid_: Ad-hoc per-lens consumption checks that can drift over time

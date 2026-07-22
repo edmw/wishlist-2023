@@ -2,14 +2,14 @@ from __future__ import annotations
 
 from django.db.models import Prefetch
 
-from core.models._base import LensBase, LensHasOrderMixin
+from core.models._base import LensBase, LensHasIdMixin, LensHasOrderMixin
 from core.models.favorite import Favorite
 from core.models.user import User
 from core.models.wishlist import Wishlist
 from core.models.wishlist_lens import WishlistLens
 
 
-class FavoriteLens(LensHasOrderMixin, LensBase[Favorite]):
+class FavoriteLens(LensHasIdMixin, LensHasOrderMixin, LensBase[Favorite]):
     model = Favorite
 
     class ViewAlreadyNarrowedDownToUserError(LensBase.StateError):
@@ -38,6 +38,7 @@ class FavoriteLens(LensHasOrderMixin, LensBase[Favorite]):
             FavoriteLens.OwnerAlreadyQueriedError if the lens was already
             narrowed down to another user.
         """
+        self._assert_not_consumed()
         match self.filter_for_user:
             case None:
                 self.filter_for_user = user.pk
@@ -64,6 +65,7 @@ class FavoriteLens(LensHasOrderMixin, LensBase[Favorite]):
             FavoriteLens.ListAlreadyQueriedError if the lens was already
             narrowed down to another list.
         """
+        self._assert_not_consumed()
         match self.filter_for_wishlist:
             case None:
                 self.filter_for_wishlist = wishlist.pk
@@ -125,6 +127,7 @@ class FavoriteLens(LensHasOrderMixin, LensBase[Favorite]):
         Returns:
             This lens with a view suitable for iterating the favorites.
         """
+        self._assert_not_consumed()
         if not self.filter_for_user:
             self.queryset = self.queryset.select_related(Favorite.Fields.USER)
         if not self.filter_for_wishlist:
@@ -140,6 +143,7 @@ class FavoriteLens(LensHasOrderMixin, LensBase[Favorite]):
         Returns:
             This lens with a view suitable for listing the favorites.
         """
+        self._assert_not_consumed()
         self.queryset = self.queryset.prefetch_related(
             Prefetch(
                 Favorite.Fields.WISHLIST,
