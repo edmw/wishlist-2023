@@ -36,6 +36,14 @@ class ItemMoveForm(ModelForm):
         user = kwargs.pop("user")
         instance = kwargs["instance"]
         wishlist_field = cast(ModelChoiceField, self.base_fields[Wish.Fields.WISHLIST])
+
+        def label_for_wishlist(wishlist: Any) -> str:
+            if getattr(wishlist, "is_collaboration", False):
+                shared_by = _("shared by %(ownername)s") % {"ownername": wishlist.owner.username}
+                return f"{wishlist.name} ({shared_by})"
+            return wishlist.name
+
+        wishlist_field.label_from_instance = label_for_wishlist
         wishlist_field.queryset = (
             WishlistLens.view()
             .editable_by(user=user)
