@@ -3,6 +3,7 @@
 This is the starting of all url patterns. More url patterns of the other apps
 are included here.
 """
+
 from uuid import UUID
 
 from allauth.account import views as allauth_account_views
@@ -94,6 +95,7 @@ if django_settings.ADMIN_SITE_ENABLED:
         path("admin/", admin.site.urls),
     ]
 
-urlpatterns += [
-    path("__debug__/", include("debug_toolbar.urls")),
-]
+if "debug_toolbar" in django_settings.INSTALLED_APPS:
+    urlpatterns += [
+        path("__debug__/", include("debug_toolbar.urls")),
+    ]

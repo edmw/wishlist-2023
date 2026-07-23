@@ -357,7 +357,7 @@ if ADMIN_SITE_ENABLED:
     AUTHENTICATION_BACKENDS.insert(0, "django.contrib.auth.backends.ModelBackend")
 
 ACCOUNT_ADAPTER = "webapp.authenticator.WebappAccountAdapter"
-ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_SIGNUP_FIELDS = ["email*", "username*", "password1*", "password2*"]
 ACCOUNT_EMAIL_VERIFICATION = "none"
 ACCOUNT_USERNAME_BLACKLIST = [
     "root",
