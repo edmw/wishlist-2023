@@ -18,3 +18,5 @@ from .user_settings_id import UserSettingsID
 from .visibility import Visibility
 from .wish_id import WishID
 from .wishlist_id import WishlistID
+from .wishlist_membership_id import WishlistMembershipID
+from .wishlist_membership_role import WishlistMembershipRole

@@ -76,6 +76,16 @@ msgstr "alle Nutzer"
 msgid "Public"
 msgstr "Öffentlich"
 
+msgid "Editor"
+msgstr "Bearbeiter"
+
+msgid ""
+"Visibility cannot be changed to \"Only you\" while editors still have access"
+" to this list."
+msgstr ""
+"Die Sichtbarkeit kann nicht auf \"nur Du\" geändert werden, solange es noch "
+"Bearbeiter für diese Liste gibt."
+
 msgid "just now"
 msgstr "gerade eben"
 
@@ -671,6 +681,22 @@ msgstr ""
 "Wenn du mit dem Löschen des Wunschzettels fortfährst, werden auch alle "
 "darauf befindlichen Wünsche gelöscht."
 
+#, python-format
+msgid ""
+"This wish list is shared with one editor. If you proceed to delete the list,"
+" this editor will lose access to it."
+msgid_plural ""
+"This wish list is shared with %(counter)s editors. If you proceed to delete "
+"the list, these editors will lose access to it."
+msgstr[0] ""
+"Dieser Wunschzettel ist für einen Bearbeiter freigegeben. Wenn du mit dem "
+"Löschen des Wunschzettels fortfährst, verliert dieser Bearbeiter den Zugriff"
+" darauf."
+msgstr[1] ""
+"Dieser Wunschzettel ist für %(counter)s Bearbeiter freigegeben. Wenn du mit "
+"dem Löschen des Wunschzettels fortfährst, verlieren diese Bearbeiter den "
+"Zugriff darauf."
+
 msgid ""
 "If you really want to do this, please confirm by entering the name of the "
 "list again:"
@@ -759,6 +785,10 @@ msgstr ""
 
 msgid "Edit items"
 msgstr "Wünsche bearbeiten"
+
+#, python-format
+msgid "shared by %(ownername)s"
+msgstr "geteilt von %(ownername)s"
 
 msgid "Export list"
 msgstr "Wunschzettel exportieren"

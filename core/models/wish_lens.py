@@ -2,13 +2,13 @@ from __future__ import annotations
 
 from typing import Self
 
-from core.models._base import LensBase, LensHasOrderMixin
+from core.models._base import LensBase, LensHasIdMixin, LensHasOrderMixin
 from core.models.types import ItemOrdering
 from core.models.wish import Wish
 from core.models.wishlist import Wishlist
 
 
-class WishLens(LensHasOrderMixin, LensBase[Wish]):
+class WishLens(LensHasIdMixin, LensHasOrderMixin, LensBase[Wish]):
     model = Wish
 
     class ViewAlreadyNarrowedDownToListError(LensBase.StateError):
@@ -35,6 +35,7 @@ class WishLens(LensHasOrderMixin, LensBase[Wish]):
             WishLens.ListAlreadyQueriedError if the lens was already
             narrowed down to another list.
         """
+        self._assert_not_consumed()
         match self.filter_for_wishlist:
             case None:
                 self.filter_for_wishlist = list.pk
@@ -77,6 +78,7 @@ class WishLens(LensHasOrderMixin, LensBase[Wish]):
             WishLens.StateError if there is already another setting in
             effect.
         """
+        self._assert_not_consumed()
         match self.filter_for_archived:
             case None:
                 self.filter_for_archived = False
@@ -122,6 +124,7 @@ class WishLens(LensHasOrderMixin, LensBase[Wish]):
         Returns:
             This lens with a view suitable for listing the wish lists.
         """
+        self._assert_not_consumed()
         self.queryset = self.queryset.select_related(Wish.Fields.WISHLIST)
 
         return self

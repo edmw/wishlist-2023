@@ -143,7 +143,7 @@ def notify_on_reservation_delete(self: Task, wish_id: WishID) -> bool:
     max_retries=3,
     default_retry_delay=3,
 )
-def generate_image_for_reference_photo(self: Task, wish_id: WishID) -> bool:
+def generate_image_from_reference_photo(self: Task, wish_id: WishID) -> bool:
     """Task to generate an image if the web reference to a wish‘s photo has
     been changed.
 

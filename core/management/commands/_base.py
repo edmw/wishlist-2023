@@ -2,11 +2,11 @@ from functools import partial, update_wrapper
 from typing import Callable, TypeVar
 from uuid import UUID
 
-from core.models.types import WishID, WishlistID
+from core.models.types import UserID, WishID, WishlistID
 from webapp.management.commands import WebappBaseCommand
 from webapp.services import Base62Service
 
-ID_TYPE = TypeVar("ID_TYPE", WishID, WishlistID)
+ID_TYPE = TypeVar("ID_TYPE", UserID, WishID, WishlistID)
 
 
 class CoreBaseCommand(WebappBaseCommand):

@@ -40,10 +40,15 @@
                             </td>
                             <td class="wl-visibility" data-label="{% translate 'Visibility' %}">{{ wishlist.visibility.display }}</td>
                             <td class="wl-actions wl-actions-right" data-label="">
+                                {% if wishlist.is_collaboration %}
+                                    <span class="badge bg-secondary ms-2">{% blocktranslate with ownername=wishlist.owner.username %}shared by {{ ownername }}{% endblocktranslate %}</span>
+                                {% endif %}
                                 <div class="btn-group" role="group">
-                                    <a href="{{ wishlist.get_absolute_export_url }}" title="{% translate 'Export list' %}" class="btn btn-action ms-3">{% icon "download" %}</a>
-                                    <a href="{% make_linked_url wishlist.get_absolute_edit_url %}" title="{% translate 'Edit list' %}" class="btn btn-action ms-3">{% icon "edit" %}</a>
-                                    <a href="{% make_linked_url wishlist.get_absolute_delete_url %}" title="{% translate 'Delete list' %}" class="btn btn-action ms-3">{% icon "delete" %}</a>
+                                    {% if user == wishlist.owner %}
+                                        <a href="{{ wishlist.get_absolute_export_url }}" title="{% translate 'Export list' %}" class="btn btn-action ms-3">{% icon "download" %}</a>
+                                        <a href="{% make_linked_url wishlist.get_absolute_edit_url %}" title="{% translate 'Edit list' %}" class="btn btn-action ms-3">{% icon "edit" %}</a>
+                                        <a href="{% make_linked_url wishlist.get_absolute_delete_url %}" title="{% translate 'Delete list' %}" class="btn btn-action ms-3">{% icon "delete" %}</a>
+                                    {% endif %}
                                 </div>
                             </td>
                         </tr>

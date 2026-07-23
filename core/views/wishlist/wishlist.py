@@ -69,6 +69,10 @@ class WishlistView(
         wishlist = self.try_wishlist()
         context["wishlist"] = wishlist
         context["wishlist_is_favorite"] = FavoriteService.is_favorite(wishlist=wishlist, user=user)
+        context["wishlist_is_editable"] = PermissionService.can_edit_wishlist(
+            requesting_user=user,
+            wishlist_object=wishlist,
+        )
         context["wishes_count"] = context["wishes"].count
 
         return context

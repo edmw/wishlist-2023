@@ -9,9 +9,21 @@
 
 {% block content_extra %}
     {% with object.wishes_count as wishes_count %}
-        {% if wishes_count > 0 %}
-            <p>{% blocktranslate count counter=wishes_count %}There is still one wish on your wish list.{% plural %}There are still {{ counter }} wishes on your wish list.{% endblocktranslate %} {% blocktranslate %}If you proceed to delete the list, all the wishes on it will also be deleted.{% endblocktranslate %} {% blocktranslate %}If you really want to do this, please confirm by entering the name of the list again:{% endblocktranslate %}</p>
-        {% endif %}
+        {% with collaboration_memberships_count as editors_count %}
+            {% if wishes_count > 0 or editors_count > 0 %}
+                <p>
+                    {% if wishes_count > 0 %}
+                        {% blocktranslate count counter=wishes_count %}There is still one wish on your wish list.{% plural %}There are still {{ counter }} wishes on your wish list.{% endblocktranslate %} {% blocktranslate %}If you proceed to delete the list, all the wishes on it will also be deleted.{% endblocktranslate %}
+                    {% endif %}
+                    {% if editors_count > 0 %}
+                        {% blocktranslate count counter=editors_count %}This wish list is shared with one editor. If you proceed to delete the list, this editor will lose access to it.{% plural %}This wish list is shared with {{ counter }} editors. If you proceed to delete the list, these editors will lose access to it.{% endblocktranslate %}
+                    {% endif %}
+                    {% if wishes_count > 0 %}
+                        {% blocktranslate %}If you really want to do this, please confirm by entering the name of the list again:{% endblocktranslate %}
+                    {% endif %}
+                </p>
+            {% endif %}
+        {% endwith %}
     {% endwith %}
 {% endblock content_extra %}
 
