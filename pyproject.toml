@@ -19,7 +19,7 @@ dependencies = [
   "django_celery_beat == 2.9.*",
   "django_celery_results == 2.6.*",
   "django-debug-toolbar == 7.0.*",
-  "djangorestframework == 3.17.*",
+  "djangorestframework == 3.16.*",
   "djangorestframework-dataclasses == 1.4.*",
   "drf-spectacular == 0.30.*",
   "markdown-it-py[linkify] == 4.2.*",
