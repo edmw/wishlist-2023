@@ -64,19 +64,19 @@ class JsonFormatter(jsonlogger.JsonFormatter):
 
     def add_fields(
         self,
-        log_record: dict[str, Any],
+        log_data: dict[str, Any],
         record: logging.LogRecord,
         message_dict: dict[str, Any],
     ) -> None:
-        super().add_fields(log_record, record, message_dict)
+        super().add_fields(log_data, record, message_dict)
 
         if record.name == GUNICORN_ACCESS_LOG:
             # Populate fields on log record after renaming.
             for field in self.fields or self._required_fields:
                 default_name = field
                 name = self.rename_fields.get(field, default_name)
-                if not log_record[name] and record.args:
-                    log_record[name] = record.args.get(field)
+                if not log_data[name] and record.args:
+                    log_data[name] = record.args.get(field)
 
 
 # Configure log formatter for structured logging using JSON

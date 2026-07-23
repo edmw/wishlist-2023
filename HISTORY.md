@@ -2,6 +2,11 @@
 
 ## [x.x.x]
 
+## [2.1.0]
+
+* 🛠️ upgrade django to 5.2
+* 🛠️ upgrade project dependencies
+
 ## [2.0.0]
 
 * 🖼️ add wishlist collaboration; users can be editors for other lists

@@ -14,6 +14,7 @@ import structlog
 import structlog.types
 from celery.schedules import crontab
 from cryptography.fernet import Fernet
+from csp.constants import NONCE, SELF
 from django.core.exceptions import ImproperlyConfigured
 from django.http import HttpRequest
 from marshmallow.validate import OneOf
@@ -145,6 +146,7 @@ INSTALLED_APPS = [
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
+    "csp",
     "django_probes",
     "webapp",
     "webapp.apps.StaticFilesConfig",
@@ -306,16 +308,14 @@ CSRF_COOKIE_HTTPONLY = False
 CSRF_HEADER_NAME = "HTTP_X_CSRFTOKEN"
 CSRF_TRUSTED_ORIGINS = [WEBAPP_LOCATION]
 
-CSP_SELF = "'self'"
-CSP_DATA = "data:"
-
-CSP_STYLE_SRC = (CSP_SELF,)
-CSP_SCRIPT_SRC = (CSP_SELF,)
-CSP_IMG_SRC = (
-    CSP_SELF,
-    CSP_DATA,
-)
-CSP_INCLUDE_NONCE_IN = ["script-src", "style-src"]
+CONTENT_SECURITY_POLICY = {
+    "DIRECTIVES": {
+        "default-src": [SELF],
+        "style-src": [SELF, NONCE],
+        "script-src": [SELF, NONCE],
+        "img-src": [SELF, "data:"],
+    }
+}
 
 # endregion SECURITY
 
@@ -357,7 +357,7 @@ if ADMIN_SITE_ENABLED:
     AUTHENTICATION_BACKENDS.insert(0, "django.contrib.auth.backends.ModelBackend")
 
 ACCOUNT_ADAPTER = "webapp.authenticator.WebappAccountAdapter"
-ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_SIGNUP_FIELDS = ["email*", "username*", "password1*", "password2*"]
 ACCOUNT_EMAIL_VERIFICATION = "none"
 ACCOUNT_USERNAME_BLACKLIST = [
     "root",
@@ -460,7 +460,10 @@ with env.prefixed("STORAGE_"):
 
 AWS_SECRET_ACCESS_KEY = webapp_env_decrypt("STORAGE_SECRET_KEY", None)
 
-CSP_IMG_SRC = (*CSP_IMG_SRC, WEBAPP_MEDIA_LOCATION)
+CONTENT_SECURITY_POLICY["DIRECTIVES"]["img-src"] = [
+    *CONTENT_SECURITY_POLICY["DIRECTIVES"]["img-src"],
+    WEBAPP_MEDIA_LOCATION,
+]
 
 # endregion MEDIA
 
