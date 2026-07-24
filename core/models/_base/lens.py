@@ -68,6 +68,13 @@ class LensBase(Generic[M], object):
         finally:
             self._consume()
 
+    def ids(self) -> list[int]:
+        self._assert_not_consumed()
+        try:
+            return cast(list[int], list(self.queryset.values_list("pk", flat=True)))
+        finally:
+            self._consume()
+
 
 class LensHasIdMixin:
     filter_for_id: Any | None = None
