@@ -124,3 +124,23 @@ _Avoid_: Reusing unrelated state-conflict errors for consumed-lens violations
 **Central Consumption Guard**:
 Consumption checks are centralized in LensBase and are required at the start of every scope-building method.
 _Avoid_: Ad-hoc per-lens consumption checks that can drift over time
+
+**Owner-Scoped Membership Overview**:
+The membership overview for a wishlist belongs to owner-level management and is accessible only to the wishlist owner.
+_Avoid_: Editor-visible membership administration, collaborator-owned membership view
+
+**Conditional Membership Action**:
+The memberships action in the personal wishlist index appears only when the wishlist currently has at least one collaboration membership.
+_Avoid_: Always-visible membership action, count-independent action visibility
+
+**Icon-Only Membership Action**:
+The memberships action in list rows is represented by a standalone icon button without an inline membership count.
+_Avoid_: Count-labeled membership action, mixed icon-text action in row controls
+
+**Read-Only Membership Listing**:
+The memberships overview presents collaborator data for inspection without inline mutation actions in that same table view.
+_Avoid_: Inline edit controls in listing, mixed read-write membership index
+
+**Membership Empty-State Fallback**:
+The memberships overview has a dedicated empty state when no memberships remain at render time.
+_Avoid_: Missing empty handling, forced redirect on empty membership set

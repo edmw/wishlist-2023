@@ -1,4 +1,5 @@
 """The Core’s constants."""
+
 from typing import Final
 
 USER_ID_KEY: Final[str] = "user_id"
@@ -17,6 +18,7 @@ VIEW_LIST_CREATE: Final[str] = "list-create"
 VIEW_LIST_UPDATE: Final[str] = "list-update"
 VIEW_LIST_DELETE: Final[str] = "list-delete"
 VIEW_LIST_EXPORT: Final[str] = "list-export"
+VIEW_MEMBERSHIPS: Final[str] = "memberships"
 VIEW_ITEMS: Final[str] = "items"
 VIEW_ITEM_CREATE: Final[str] = "item-create"
 VIEW_ITEM_UPDATE: Final[str] = "item-update"

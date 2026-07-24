@@ -464,6 +464,10 @@ msgstr ""
 msgid "Select a list to move your wish to"
 msgstr ""
 
+#, python-format
+msgid "shared by %(ownername)s"
+msgstr ""
+
 msgid "This wish can not be moved."
 msgstr ""
 
@@ -693,8 +697,7 @@ msgstr ""
 msgid "Edit items"
 msgstr ""
 
-#, python-format
-msgid "shared by %(ownername)s"
+msgid "Show contributors"
 msgstr ""
 
 msgid "Export list"
@@ -713,6 +716,21 @@ msgid "Import list"
 msgstr ""
 
 msgid "Wishlists"
+msgstr ""
+
+msgid "This wish list currently has no additional contributors."
+msgstr ""
+
+msgid "Contributors"
+msgstr ""
+
+msgid "User"
+msgstr ""
+
+msgid "Role"
+msgstr ""
+
+msgid "Added"
 msgstr ""
 
 #, python-format

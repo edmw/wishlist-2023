@@ -45,6 +45,9 @@
                                 {% endif %}
                                 <div class="btn-group" role="group">
                                     {% if user == wishlist.owner %}
+                                        {% if wishlist.id in your_wishlists_with_members %}
+                                            <a href="{{ wishlist.get_absolute_memberships_url }}" title="{% translate 'Show contributors' %}" class="btn btn-action ms-3">{% icon "users" %}</a>
+                                        {% endif %}
                                         <a href="{{ wishlist.get_absolute_export_url }}" title="{% translate 'Export list' %}" class="btn btn-action ms-3">{% icon "download" %}</a>
                                         <a href="{% make_linked_url wishlist.get_absolute_edit_url %}" title="{% translate 'Edit list' %}" class="btn btn-action ms-3">{% icon "edit" %}</a>
                                         <a href="{% make_linked_url wishlist.get_absolute_delete_url %}" title="{% translate 'Delete list' %}" class="btn btn-action ms-3">{% icon "delete" %}</a>

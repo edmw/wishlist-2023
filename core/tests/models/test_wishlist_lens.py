@@ -137,3 +137,22 @@ def test_lens_editable_by_includes_collaboration(core: CoreFixture) -> None:
 
     assert alice_list.is_collaboration is True
     assert bob_list.is_collaboration is False
+
+
+@pytest.mark.django_db
+def test_lens_with_memberships(core: CoreFixture) -> None:
+    WishlistCollaborationService.add_editor(wishlist=core.list_alice, user=core.user_bob)
+    WishlistCollaborationService.add_editor(wishlist=core.list_alice, user=core.user_carol)
+
+    lens = WishlistLens.view().with_memberships().ordered_by_name()
+    wishlists = list(lens.queryset.all())
+
+    assert len(wishlists) == 1
+    assert wishlists[0].id == core.list_alice.id
+
+
+@pytest.mark.django_db
+def test_lens_ids(core: CoreFixture) -> None:
+    ids = WishlistLens.view().by_owner(user=core.user_alice).ordered_by_name().ids()
+
+    assert ids == [core.list_alice_empty.pk, core.list_alice.pk]
