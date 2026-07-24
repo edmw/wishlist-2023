@@ -2,6 +2,10 @@
 
 ## [x.x.x]
 
+## [2.2.0]
+
+* 🖼️ enable viewing memberships for wishlists
+
 ## [2.1.0]
 
 * 🛠️ upgrade django to 5.2

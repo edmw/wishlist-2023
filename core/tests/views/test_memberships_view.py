@@ -42,7 +42,9 @@ class TestMembershipsView(AssertLoggingMixin):
         response = self._get(client, core.user_alice.id, core.list_alice.id)
 
         assert response.status_code == HTTPStatus.OK
-        assert "This wish list currently has no members." in response.content.decode("utf-8")
+        assert "This wish list currently has no additional contributors." in response.content.decode(
+            "utf-8"
+        )
 
     def test_memberships_view_not_allowed_for_non_owner(
         self, core: CoreFixture, client: Client, caplog: pytest.LogCaptureFixture

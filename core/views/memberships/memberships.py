@@ -22,7 +22,7 @@ class MembershipsView(
     http_method_names = ["get", "head", "options"]
 
     model = WishlistMembership
-    page_title = gettext_noop("Members")
+    page_title = gettext_noop("Contributors")
     template_name = "memberships/memberships.html"
     context_object_name = "memberships"
 
