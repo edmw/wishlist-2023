@@ -28,6 +28,11 @@ class ListsView(
 
         user = self.try_user()
         context["your_wishlists_count"] = WishlistService.count_wishlists_for_user(user=user)
-        context["your_wishlists"] = WishlistLens.view().editable_by(user=user).for_listing().queryset.all()
+        context["your_wishlists"] = list(
+            WishlistLens.view().editable_by(user=user).for_listing().queryset.all()
+        )
+        context["your_wishlists_with_members"] = set(
+            WishlistLens.view().by_owner(user=user).with_memberships().ids()
+        )
 
         return context

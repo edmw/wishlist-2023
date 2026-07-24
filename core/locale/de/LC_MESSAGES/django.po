@@ -511,6 +511,10 @@ msgstr ""
 msgid "Select a list to move your wish to"
 msgstr "Wähle eine Liste auf die dein Wunsch verschoben werden soll"
 
+#, python-format
+msgid "shared by %(ownername)s"
+msgstr "geteilt von %(ownername)s"
+
 msgid "This wish can not be moved."
 msgstr "Dieser Wunsch kann nicht verschoben werden."
 
@@ -786,9 +790,8 @@ msgstr ""
 msgid "Edit items"
 msgstr "Wünsche bearbeiten"
 
-#, python-format
-msgid "shared by %(ownername)s"
-msgstr "geteilt von %(ownername)s"
+msgid "Show contributors"
+msgstr "Mitwirkende anzeigen"
 
 msgid "Export list"
 msgstr "Wunschzettel exportieren"
@@ -807,6 +810,21 @@ msgstr "Wunschzettel importieren"
 
 msgid "Wishlists"
 msgstr "Wunschzettel"
+
+msgid "This wish list currently has no additional contributors."
+msgstr "Diese Wunschliste hat derzeit keine weiteren Mitwirkenden."
+
+msgid "Contributors"
+msgstr "Mitwirkende"
+
+msgid "User"
+msgstr "Benutzer"
+
+msgid "Role"
+msgstr "Rolle"
+
+msgid "Added"
+msgstr "Hinzugefügt"
 
 #, python-format
 msgid ""
