@@ -34,6 +34,7 @@ class WishlistLens(LensHasIdMixin, LensHasOrderMixin, LensBase[Wishlist]):
 
     filter_for_owner: int | None = None
     filter_for_editable_by: int | None = None
+    filter_for_with_memberships: bool = False
     exclude_for_lists: list[int] | None = None
     annotate_wishes_count: bool = False
 
@@ -99,6 +100,17 @@ class WishlistLens(LensHasIdMixin, LensHasOrderMixin, LensBase[Wishlist]):
                 return self
             case _:
                 raise WishlistLens.ViewAlreadyNarrowedDownToOwnerError
+
+    def with_memberships(self) -> Self:
+        """Narrows the view to wishlists with at least one membership."""
+        self._assert_not_consumed()
+        match self.filter_for_with_memberships:
+            case False:
+                self.filter_for_with_memberships = True
+                self.queryset = self.queryset.filter(collaboration_memberships__isnull=False).distinct()
+                return self
+            case _:
+                return self
 
     def without_lists(self, *, lists: list[Wishlist] | None) -> Self:
         """Narrows the view of this lens to all wish lists except the ones

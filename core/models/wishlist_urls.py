@@ -37,6 +37,20 @@ class URLMixin:
             },
         )
 
+    def get_absolute_memberships_url(self: HasOwner) -> str:
+        """Returns the URL for the page to view this wish list’s memberships.
+
+        Returns:
+            URL
+        """
+        return reverse(
+            constants.VIEW_MEMBERSHIPS,
+            kwargs={
+                constants.USER_ID_KEY: self.owner_id,
+                constants.LIST_ID_KEY: self.pk,
+            },
+        )
+
     def get_absolute_edit_url(self: HasOwner) -> str:
         """Returns the URL for the page to edit this wish list.
 
