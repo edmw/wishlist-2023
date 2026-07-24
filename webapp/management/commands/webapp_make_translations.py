@@ -49,7 +49,13 @@ class Command(WebappBaseCommand):
         )
         management.call_command(*command)
 
-        command = ("compilemessages", "--no-color", "--ignore=.git", "--ignore=.git/**")
+        command = (
+            "compilemessages",
+            "--no-color",
+            "--ignore=.git",
+            "--ignore=.git/**",
+            "--ignore=.venv/**",
+        )
         management.call_command(*command)
 
         self.pin_pot_creation_date(locale_paths, locale_languages)

@@ -2,6 +2,8 @@
 
 import logging
 
+from django.db.models import QuerySet
+
 from core.models import User, Wishlist, WishlistMembership, WishlistMembershipLens
 from core.models.types import Visibility, WishlistMembershipRole
 
@@ -22,6 +24,15 @@ class WishlistCollaborationOwnerAsEditorError(WishlistCollaborationServiceError)
 
 class WishlistCollaborationService:
     """Service for managing collaboration memberships on wishlists."""
+
+    @staticmethod
+    def list_memberships(*, wishlist: Wishlist) -> QuerySet[WishlistMembership]:
+        lens = WishlistMembershipLens.view().by_wishlist(wishlist=wishlist)
+        return (
+            lens.qs()
+            .select_related(WishlistMembership.Fields.USER)
+            .order_by(WishlistMembership.Fields.CREATED_AT)
+        )
 
     @staticmethod
     def count_memberships(*, wishlist: Wishlist) -> int:
