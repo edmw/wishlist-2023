@@ -36,7 +36,8 @@ class TestMembershipsView(AssertLoggingMixin):
         assert "bob" in content
         assert "editor" in content
         assert "Remove contributor" in content
-        assert "/memberships/" in content and "/delete" in content
+        assert "/memberships/" in content
+        assert "/delete" in content
 
     def test_memberships_view_empty_state(self, core: CoreFixture, client: Client) -> None:
         client.force_login(core.user_alice)
