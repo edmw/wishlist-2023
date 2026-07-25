@@ -455,6 +455,9 @@ msgstr ""
 msgid "Manage your Wish"
 msgstr ""
 
+msgid "Manage Wish"
+msgstr ""
+
 #, python-format
 msgid ""
 "... to move the wish named <strong>%(item_name)s</strong> from list "
