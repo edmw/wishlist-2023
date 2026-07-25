@@ -29,9 +29,7 @@ class Preference(int):
     def display(self) -> str:
         """Returns a string that can be used for display in the UI.
 
-        The returned string is not localized.
-
         Returns:
             String for display use.
         """
-        return self.PREFERENCES_DICT.get(self, "")
+        return str(self.PREFERENCES_DICT.get(self, ""))
