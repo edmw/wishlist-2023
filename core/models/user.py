@@ -3,6 +3,7 @@
 The Core’s user model substitutes the default user model by subclassing
 `AbstractUser` and adding custom attributes and behavior.
 """
+
 from __future__ import annotations
 
 import logging
@@ -10,6 +11,7 @@ from typing import Iterable
 
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.db.models.base import ModelBase
 from django.db.models.functions import Lower
 from django.urls import reverse
 
@@ -203,7 +205,8 @@ class User(IDMixin[UserID], AbstractUser):
 
     def save(
         self,
-        force_insert: bool = False,
+        *,
+        force_insert: bool | tuple[ModelBase, ...] = False,
         force_update: bool = False,
         using: str | None = None,
         update_fields: Iterable[str] | None = None,
