@@ -1,5 +1,4 @@
 """Mixin for models that want to provide a caption."""
-from typing import Callable
 
 from django.utils.text import Truncator
 
@@ -12,7 +11,8 @@ class Captionable:
     call `instance.caption()`.
     """
 
-    captionable: Callable[[], str]
+    def captionable(self) -> str:
+        raise NotImplementedError("Subclasses must implement captionable()")
 
     def caption(self, number_of_chars: int = 25) -> str:
         """Returns a caption text for the model.
