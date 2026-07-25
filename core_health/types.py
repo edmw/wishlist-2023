@@ -2,7 +2,8 @@
 
 from __future__ import annotations
 
-from typing import NamedTuple, Sequence, Tuple, Union, overload, override
+from collections.abc import Iterator
+from typing import Iterable, NamedTuple, Protocol, Tuple, overload, override
 
 
 class HealthCheckResult(NamedTuple):
@@ -22,6 +23,10 @@ class HealthCheckResult(NamedTuple):
         return f"{str(self.status):6} [{self.component_name}][{self.check_id:04}] {self.check_text}"
 
 
+class HealthCheckResultsLike(Protocol):
+    def __iter__(self) -> Iterator[Tuple[bool, str, int, str]]: ...
+
+
 class HealthCheckResults(list[HealthCheckResult]):
     """Represents the results of multiple health checks.
 
@@ -37,56 +42,49 @@ class HealthCheckResults(list[HealthCheckResult]):
     ```
     """
 
-    def _append(
-        self,
-        more: Sequence[HealthCheckResult] | Sequence[tuple[bool, str, int, str]],
-    ) -> None:
-        """Appends the given check results to self."""
-        for result in more:
-            if isinstance(result, HealthCheckResult):
-                self.append(result)
-            elif (
-                type(result) is tuple
-                and len(result) == 4
-                and isinstance(result[0], bool)
-                and isinstance(result[1], str)
-                and isinstance(result[2], int)
-                and isinstance(result[3], str)
-            ):
-                self.append(HealthCheckResult(*result))
-            else:
-                raise TypeError()
+    @staticmethod
+    def _coerce_item(item: object) -> HealthCheckResult:
+        """Coerces the given item to a HealthCheckResult if possible.
 
-    @overload
-    def __add__(self, more: Sequence[HealthCheckResult]) -> HealthCheckResults: ...
-
-    @overload
-    def __add__(self, more: Sequence[Tuple[bool, str, int, str]]) -> HealthCheckResults: ...
-
-    @override
-    def __add__(
-        self,
-        more: Sequence[Union[HealthCheckResult, Tuple[bool, str, int, str]]],
-    ) -> HealthCheckResults:
-        """Override magic `__add__` method to allow tuples to be added.
-        Tuples will be converted to `HealthCheckResult` objects before adding.
+        Raises:
+            TypeError: If the given item cannot be coerced to a HealthCheckResult.
         """
-        self._append(more)
-        return self
+        if isinstance(item, HealthCheckResult):
+            return item
+        elif (
+            type(item) is tuple
+            and len(item) == 4
+            and isinstance(item[0], bool)
+            and isinstance(item[1], str)
+            and isinstance(item[2], int)
+            and isinstance(item[3], str)
+        ):
+            return HealthCheckResult(*item)
+        else:
+            raise TypeError(f"Cannot coerce {item} to HealthCheckResult.")
+
+    def extend(self, more: Iterable[HealthCheckResult] | HealthCheckResultsLike) -> None:
+        for item in more:
+            self.append(self._coerce_item(item))
+
+    def added(self, more: Iterable[HealthCheckResult] | HealthCheckResultsLike) -> HealthCheckResults:
+        result = HealthCheckResults(self)
+        result.extend(more)
+        return result
 
     @overload
-    def __iadd__(self, more: Sequence[HealthCheckResult]) -> HealthCheckResults: ...
+    def __iadd__(self, more: Iterable[HealthCheckResult]) -> HealthCheckResults: ...
 
     @overload
-    def __iadd__(self, more: Sequence[Tuple[bool, str, int, str]]) -> HealthCheckResults: ...
+    def __iadd__(self, more: HealthCheckResultsLike) -> HealthCheckResults: ...
 
     @override
     def __iadd__(
         self,
-        more: Sequence[Union[HealthCheckResult, Tuple[bool, str, int, str]]],
+        more: Iterable[HealthCheckResult] | HealthCheckResultsLike,
     ) -> HealthCheckResults:
         """Override magic `__iadd__` method to allow tuples to be added.
         Tuples will be converted to `HealthCheckResult` objects before adding.
         """
-        self._append(more)
+        self.extend(more)
         return self
