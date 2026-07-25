@@ -814,6 +814,25 @@ msgstr "Wunschzettel importieren"
 msgid "Wishlists"
 msgstr "Wunschzettel"
 
+# python-format
+#, python-format
+msgid ""
+"... you want to <span class=\"text-danger\">remove</span> the contributor "
+"<strong>%(username)s</strong> from list <strong>%(list_name)s</strong>?"
+msgstr ""
+"... daß du den Mitwirkenden <strong>%(username)s</strong> vom Wunschzettel "
+"<strong>%(list_name)s</strong> <span class=\"text-danger\">entfernen</span> "
+"möchtest?"
+
+msgid "Remove a Contributor"
+msgstr "Mitwirkenden entfernen"
+
+msgid "Remove Contributor"
+msgstr "Mitwirkenden entfernen"
+
+msgid "The contributor has been successfully removed."
+msgstr "Der Mitwirkende wurde erfolgreich entfernt."
+
 msgid "This wish list currently has no additional contributors."
 msgstr "Diese Wunschliste hat derzeit keine weiteren Mitwirkenden."
 
@@ -828,6 +847,9 @@ msgstr "Rolle"
 
 msgid "Added"
 msgstr "Hinzugefügt"
+
+msgid "Remove contributor"
+msgstr "Mitwirkenden entfernen"
 
 #, python-format
 msgid ""
@@ -929,7 +951,7 @@ msgid ""
 "the wish named <strong>%(item_name)s</strong> from list "
 "<strong>%(list_name)s</strong>?"
 msgstr ""
-"... daß du die Reservierung für den Wunsch  <strong>%(item_name)s</strong> "
+"... daß du die Reservierung für den Wunsch <strong>%(item_name)s</strong> "
 "vom Wunschzettel <strong>%(list_name)s</strong> <span class=\"text-"
 "danger\">zurücknehmen</span> möchtest?"
 

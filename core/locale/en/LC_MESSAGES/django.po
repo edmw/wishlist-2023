@@ -721,6 +721,21 @@ msgstr ""
 msgid "Wishlists"
 msgstr ""
 
+#, python-format
+msgid ""
+"... you want to <span class=\"text-danger\">remove</span> the contributor "
+"<strong>%(username)s</strong> from list <strong>%(list_name)s</strong>?"
+msgstr ""
+
+msgid "Remove a Contributor"
+msgstr ""
+
+msgid "Remove Contributor"
+msgstr ""
+
+msgid "The contributor has been successfully removed."
+msgstr ""
+
 msgid "This wish list currently has no additional contributors."
 msgstr ""
 
@@ -734,6 +749,9 @@ msgid "Role"
 msgstr ""
 
 msgid "Added"
+msgstr ""
+
+msgid "Remove contributor"
 msgstr ""
 
 #, python-format

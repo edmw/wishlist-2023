@@ -137,9 +137,9 @@ _Avoid_: Always-visible membership action, count-independent action visibility
 The memberships action in list rows is represented by a standalone icon button without an inline membership count.
 _Avoid_: Count-labeled membership action, mixed icon-text action in row controls
 
-**Read-Only Membership Listing**:
-The memberships overview presents collaborator data for inspection without inline mutation actions in that same table view.
-_Avoid_: Inline edit controls in listing, mixed read-write membership index
+**Owner-Managed Membership Removal**:
+The memberships overview includes an owner-only remove action per membership row that opens a dedicated confirmation step before deletion.
+_Avoid_: Collaborator-managed membership deletion, direct deletion without confirmation
 
 **Membership Empty-State Fallback**:
 The memberships overview has a dedicated empty state when no memberships remain at render time.
