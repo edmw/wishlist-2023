@@ -33,6 +33,7 @@ class ItemManageView(
     http_method_names = ["get", "head", "options"]
 
     page_title = gettext_noop("Manage your Wish")
+    form_title = gettext_noop("Manage Wish")
     template_name = "item/item_manage.html"
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
