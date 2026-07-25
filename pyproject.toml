@@ -100,6 +100,9 @@ testpaths = "webapp core core_health"
 
 [tool.ruff]
 cache-dir = ".cache/ruff"
+exclude = [
+  ".venv",
+]
 line-length = 108
 
 [tool.ruff.lint]
@@ -127,6 +130,7 @@ select = [
 "apps.py" = ["F401"]
 "core/migrations/*" = ["E501"]
 "core/templates_tags/*" = ["PT"]
+"tasks/*" = ["PT"]
 "webapp/services/*" = ["PT"]
 
 [tool.ruff.lint.mccabe]
@@ -146,7 +150,7 @@ stubPath = ".python-typings"
 typeCheckingMode = "standard"
 
 [tool.bandit]
-exclude_dirs = ["./.python-typings"]
+exclude_dirs = [".venv", "./.python-typings"]
 skips = ["B404"]
 
 [tool.bandit.assert_used]
