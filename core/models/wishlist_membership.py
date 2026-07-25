@@ -1,9 +1,10 @@
 from __future__ import annotations
 
-from typing import Iterable
+from typing import Iterable, override
 
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.db.models.base import ModelBase
 
 from core.models import fields, types
 from core.models._base import IDMixin
@@ -57,6 +58,46 @@ class WishlistMembership(IDMixin[types.WishlistMembershipID], models.Model):
         CREATED_AT = "created_at"
         MODIFIED_AT = "modified_at"
 
+    # Concerns
+
+    def __str__(self) -> str:
+        """Returns a string representation of this wishlist membership.
+
+        Returns:
+            Representation text.
+        """
+        return f"{self.user_id} -> {self.wishlist_id}"
+
+    def __repr__(self) -> str:
+        """Returns a string reputation of this wishlist membership.
+
+        Returns:
+            Reputation text.
+        """
+        return (
+            f"<{self.__class__.__name__}[{str(self.id)}]: "
+            f"wishlist={self.wishlist_id}; user={self.user_id}; role={self.role}>"
+        )
+
+    @override
+    def save(
+        self,
+        *,
+        force_insert: bool | tuple[ModelBase, ...] = False,
+        force_update: bool = False,
+        using: str | None = None,
+        update_fields: Iterable[str] | None = None,
+    ) -> None:
+        self.full_clean()
+        super().save(
+            force_insert=force_insert,
+            force_update=force_update,
+            using=using,
+            update_fields=update_fields,
+        )
+
+    # Custom properties
+
     @property
     def role(self) -> types.WishlistMembershipRole:
         return types.WishlistMembershipRole(self.role_field)
@@ -73,24 +114,3 @@ class WishlistMembership(IDMixin[types.WishlistMembershipID], models.Model):
 
         if self.wishlist.visibility == Visibility.PRIVATE:
             raise ValidationError("Private wish lists cannot have collaborators.")
-
-    def save(
-        self,
-        force_insert: bool = False,
-        force_update: bool = False,
-        using: str | None = None,
-        update_fields: Iterable[str] | None = None,
-    ) -> None:
-        self.full_clean()
-        super().save(
-            force_insert=force_insert,
-            force_update=force_update,
-            using=using,
-            update_fields=update_fields,
-        )
-
-    def __repr__(self) -> str:
-        return (
-            f"<{self.__class__.__name__}[{str(self.id)}]: "
-            f"wishlist={self.wishlist_id}; user={self.user_id}; role={self.role}>"
-        )
