@@ -17,5 +17,9 @@ class WishlistMembershipRole(str):
 
     @property
     def display(self) -> str:
-        """Returns a string that can be used for display in the UI."""
-        return self.ROLES_DICT.get(self, "")
+        """Returns a string that can be used for display in the UI.
+
+        Returns:
+            String for display use.
+        """
+        return str(self.ROLES_DICT.get(self, ""))
