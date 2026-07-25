@@ -2,6 +2,8 @@
 
 ## [x.x.x]
 
+* 🛠️ cleanup code
+
 ## [2.3.0]
 
 * 🖼️ add removal of memberships by wishlist owner
