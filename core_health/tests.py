@@ -23,11 +23,11 @@ def test_adding_healthchecks() -> None:
     assert len(results) == 0
     results += [(True, COMPONENT_1, 1, CHECK_1)]
     assert len(results) == 1
-    results = results + [(True, COMPONENT_1, 1, CHECK_2)]
+    results = results.added([(True, COMPONENT_1, 1, CHECK_2)])
     assert len(results) == 2
     results += [(True, COMPONENT_2, 1, CHECK_1)]
     assert len(results) == 3
-    results = results + [(True, COMPONENT_2, 1, CHECK_2)]
+    results = results.added([(True, COMPONENT_2, 1, CHECK_2)])
     assert len(results) == 4
     assert all(isinstance(r, HealthCheckResult) for r in results)
 
@@ -53,12 +53,9 @@ def test_report_formatting_plain_text(report: list[HealthCheckResult], render_co
         report,
         renderer_context=render_context,
     )
-    assert (
-        content
-        == """True   [Test-Component-1][0001] Check#1
+    assert content == """True   [Test-Component-1][0001] Check#1
 False  [Test-Component-1][0001] Check#2
 """
-    )
 
 
 def test_report_formatting_json_binary(report: list[HealthCheckResult], render_context: dict) -> None:
