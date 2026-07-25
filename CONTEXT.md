@@ -97,6 +97,10 @@ _Avoid_: Capability-named lens filters that blur data selection and policy inter
 Membership reads are composed from `by_wishlist`, `by_user`, and `editors_only` as needed per service use case.
 _Avoid_: Single-purpose combined filters that hide query intent
 
+**Membership Listing Lens Convention**:
+Membership listing query shape (related objects and default ordering) is defined in `WishlistMembershipLens.for_listing` and consumed from there by views.
+_Avoid_: Duplicated listing query-shape in views, dedicated service helper wrappers for membership listing
+
 **Lens Scope-Building Boundary**:
 Lens methods using `by_`, `without_`, `for_`, and ordering names only narrow or shape scope and never execute queries.
 _Avoid_: Scope methods that materialize or count results

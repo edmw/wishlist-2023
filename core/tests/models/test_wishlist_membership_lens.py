@@ -54,6 +54,19 @@ def test_lens_editors_only(core: CoreFixture) -> None:
 
 
 @pytest.mark.django_db
+def test_lens_for_listing(core: CoreFixture) -> None:
+    WishlistCollaborationService.add_editor(wishlist=core.list_alice, user=core.user_bob)
+    WishlistCollaborationService.add_editor(wishlist=core.list_alice, user=core.user_carol)
+
+    memberships = list(
+        WishlistMembershipLens.view().by_wishlist(wishlist=core.list_alice).for_listing().queryset.all()
+    )
+
+    assert len(memberships) == 2
+    assert [membership.user_id for membership in memberships] == [core.user_bob.id, core.user_carol.id]
+
+
+@pytest.mark.django_db
 def test_lens_raises_if_narrowed_down_to_other_wishlist(core: CoreFixture) -> None:
     lens = WishlistMembershipLens.view().by_wishlist(wishlist=core.list_alice)
     lens.by_wishlist(wishlist=core.list_alice)
