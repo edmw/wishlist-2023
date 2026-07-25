@@ -4,8 +4,7 @@ from typing import Any, cast
 from django.db.models import QuerySet
 from django.utils.translation import gettext_noop
 
-from core.models import WishlistMembership
-from core.services import WishlistCollaborationService
+from core.models import WishlistMembership, WishlistMembershipLens
 from core.views._base import ListView, LoginRequiredMixin, WishlistMixin
 
 from ._base import HasPermissionForMembershipsViewMixin
@@ -28,7 +27,7 @@ class MembershipsView(
 
     def get_queryset(self) -> QuerySet[WishlistMembership]:
         wishlist = self.try_wishlist()
-        return WishlistCollaborationService.list_memberships(wishlist=wishlist)
+        return WishlistMembershipLens.view().by_wishlist(wishlist=wishlist).for_listing().queryset.all()
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)

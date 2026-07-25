@@ -2,6 +2,9 @@
 
 ## [x.x.x]
 
+## [2.3.0]
+
+* 🖼️ add removal of memberships by wishlist owner
 * 🖌️ fix missing translation
 
 ## [2.2.0]

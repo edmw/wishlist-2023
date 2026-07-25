@@ -17,6 +17,7 @@ from .items import ItemsView
 from .legal_notice import LegalNoticeView
 from .list import ListCreateView, ListDeleteView, ListExportView, ListUpdateView
 from .lists import ListsView
+from .membership import MembershipDeleteView
 from .memberships import MembershipsView
 from .privacy_policy import PrivacyPolicyView
 from .reservation import ReservationCreateView, ReservationUndoView
