@@ -54,3 +54,11 @@ class WishlistMembershipLens(LensHasIdMixin, LensBase[WishlistMembership]):
         self.filter_for_editors = True
         self.queryset = self.queryset.filter(role_field=WishlistMembershipRole.EDITOR)
         return self
+
+    def for_listing(self) -> Self:
+        self._assert_not_consumed()
+        self.queryset = self.queryset.select_related(
+            WishlistMembership.Fields.USER,
+            WishlistMembership.Fields.WISHLIST,
+        ).order_by(WishlistMembership.Fields.CREATED_AT)
+        return self

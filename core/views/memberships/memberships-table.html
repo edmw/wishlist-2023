@@ -8,6 +8,7 @@
             <col />
             <col />
             <col />
+            <col />
         </colgroup>
         <thead>
             <tr>
@@ -23,7 +24,9 @@
                     <td data-label="{% translate 'User' %}">{{ membership.user.username }}</td>
                     <td data-label="{% translate 'Role' %}">{{ membership.role }}</td>
                     <td data-label="{% translate 'Added' %}">{{ membership.created_at|date:"SHORT_DATETIME_FORMAT" }}</td>
-                    <td class="wl-actions wl-actions-right" data-label=""></td>
+                    <td class="wl-actions wl-actions-right" data-label="">
+                        <a href="{% linked_url 'membership-delete' wishlist.owner_id wishlist.id membership.id %}" title="{% translate 'Remove contributor' %}" class="btn btn-action ms-3">{% icon "delete" %}</a>
+                    </td>
                 </tr>
             {% endfor %}
         </tbody>

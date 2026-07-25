@@ -97,6 +97,10 @@ _Avoid_: Capability-named lens filters that blur data selection and policy inter
 Membership reads are composed from `by_wishlist`, `by_user`, and `editors_only` as needed per service use case.
 _Avoid_: Single-purpose combined filters that hide query intent
 
+**Membership Listing Lens Convention**:
+Membership listing query shape (related objects and default ordering) is defined in `WishlistMembershipLens.for_listing` and consumed from there by views.
+_Avoid_: Duplicated listing query-shape in views, dedicated service helper wrappers for membership listing
+
 **Lens Scope-Building Boundary**:
 Lens methods using `by_`, `without_`, `for_`, and ordering names only narrow or shape scope and never execute queries.
 _Avoid_: Scope methods that materialize or count results
@@ -137,9 +141,9 @@ _Avoid_: Always-visible membership action, count-independent action visibility
 The memberships action in list rows is represented by a standalone icon button without an inline membership count.
 _Avoid_: Count-labeled membership action, mixed icon-text action in row controls
 
-**Read-Only Membership Listing**:
-The memberships overview presents collaborator data for inspection without inline mutation actions in that same table view.
-_Avoid_: Inline edit controls in listing, mixed read-write membership index
+**Owner-Managed Membership Removal**:
+The memberships overview includes an owner-only remove action per membership row that opens a dedicated confirmation step before deletion.
+_Avoid_: Collaborator-managed membership deletion, direct deletion without confirmation
 
 **Membership Empty-State Fallback**:
 The memberships overview has a dedicated empty state when no memberships remain at render time.
