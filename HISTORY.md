@@ -2,6 +2,8 @@
 
 ## [x.x.x]
 
+* 🖌️ fix missing translation
+
 ## [2.2.0]
 
 * 🖼️ enable viewing memberships for wishlists
