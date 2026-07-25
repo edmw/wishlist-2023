@@ -6,8 +6,8 @@ import logging
 from datetime import datetime, timezone
 from typing import Any, cast
 
+import pythonjsonlogger
 from gunicorn import glogging
-from pythonjsonlogger import jsonlogger
 
 PROJECT_NAME = "Wishlist"
 
@@ -51,7 +51,7 @@ class Logger(glogging.Logger):
 logger_class = Logger
 
 
-class JsonFormatter(jsonlogger.JsonFormatter):
+class JsonFormatter(pythonjsonlogger.json.JsonFormatter):
     """Log formatter for structured logging using JSON."""
 
     def __init__(self, *args: Any, **kwargs: Any):
