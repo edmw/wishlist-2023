@@ -1,5 +1,4 @@
 """Mixin for models that want to provide a preview."""
-from typing import Callable
 
 from django.utils.text import Truncator
 
@@ -12,7 +11,8 @@ class Previewable:
     call `instance.preview()`.
     """
 
-    previewable: Callable[[], str]
+    def previewable(self) -> str:
+        raise NotImplementedError("Subclasses must implement previewable()")
 
     def preview(self, number_of_words: int = 25) -> str:
         """Returns a preview text for the model.
