@@ -16,7 +16,7 @@ def _divide(source: bytearray, from_base: int, to_base: int) -> tuple[bytearray,
     return (quotient, remainder)
 
 
-def _pad(target: bytearray, using: bytes) -> bytearray:
+def _pad(target: bytearray, using: bytes | bytearray) -> bytearray:
     source = using
     for byte in source:
         if byte == 0:
@@ -26,7 +26,7 @@ def _pad(target: bytearray, using: bytes) -> bytearray:
     return target
 
 
-def from_base_to_base(from_bytes: bytes, from_base: int, to_base: int) -> bytes:
+def from_base_to_base(from_bytes: bytes | bytearray, from_base: int, to_base: int) -> bytes:
     # This is a sanity check while developing which can be safely removed in production.
     assert from_base > 0 and from_base <= 256  # nosec
     assert to_base > 0 and to_base <= 256  # nosec
