@@ -206,7 +206,7 @@ class User(IDMixin[UserID], AbstractUser):
     @override
     def save(
         self,
-        *args,
+        *args: Any,
         force_insert: bool | tuple[ModelBase, ...] = False,
         force_update: bool = False,
         using: str | None = None,
