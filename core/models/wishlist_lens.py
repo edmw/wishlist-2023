@@ -32,16 +32,19 @@ class EditableWishlist(Wishlist):
 
 def assert_editable_wishlist(obj: Any) -> EditableWishlist:
     """Cast obj to EditableWishlist, asserting it's a Wishlist instance
-    with the collaboration annotations (is_collaboration and collaboration_role) present."""
-    assert isinstance(obj, Wishlist), f"Expected Wishlist instance, got {type(obj)!r}"
-    assert hasattr(obj, "is_collaboration"), (
-        "Wishlist is missing is_collaboration annotation "
-        "(expected queryset from WishlistLens.editable_by())"
-    )
-    assert hasattr(obj, "collaboration_role"), (
-        "Wishlist is missing collaboration_role annotation "
-        "(expected queryset from WishlistLens.editable_by())"
-    )
+    with the collaboration annotations present."""
+    if not isinstance(obj, Wishlist):
+        raise TypeError(f"Expected Wishlist instance, got {type(obj)!r}")
+    if not hasattr(obj, "is_collaboration"):
+        raise TypeError(
+            "Wishlist is missing is_collaboration annotation "
+            "(expected queryset from WishlistLens.editable_by())"
+        )
+    if not hasattr(obj, "collaboration_role"):
+        raise TypeError(
+            "Wishlist is missing collaboration_role annotation "
+            "(expected queryset from WishlistLens.editable_by())"
+        )
     return cast(EditableWishlist, obj)
 
 
