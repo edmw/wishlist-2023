@@ -9,7 +9,7 @@ from core.tests.conftest import CoreFixture
 @pytest.mark.django_db
 def test_lens() -> None:
     lens = WishLens.view()
-    wishes = list(lens.queryset.all())
+    wishes = list(lens.qs())
     assert len(wishes) == 4
 
 
@@ -17,7 +17,7 @@ def test_lens() -> None:
 def test_lens_reduced_by_archived_wishes(core: CoreFixture) -> None:
     lens = WishLens.view().without_archived()
     lens.without_archived()
-    wishes = list(lens.queryset.all())
+    wishes = list(lens.qs())
     assert len(wishes) == 3
     assert core.item_bob_archived not in wishes
 
@@ -33,7 +33,7 @@ def test_lens_reduced_by_archived_wishes_is_in_illegal_state(core: CoreFixture) 
 @pytest.mark.django_db
 def test_lens_narrowed_down_to_alices_list(core: CoreFixture) -> None:
     lens = WishLens.view().by_wishlist(list=core.list_alice)
-    wishes = list(lens.queryset.all())
+    wishes = list(lens.qs())
     assert len(wishes) == 3
     assert core.item_alice in wishes
     assert core.item_alice_reserved_by_alice in wishes
@@ -51,7 +51,7 @@ def test_lens_raises_if_narrowed_down_to_list_twice(core: CoreFixture) -> None:
 @pytest.mark.django_db
 def test_lens_ordered_by_created_at(core: CoreFixture) -> None:
     lens = WishLens.view().last_created_first()
-    wishes = list(lens.queryset.all())
+    wishes = list(lens.qs())
     assert len(wishes) == 4
     assert wishes == [
         core.item_bob_archived,
@@ -64,7 +64,7 @@ def test_lens_ordered_by_created_at(core: CoreFixture) -> None:
 @pytest.mark.django_db
 def test_lens_ordered_by_modified_at(core: CoreFixture) -> None:
     lens = WishLens.view().last_modified_first()
-    wishes = list(lens.queryset.all())
+    wishes = list(lens.qs())
     assert len(wishes) == 4
     assert wishes == [
         core.item_bob_archived,
@@ -77,7 +77,7 @@ def test_lens_ordered_by_modified_at(core: CoreFixture) -> None:
 @pytest.mark.django_db
 def test_lens_for_listing(core: CoreFixture, django_assert_num_queries: DjangoAssertNumQueries) -> None:
     lens = WishLens.view().by_wishlist(list=core.list_alice).for_listing()
-    wishes = list(lens.queryset.all())
+    wishes = list(lens.qs())
     assert len(wishes) == 3
     # ordered by name
     assert wishes == [core.item_alice_reserved_by_alice, core.item_alice, core.item_alice_reserved_by_bob]
@@ -90,6 +90,6 @@ def test_lens_for_listing(core: CoreFixture, django_assert_num_queries: DjangoAs
 def test_lens_for_listing_order_by_name_descending(core: CoreFixture) -> None:
     core.list_alice.item_ordering = ItemOrdering(ItemOrdering.NAME_DESCENDING)
     lens = WishLens.view().by_wishlist(list=core.list_alice).for_listing()
-    wishes = list(lens.queryset.all())
+    wishes = list(lens.qs())
     # ordered by name descending
     assert wishes == [core.item_alice_reserved_by_bob, core.item_alice, core.item_alice_reserved_by_alice]
