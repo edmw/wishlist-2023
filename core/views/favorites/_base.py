@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 class IsFavoriteView(HasUser, HasModel, Protocol): ...
 
 
-class HasPermissionForFavoritesViewMixin(DoesViewDispatching):
+class HasPermissionForFavoritesViewMixin:
     """Verifies the requesting user is allowed to access the user’s favorites."""
 
     def dispatch(self: IsFavoriteView, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponseBase:
@@ -31,5 +31,4 @@ class HasPermissionForFavoritesViewMixin(DoesViewDispatching):
             requesting_user=self.try_user(),
             user_object_id=user_id,
         )
-
-        return super().dispatch(request, *args, **kwargs)
+        return cast(DoesViewDispatching, super()).dispatch(request, *args, **kwargs)
