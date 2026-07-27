@@ -8,7 +8,7 @@ Items on a wish list have a sort order.
 from __future__ import annotations
 
 import logging
-from typing import Any, Iterable, override
+from typing import TYPE_CHECKING, Any, Iterable, override
 
 from django.conf import settings as django_settings
 from django.core.exceptions import ValidationError
@@ -24,6 +24,10 @@ from .wishlist_types import TypesMixin
 from .wishlist_urls import URLMixin
 
 logger = logging.getLogger(__name__)
+
+if TYPE_CHECKING:
+    from core.models.wish import Wish
+    from core.models.wishlist_membership import WishlistMembership
 
 
 class Wishlist(
@@ -57,11 +61,11 @@ class Wishlist(
 
     # Relations
 
-    wishes: models.QuerySet  # relation
+    wishes: models.QuerySet["Wish"]  # relation
     wishes_count: int  # annotation
     wishes_count_not_archived: int  # annotation
 
-    collaboration_memberships: models.QuerySet  # relation
+    collaboration_memberships: models.QuerySet["WishlistMembership"]  # relation
 
     # Lifecycle
 
