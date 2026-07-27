@@ -8,7 +8,7 @@ import django.views.generic
 import django.views.generic.base
 import django.views.generic.edit
 from django.contrib import messages
-from django.core.exceptions import BadRequest
+from django.core.exceptions import BadRequest, ImproperlyConfigured
 from django.forms import ModelForm
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect
@@ -35,7 +35,7 @@ from webapp.views import AddNeverCacheMixin
 from ._typing import SupportsViewSetup
 
 
-class UserMixin(SupportsViewSetup):
+class UserMixin:
     user: User | None
 
     def try_user(self) -> User:
@@ -46,7 +46,7 @@ class UserMixin(SupportsViewSetup):
         return self.user
 
     def setup(self, request: HttpRequest, *args: Any, **kwargs: Any) -> None:
-        super().setup(request, *args, **kwargs)
+        cast(SupportsViewSetup, super()).setup(request, *args, **kwargs)
         user = request.user
         self.user = cast(User, user) if user.is_authenticated else None
 
@@ -57,10 +57,10 @@ class WishlistModelMixin(UserMixin):
 
     def get_queryset(self) -> django.db.models.QuerySet[Wishlist]:
         user = self.try_user()
-        return WishlistLens.view().by_owner(user=user).for_listing().queryset.all()
+        return WishlistLens.view().by_owner(user=user).for_listing().qs()
 
 
-class WishlistMixin(SupportsViewSetup):
+class WishlistMixin:
     wishlist_id: WishlistID | None = None
     wishlist: Wishlist | None = None
 
@@ -80,7 +80,7 @@ class WishlistMixin(SupportsViewSetup):
         return self.wishlist
 
     def setup(self, request: HttpRequest, *args: Any, **kwargs: Any) -> None:
-        super().setup(request, *args, **kwargs)
+        cast(SupportsViewSetup, super()).setup(request, *args, **kwargs)
         self.wishlist_id = kwargs.get(constants.LIST_ID_KEY)
 
 
@@ -91,7 +91,7 @@ class WishModelMixin(WishlistMixin, django.views.generic.base.ContextMixin):
 
     def get_queryset(self) -> django.db.models.QuerySet[Wish]:
         wishlist = self.try_wishlist()
-        return WishLens.view().by_wishlist(list=wishlist).for_listing().queryset.all()
+        return WishLens.view().by_wishlist(list=wishlist).for_listing().qs()
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
@@ -100,7 +100,7 @@ class WishModelMixin(WishlistMixin, django.views.generic.base.ContextMixin):
         return context
 
 
-class WishMixin(SupportsViewSetup):
+class WishMixin:
     wish_id: WishID | None = None
     wish: Wish | None = None
 
@@ -121,7 +121,7 @@ class WishMixin(SupportsViewSetup):
         return self.wish
 
     def setup(self, request: HttpRequest, *args: Any, **kwargs: Any) -> None:
-        super().setup(request, *args, **kwargs)
+        cast(SupportsViewSetup, super()).setup(request, *args, **kwargs)
         self.wish_id = kwargs.get(constants.ITEM_ID_KEY)
 
 
@@ -131,7 +131,7 @@ class FavoriteModelMixin(UserMixin):
 
     def get_queryset(self) -> django.db.models.QuerySet[Favorite]:
         user = self.try_user()
-        return FavoriteLens.view().by_user(user=user).queryset.all()
+        return FavoriteLens.view().by_user(user=user).qs()
 
 
 class ReservationModelMixin(UserMixin):
@@ -140,7 +140,7 @@ class ReservationModelMixin(UserMixin):
 
     def get_queryset(self) -> django.db.models.QuerySet[Reservation]:
         user = self.try_user()
-        return ReservationLens.view().by_holder(user=user).queryset.all()
+        return ReservationLens.view().by_holder(user=user).qs()
 
 
 class LoginRequiredMixin(django.contrib.auth.mixins.LoginRequiredMixin, UserMixin):
@@ -316,6 +316,8 @@ class LocalizedTemplateView(PageContextMixin, django.views.generic.TemplateView)
     def get_template_names(self) -> list[str]:
         """Returns the configured template name, after modifying it to include
         the code of the activated language."""
+        if self.template_name is None:
+            raise ImproperlyConfigured(f"{self.__class__.__name__}.template_name must be set")
         if language_code := LanguageService.get_language_code():
             return [self.template_name.replace(".html", f".{language_code}.html")]
         return [self.template_name]
