@@ -4,7 +4,7 @@ from django.core.exceptions import BadRequest
 from django.db.models import QuerySet
 from django.utils.translation import gettext_noop
 
-from core.models import Reservation
+from core.models import Reservation, Wish
 from core.views._base import DeleteView, LoginRequiredMixin, WishMixin
 
 from ._base import HasPermissionForItemViewMixin
@@ -28,8 +28,8 @@ class ItemReleaseView(
     success_url = "/"
     success_message = gettext_noop("The reservation for the wish has been successfully deleted.")
 
-    def get_object(self, queryset: QuerySet[Reservation] | None = None) -> Reservation:
-        wish = self.try_wish()
+    def get_object(self, queryset: QuerySet[Wish] | None = None) -> Reservation:
+        wish = self.assert_permission_for_wish(self.try_wish())
         if not wish.is_reserved:
             raise BadRequest()
         return wish.reservation
