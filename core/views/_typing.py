@@ -20,17 +20,11 @@ class HasObjectList(Protocol):
 
 
 class SupportsViewSetup(Protocol):
-    class SetupCallable(Protocol):
-        def __call__(self, request: HttpRequest, *args: Any, **kwargs: Any) -> None: ...
-
-    setup: SetupCallable
+    def setup(self, request: HttpRequest, *args: Any, **kwargs: Any) -> None: ...
 
 
 class DoesViewDispatching(Protocol):
-    class DispatchCallable(Protocol):
-        def __call__(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponseBase: ...
-
-    dispatch: DispatchCallable
+    def dispatch(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponseBase: ...
 
 
 class HasUser(Protocol):

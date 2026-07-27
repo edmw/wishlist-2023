@@ -30,7 +30,7 @@ class MembershipDeleteView(
 
     def get_queryset(self) -> QuerySet[WishlistMembership]:
         wishlist = self.try_wishlist()
-        return WishlistMembershipLens.view().by_wishlist(wishlist=wishlist).for_listing().queryset.all()
+        return WishlistMembershipLens.view().by_wishlist(wishlist=wishlist).for_listing().qs()
 
     def get_success_url(self) -> str:
         return self.try_wishlist().get_absolute_memberships_url()

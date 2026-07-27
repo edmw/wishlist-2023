@@ -18,7 +18,7 @@ class WishReservationInline(admin.StackedInline):
     model = Reservation
     fk_name = Reservation.Fields.WISH
     can_delete = False
-    view_on_site = False
+    view_on_site = False  # type: ignore[assignment]
 
 
 class WishReservationFilter(admin.SimpleListFilter):
@@ -142,6 +142,7 @@ class WishAdmin(admin.ModelAdmin):
 
     search_fields = [Wish.Fields.ID, Wish.Fields.NAME, Wish.Fields.DESCRIPTION]
 
+    @admin.display(boolean=True, ordering="reservation")
     def reserved(self, wish: Wish) -> bool:
         """Returns True if the specified wish is reserved, false otherwise.
 
@@ -154,9 +155,6 @@ class WishAdmin(admin.ModelAdmin):
             True, if wish is reserved, false otherwise.
         """
         return wish.is_reserved
-
-    reserved.boolean = True
-    reserved.admin_order_field = "reservation"
 
     def image_preview(self, wish: Wish) -> SafeString:
         """Returns HTML used for displaying the preview image of the wish’s

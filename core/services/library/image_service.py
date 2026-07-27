@@ -1,6 +1,7 @@
 """Image services."""
 
 import logging
+from io import BytesIO
 
 import requests
 from PIL import Image, UnidentifiedImageError
@@ -36,9 +37,12 @@ class ImageService:
     """Image service: The image service provides functions for handling images."""
 
     @staticmethod
-    def generate_jpeg_image_from_url(*, url: str) -> Image.Image:
+    def generate_jpeg_image_from_url(*, url: str, max_image_pixels: int) -> Image.Image:
         try:
-            image = Image.open(requests.get(url, stream=True, timeout=2).raw)
+            Image.MAX_IMAGE_PIXELS = max_image_pixels
+            response = requests.get(url, timeout=2)
+            response.raise_for_status()
+            image = Image.open(BytesIO(response.content))
             width, height = image.size
             offset = int(abs(height - width) / 2)
             if width > height:

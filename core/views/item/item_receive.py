@@ -31,7 +31,7 @@ class ItemReceiveForm(ModelForm):
         kwargs["initial"] = initial
         super().__init__(*args, **kwargs)
 
-    def clean(self) -> dict[str, Any]:
+    def clean(self) -> dict[str, Any] | None:
         reservation = cast(Reservation, self.instance)
         try:
             ReservationService.complete(reservation=reservation, save=False)

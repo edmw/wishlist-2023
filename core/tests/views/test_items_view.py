@@ -1,5 +1,6 @@
 import logging
 from http import HTTPStatus
+from typing import cast
 
 import pytest
 from django.http import HttpResponse
@@ -22,7 +23,7 @@ class TestItemsView(AssertLoggingMixin):
                 kwargs={constants.USER_ID_KEY: user_id, constants.LIST_ID_KEY: list_id},
             )
         )
-        return response
+        return cast(HttpResponse, response)
 
     def test_items_view_ok(self, core: CoreFixture, client: Client) -> None:
         """Alice requesting alice’s wish items."""
