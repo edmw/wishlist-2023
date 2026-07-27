@@ -1,5 +1,5 @@
 import logging
-from typing import Any, Protocol
+from typing import Any, Protocol, cast
 
 import django.db.models
 from django.http import HttpRequest
@@ -23,7 +23,7 @@ logger = logging.getLogger(__name__)
 class IsWishlistView(HasUser, HasWishlist, HasModel, HasObjectList, Protocol): ...
 
 
-class HasPermissionForWishlistViewMixin(DoesViewDispatching):
+class HasPermissionForWishlistViewMixin:
     """Verifies the requesting user is allowed to access the wish list."""
 
     request: HttpRequest
@@ -41,8 +41,7 @@ class HasPermissionForWishlistViewMixin(DoesViewDispatching):
             requesting_user=self.try_user(),
             wishlist=wishlist,
         )
-
-        return super().dispatch(request, *args, **kwargs)
+        return cast(DoesViewDispatching, super()).dispatch(request, *args, **kwargs)
 
 
 class WishlistView(
