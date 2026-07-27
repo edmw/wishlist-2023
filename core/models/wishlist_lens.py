@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from typing import Any, Self, cast
+from datetime import datetime
+from typing import TYPE_CHECKING, Any, Protocol, Self, cast
 
 from django.db.models import (
     BooleanField,
@@ -9,25 +10,49 @@ from django.db.models import (
     Count,
     OuterRef,
     Q,
+    QuerySet,
     Subquery,
     Value,
     When,
 )
 
+from core.models import types
 from core.models._base import LensBase, LensHasIdMixin, LensHasOrderMixin
 from core.models.user import User
 from core.models.wishlist import Wishlist
 from core.models.wishlist_membership import WishlistMembership
 
 
-class EditableWishlist(Wishlist):
-    """Wishlist as returned by WishlistLens.editable_by().
+class EditableWishlist(Protocol):
+    """Wishlist shape as returned by WishlistLens.editable_by().
 
-    Adds collaboration_role and is_collaboration annotations.
+    Exposes the public Wishlist surface plus collaboration annotations.
     """
 
+    if TYPE_CHECKING:
+        from core.models.wish import Wish
+
+    id: types.WishlistID
+    pk: types.WishlistID
+    owner: User
+    owner_id: types.UserID
+    name: types.Name
+    description: types.Description
+    visibility: types.Visibility
+    item_ordering: types.ItemOrdering
+    mask_reservations: bool
+    created_at: datetime
+    modified_at: datetime
+    wishes: QuerySet["Wish"]
+    wishes_count: int
+    wishes_count_not_archived: int
+    collaboration_memberships: QuerySet[WishlistMembership]
     is_collaboration: bool
     collaboration_role: str | None
+
+    def captionable(self) -> str: ...
+
+    def previewable(self) -> str: ...
 
 
 def assert_editable_wishlist(obj: Any) -> EditableWishlist:

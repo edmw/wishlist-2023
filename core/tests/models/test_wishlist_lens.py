@@ -1,7 +1,6 @@
-from typing import cast
+from typing import Iterable, cast
 
 import pytest
-from django.db.models import QuerySet
 
 from core.models import WishlistLens
 from core.models.wishlist_lens import EditableWishlist
@@ -131,7 +130,7 @@ def test_lens_editable_by_includes_collaboration(core: CoreFixture) -> None:
     WishlistCollaborationService.add_editor(wishlist=core.list_alice, user=core.user_bob)
 
     lens = WishlistLens.view().editable_by(user=core.user_bob).for_listing()
-    wishlists = list(cast(QuerySet[EditableWishlist], lens.qs().all()))
+    wishlists = list(cast(Iterable[EditableWishlist], lens.qs()))
 
     assert len(wishlists) == 2
     assert [list.name for list in wishlists] == ["Wishes for Alice", "Wishes for Bob"]
