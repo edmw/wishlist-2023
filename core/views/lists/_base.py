@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 class IsListView(HasUser, HasModel, Protocol): ...
 
 
-class HasPermissionForListsViewMixin(DoesViewDispatching):
+class HasPermissionForListsViewMixin:
     """Verifies the requesting user is allowed to access the user’s lists."""
 
     def dispatch(self: IsListView, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponseBase:
@@ -31,5 +31,4 @@ class HasPermissionForListsViewMixin(DoesViewDispatching):
             requesting_user=self.try_user(),
             user_object_id=user_id,
         )
-
-        return super().dispatch(request, *args, **kwargs)
+        return cast(DoesViewDispatching, super()).dispatch(request, *args, **kwargs)

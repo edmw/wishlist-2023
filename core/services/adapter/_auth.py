@@ -15,11 +15,9 @@ class AuthSupportsRetry(Protocol):
     """Protocol which must be implemented by an auth class if the class is to be
     used with automatic auth retry (see RetryAuth below)."""
 
-    def reset(self) -> None:
-        ...
+    def reset(self) -> None: ...
 
-    def __call__(self, request: requests.PreparedRequest) -> requests.PreparedRequest:
-        ...
+    def __call__(self, request: requests.PreparedRequest) -> requests.PreparedRequest: ...
 
 
 class RetryAuth(AuthBase):
@@ -38,11 +36,10 @@ class RetryAuth(AuthBase):
         if not hasattr(self._thread_local, "init"):
             self._thread_local.auth_use_attempts = None
 
-    def __eq__(self, other: RetryAuth) -> bool:
-        return self.auth == getattr(other, "auth", None)
-
-    def __ne__(self, other: RetryAuth) -> bool:
-        return self != other
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, RetryAuth):
+            return NotImplemented
+        return self.auth == other.auth
 
     def _retry_unauthorized(self, response: requests.Response, **kwargs: Any) -> requests.Response | None:
         if response.status_code == HTTPStatus.UNAUTHORIZED:
@@ -129,16 +126,15 @@ class CookieAuth(AuthBase, AuthSupportsRetry):
             self._thread_local.init = True
             self._thread_local.cookies = None
 
-    def __eq__(self, other: CookieAuth) -> bool:
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, CookieAuth):
+            return NotImplemented
         return all(
             [
-                self.get_cookies_url == getattr(other, "get_cookies_url", None),
-                self.get_cookies_auth == getattr(other, "get_cookies_auth", None),
+                self.get_cookies_url == other.get_cookies_url,
+                self.get_cookies_auth == other.get_cookies_auth,
             ]
         )
-
-    def __ne__(self, other: CookieAuth) -> bool:
-        return self != other
 
     def __call__(self, request: requests.PreparedRequest) -> requests.PreparedRequest:
         self._init_per_thread_state()

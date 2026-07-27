@@ -23,7 +23,7 @@ class TestListCreateView(AssertLoggingMixin):
                 kwargs={constants.USER_ID_KEY: user_id},
             )
         )
-        return response
+        return cast(HttpResponse, response)
 
     def _post_create(self, client: Client, user_id: UserID) -> HttpResponse:
         response = client.post(
@@ -37,7 +37,7 @@ class TestListCreateView(AssertLoggingMixin):
                 Wishlist.Fields.ITEM_ORDERING: ItemOrdering.NAME_ASCENDING,
             },
         )
-        return response
+        return cast(HttpResponse, response)
 
     def test_list_create_view_ok(self, core: CoreFixture, client: Client) -> None:
         """Alice creating a wish list for alice’s wish lists."""
@@ -84,7 +84,7 @@ class TestListUpdateView(AssertLoggingMixin):
                 kwargs={constants.USER_ID_KEY: user_id, constants.LIST_ID_KEY: list_id},
             )
         )
-        return response
+        return cast(HttpResponse, response)
 
     def _post_update(self, client: Client, user_id: UserID, list_id: WishlistID) -> HttpResponse:
         response = client.post(
@@ -98,7 +98,7 @@ class TestListUpdateView(AssertLoggingMixin):
                 Wishlist.Fields.ITEM_ORDERING: ItemOrdering.NAME_DESCENDING,
             },
         )
-        return response
+        return cast(HttpResponse, response)
 
     def test_list_update_view_ok(self, core: CoreFixture, client: Client) -> None:
         """Alice updating a wish list from alice’s wish lists."""
@@ -184,7 +184,7 @@ class TestListDeleteView(AssertLoggingMixin):
                 kwargs={constants.USER_ID_KEY: user_id, constants.LIST_ID_KEY: list_id},
             )
         )
-        return response
+        return cast(HttpResponse, response)
 
     def _post_delete(self, client: Client, user_id: UserID, list_id: WishlistID) -> HttpResponse:
         response = client.post(
@@ -193,7 +193,7 @@ class TestListDeleteView(AssertLoggingMixin):
                 kwargs={constants.USER_ID_KEY: user_id, constants.LIST_ID_KEY: list_id},
             ),
         )
-        return response
+        return cast(HttpResponse, response)
 
     def _post_delete_with_confirmation(
         self, client: Client, user_id: UserID, list_id: WishlistID
@@ -207,7 +207,7 @@ class TestListDeleteView(AssertLoggingMixin):
                 "name_confirmation": "Wishes for Alice",
             },
         )
-        return response
+        return cast(HttpResponse, response)
 
     def test_list_delete_view_ok(self, core: CoreFixture, client: Client) -> None:
         """Alice deleting a wish list from alice’s wish lists."""
