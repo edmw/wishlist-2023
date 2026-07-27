@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Self
+from typing import Any, Self, cast
 
 from django.db.models import (
     BooleanField,
@@ -18,6 +18,31 @@ from core.models._base import LensBase, LensHasIdMixin, LensHasOrderMixin
 from core.models.user import User
 from core.models.wishlist import Wishlist
 from core.models.wishlist_membership import WishlistMembership
+
+
+class EditableWishlist(Wishlist):
+    """Wishlist as returned by WishlistLens.editable_by().
+
+    Adds collaboration_role and is_collaboration annotations.
+    """
+
+    is_collaboration: bool
+    collaboration_role: str | None
+
+
+def assert_editable_wishlist(obj: Any) -> EditableWishlist:
+    """Cast obj to EditableWishlist, asserting it's a Wishlist instance
+    with the collaboration annotations (is_collaboration and collaboration_role) present."""
+    assert isinstance(obj, Wishlist), f"Expected Wishlist instance, got {type(obj)!r}"
+    assert hasattr(obj, "is_collaboration"), (
+        "Wishlist is missing is_collaboration annotation "
+        "(expected queryset from WishlistLens.editable_by())"
+    )
+    assert hasattr(obj, "collaboration_role"), (
+        "Wishlist is missing collaboration_role annotation "
+        "(expected queryset from WishlistLens.editable_by())"
+    )
+    return cast(EditableWishlist, obj)
 
 
 class WishlistLens(LensHasIdMixin, LensHasOrderMixin, LensBase[Wishlist]):
@@ -56,14 +81,14 @@ class WishlistLens(LensHasIdMixin, LensHasOrderMixin, LensBase[Wishlist]):
                         Q(owner=user) | Q(collaboration_memberships__user=user),
                     )
                     .annotate(
-                        collaboration_role=Subquery(
-                            membership_role,
-                            output_field=CharField(),
-                        ),
                         is_collaboration=Case(
                             When(owner=user, then=Value(False)),
                             default=Value(True),
                             output_field=BooleanField(),
+                        ),
+                        collaboration_role=Subquery(
+                            membership_role,
+                            output_field=CharField(),
                         ),
                     )
                     .distinct()

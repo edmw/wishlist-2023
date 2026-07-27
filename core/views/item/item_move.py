@@ -7,7 +7,10 @@ from django.utils.translation import gettext as _
 from django.utils.translation import gettext_noop
 
 from core.models import Wish
-from core.models.wishlist_lens import WishlistLens
+from core.models.wishlist_lens import (
+    WishlistLens,
+    assert_editable_wishlist,
+)
 from core.views._base import LoginRequiredMixin, UpdateView, WishModelMixin
 from core.views._forms import (
     AriaDescribedByMixin,
@@ -21,7 +24,7 @@ from ._base import HasPermissionForItemViewMixin
 logger = logging.getLogger(__name__)
 
 
-class WishlistWidget(
+class WishlistWidget(  # pyright: ignore[reportIncompatibleMethodOverride]
     LabelBeforeMixin,
     PlaceholderTextMixin,
     AriaDescribedByMixin,
@@ -37,8 +40,9 @@ class ItemMoveForm(ModelForm):
         instance = kwargs["instance"]
         wishlist_field = cast(ModelChoiceField, self.base_fields[Wish.Fields.WISHLIST])
 
-        def label_for_wishlist(wishlist: Any) -> str:
-            if getattr(wishlist, "is_collaboration", False):
+        def label_for_wishlist(obj: Any) -> str:
+            wishlist = assert_editable_wishlist(obj)
+            if wishlist.is_collaboration:
                 shared_by = _("shared by %(ownername)s") % {"ownername": wishlist.owner.username}
                 return f"{wishlist.name} ({shared_by})"
             return wishlist.name
@@ -49,7 +53,7 @@ class ItemMoveForm(ModelForm):
             .editable_by(user=user)
             .without_lists(lists=[instance.wishlist])
             .for_listing()
-            .queryset.all()
+            .qs()
         )
         wishlist_field.empty_label = None
         super().__init__(*args, **kwargs)
@@ -63,7 +67,7 @@ class ItemMoveForm(ModelForm):
             Wish.Fields.WISHLIST: WishlistWidget,
         }
 
-    def clean(self) -> dict[str, Any]:
+    def clean(self) -> dict[str, Any] | None:
         wish = cast(Wish, self.instance)
         if not wish.movable:
             raise ValidationError(_("This wish can not be moved."), code="not_movable")
