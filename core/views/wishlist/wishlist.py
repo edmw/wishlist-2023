@@ -60,7 +60,7 @@ class WishlistView(
 
     def get_queryset(self) -> django.db.models.QuerySet[Wish]:
         wishlist = self.try_wishlist()
-        return WishLens.view().by_wishlist(list=wishlist).without_archived().for_listing().queryset.all()
+        return WishLens.view().by_wishlist(list=wishlist).without_archived().for_listing().qs()
 
     def get_context_data(self: IsWishlistView, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)

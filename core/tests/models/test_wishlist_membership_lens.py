@@ -8,7 +8,7 @@ from core.tests.conftest import CoreFixture
 @pytest.mark.django_db
 def test_lens(core: CoreFixture) -> None:
     lens = WishlistMembershipLens.view()
-    memberships = list(lens.queryset.all())
+    memberships = list(lens.qs())
 
     assert memberships == []
 
@@ -19,7 +19,7 @@ def test_lens_narrowed_down_to_wishlist(core: CoreFixture) -> None:
     WishlistCollaborationService.add_editor(wishlist=core.list_bob, user=core.user_alice)
 
     lens = WishlistMembershipLens.view().by_wishlist(wishlist=core.list_alice)
-    memberships = list(lens.queryset.all())
+    memberships = list(lens.qs())
 
     assert len(memberships) == 1
     assert memberships[0].wishlist_id == core.list_alice.id
@@ -33,7 +33,7 @@ def test_lens_narrowed_down_to_user(core: CoreFixture) -> None:
     WishlistCollaborationService.add_editor(wishlist=core.list_bob, user=core.user_alice)
 
     lens = WishlistMembershipLens.view().by_user(user=core.user_bob)
-    memberships = list(lens.queryset.all())
+    memberships = list(lens.qs())
 
     assert len(memberships) == 2
     assert sorted(membership.wishlist_id for membership in memberships) == sorted(
@@ -46,7 +46,7 @@ def test_lens_editors_only(core: CoreFixture) -> None:
     WishlistCollaborationService.add_editor(wishlist=core.list_alice, user=core.user_bob)
 
     lens = WishlistMembershipLens.view().editors_only()
-    memberships = list(lens.queryset.all())
+    memberships = list(lens.qs())
 
     assert len(memberships) == 1
     assert memberships[0].wishlist_id == core.list_alice.id
@@ -59,7 +59,7 @@ def test_lens_for_listing(core: CoreFixture) -> None:
     WishlistCollaborationService.add_editor(wishlist=core.list_alice, user=core.user_carol)
 
     memberships = list(
-        WishlistMembershipLens.view().by_wishlist(wishlist=core.list_alice).for_listing().queryset.all()
+        WishlistMembershipLens.view().by_wishlist(wishlist=core.list_alice).for_listing().qs()
     )
 
     assert len(memberships) == 2

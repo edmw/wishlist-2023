@@ -75,7 +75,7 @@ class ListDeleteView(
 
     def get_queryset(self) -> QuerySet[Wishlist]:
         user = self.try_user()
-        return WishlistLens.view().by_owner(user=user).for_listing().queryset
+        return WishlistLens.view().by_owner(user=user).for_listing().qs()
 
     def get_form_kwargs(self) -> dict[str, Any]:
         kwargs = super().get_form_kwargs()
