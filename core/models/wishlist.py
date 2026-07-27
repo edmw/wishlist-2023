@@ -8,7 +8,7 @@ Items on a wish list have a sort order.
 from __future__ import annotations
 
 import logging
-from typing import Iterable, override
+from typing import Any, Iterable, override
 
 from django.conf import settings as django_settings
 from django.core.exceptions import ValidationError
@@ -109,12 +109,12 @@ class Wishlist(
     @override
     def save(
         self,
-        *args,
+        *args: Any,
         force_insert: bool | tuple[ModelBase, ...] = False,
         force_update: bool = False,
         using: str | None = None,
         update_fields: Iterable[str] | None = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
         self.full_clean()
 
