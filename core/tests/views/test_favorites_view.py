@@ -1,4 +1,5 @@
 from http import HTTPStatus
+from typing import cast
 
 import pytest
 from django.http import HttpResponse
@@ -24,7 +25,7 @@ class TestFavoritesView(AssertLoggingMixin):
                 kwargs={constants.USER_ID_KEY: user_id},
             )
         )
-        return response
+        return cast(HttpResponse, response)
 
     def test_lists_view_ok(self, core: CoreFixture, client: Client) -> None:
         """Alice requesting alice’s favorites."""

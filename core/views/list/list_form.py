@@ -45,7 +45,7 @@ class NameWidget(
         super().__init__()
 
 
-class VisibilityWidget(
+class VisibilityWidget(  # pyright: ignore[reportIncompatibleMethodOverride]
     LabelBeforeMixin,
     AriaDescribedByMixin,
     RadioSelectStylesMixin,
@@ -54,7 +54,7 @@ class VisibilityWidget(
     label_text = gettext_noop("Visibility")
 
 
-class ItemOrderingWidget(
+class ItemOrderingWidget(  # pyright: ignore[reportIncompatibleMethodOverride]
     LabelBeforeMixin,
     AriaDescribedByMixin,
     SelectStylesMixin,
