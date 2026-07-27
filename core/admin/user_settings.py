@@ -1,4 +1,5 @@
 """UserSettings model representation in admin site."""
+
 from django.contrib import admin
 
 from core.models import UserSettings
@@ -8,7 +9,7 @@ from core.models import UserSettings
 class UserSettingsAdmin(admin.ModelAdmin):
     """UserSettings model representation in admin site."""
 
-    view_on_site = False
+    view_on_site = False  # type: ignore[assignment]
 
     fieldsets = (
         (

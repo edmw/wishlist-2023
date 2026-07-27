@@ -43,7 +43,7 @@ class CheckboxStylesMixin(Widget):
 class PlaceholderTextMixin(Widget):
     placeholder_text = None
 
-    def get_context(self, name: str, value: str, attrs: dict[str, str]) -> dict[str, str]:
+    def get_context(self, name: str, value: str, attrs: dict[str, Any] | None) -> dict[str, str]:
         context = super().get_context(name, value, attrs)
         if self.placeholder_text:
             if context_widget := context.get("widget"):
@@ -97,7 +97,7 @@ class LabelAfterMixin(Widget):
 
 
 class AriaDescribedByMixin(Widget):
-    def get_context(self, name: str, value: str, attrs: dict[str, str]) -> dict[str, str]:
+    def get_context(self, name: str, value: str, attrs: dict[str, Any] | None) -> dict[str, str]:
         context = super().get_context(name, value, attrs)
         if context_widget := context.get("widget"):
             if context_attrs := context_widget.get("attrs"):

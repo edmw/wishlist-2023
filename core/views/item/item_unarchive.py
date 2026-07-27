@@ -28,7 +28,7 @@ class ItemUnarchiveForm(ModelForm):
         kwargs["initial"] = initial
         super().__init__(*args, **kwargs)
 
-    def clean(self) -> dict[str, Any]:
+    def clean(self) -> dict[str, Any] | None:
         wish = cast(Wish, self.instance)
         try:
             WishService.unarchive(wish=wish, save=False)

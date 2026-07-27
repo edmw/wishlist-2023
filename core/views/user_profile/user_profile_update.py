@@ -32,7 +32,7 @@ class UsernameWidget(
     placeholder_text = gettext_noop("Enter nickname")
 
 
-class LanguageWidget(
+class LanguageWidget(  # pyright: ignore[reportIncompatibleMethodOverride]
     LabelBeforeMixin,
     AriaDescribedByMixin,
     SelectStylesMixin,
@@ -50,7 +50,7 @@ class UserProfileForm(ModelForm):
             User.Fields.LANGUAGE: LanguageWidget,
         }
 
-    def clean_username(self) -> str:
+    def clean_username(self) -> str | None:
         """Validates that the username is case-insensitive unique. The default
         validation allows usernames in different upper and lower case. A unique
         constraint in the model prevents usernames from being saved in different
@@ -58,13 +58,16 @@ class UserProfileForm(ModelForm):
         unique constraint error.
         """
         username = self.cleaned_data.get("username")
-        if username:
-            # get user for the entered username case-insensitive
-            user = UserService.find_user_for_username(username=username)
-            if user and user != self.instance:
-                # if a user was found and it is not the to be edited user
-                # fail for a duplicate username
-                raise ValidationError(_("This nickname is already in use by another user."))
+        if not username:
+            return username
+
+        # get user for the entered username case-insensitive
+        user = UserService.find_user_for_username(username=username)
+        if user and user != self.instance:
+            # if a user was found and it is not the to be edited user
+            # fail for a duplicate username
+            raise ValidationError(_("This nickname is already in use by another user."))
+
         return username
 
 

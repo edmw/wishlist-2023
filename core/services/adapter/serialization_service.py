@@ -23,7 +23,7 @@ class SerializationService:
         return {"wishlist": result}
 
     @staticmethod
-    def wishlist_yaml(*, wishlist: Wishlist) -> bytes:
+    def wishlist_yaml(*, wishlist: Wishlist) -> str:
         data = SerializationService.list_to_dict(wishlist=wishlist)
         export = {"version": "wishlist/1", "data": data}
         return yaml.dump(

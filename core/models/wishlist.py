@@ -109,19 +109,22 @@ class Wishlist(
     @override
     def save(
         self,
-        *,
+        *args,
         force_insert: bool | tuple[ModelBase, ...] = False,
         force_update: bool = False,
         using: str | None = None,
         update_fields: Iterable[str] | None = None,
+        **kwargs,
     ) -> None:
         self.full_clean()
 
         super().save(
+            *args,
             force_insert=force_insert,
             force_update=force_update,
             using=using,
             update_fields=update_fields,
+            **kwargs,
         )
 
     @override

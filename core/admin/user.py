@@ -1,4 +1,5 @@
 """User model representation in admin site."""
+
 from django.contrib import admin
 from django.contrib.auth import admin as auth_admin
 
@@ -12,14 +13,14 @@ class UserSettingsInline(admin.StackedInline):
     model = UserSettings
     fk_name = UserSettings.Fields.USER
     can_delete = False
-    view_on_site = False
+    view_on_site = False  # type: ignore[assignment]
 
 
 @admin.register(User)
 class UserAdmin(auth_admin.UserAdmin):
     """User model representation in admin site."""
 
-    view_on_site = False
+    view_on_site = False  # type: ignore[assignment]
 
     inlines = [
         UserSettingsInline,
