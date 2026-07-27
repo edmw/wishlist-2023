@@ -116,6 +116,8 @@ def env_decrpyt(key: str, default: str | None, fernet: Fernet | None) -> str | N
 #  ##  ##  ##  ##  ##    ## ##     ## ##        ##  ##    ##    ##
 #   ###  ###  ####  ######  ##     ## ######## ####  ######     ##
 
+WISH_IMAGE_PIXELS_MAX = 20_000_000
+
 # endregion WISHLIST
 
 # region DJANGO
