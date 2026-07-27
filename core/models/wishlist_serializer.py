@@ -4,7 +4,7 @@ from .wishlist import Wishlist
 
 
 class WishlistSerializer(serializers.ModelSerializer):
-    class Meta:
+    class Meta:  # type: ignore[override]
         model = Wishlist
         exclude = [
             Wishlist.Fields.ID,

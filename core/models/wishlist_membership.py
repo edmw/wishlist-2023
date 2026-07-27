@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Iterable, override
+from typing import Any, Iterable, override
 
 from django.core.exceptions import ValidationError
 from django.db import models
@@ -82,18 +82,21 @@ class WishlistMembership(IDMixin[types.WishlistMembershipID], models.Model):
     @override
     def save(
         self,
-        *,
+        *args,
         force_insert: bool | tuple[ModelBase, ...] = False,
         force_update: bool = False,
         using: str | None = None,
         update_fields: Iterable[str] | None = None,
+        **kwargs: Any,
     ) -> None:
         self.full_clean()
         super().save(
+            *args,
             force_insert=force_insert,
             force_update=force_update,
             using=using,
             update_fields=update_fields,
+            **kwargs,
         )
 
     # Custom properties

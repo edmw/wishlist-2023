@@ -17,8 +17,8 @@ def test_pagination_generate_indexes() -> None:
 
 def test_pagination_generate_indexes_raises_on_string_input() -> None:
     with pytest.raises(ValueError, match="invalid literal"):
-        pagination_generate_indexes("a", 1)
+        pagination_generate_indexes("a", 1)  # type: ignore[arg-type]
     with pytest.raises(ValueError, match="invalid literal"):
-        pagination_generate_indexes(1, "b")
+        pagination_generate_indexes(1, "b")  # type: ignore[arg-type]
     with pytest.raises(ValueError, match="invalid literal"):
-        pagination_generate_indexes("a", "b")
+        pagination_generate_indexes("a", "b")  # type: ignore[arg-type]

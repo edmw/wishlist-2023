@@ -2,6 +2,7 @@ import logging
 from typing import Any, Iterable, Protocol, cast
 
 from django.db import transaction
+from django.db.models.base import ModelBase
 
 from core.models._typing import HasModelState, HasPrimaryKey, IsSaveable
 
@@ -15,7 +16,8 @@ class ModelSupportsSave(HasPrimaryKey, HasModelState, Protocol):
 class OnSaveGenerateImageMixin(IsSaveable):
     def save(
         self: ModelSupportsSave,
-        force_insert: bool = False,
+        *args,
+        force_insert: bool | tuple[ModelBase, ...] = False,
         force_update: bool = False,
         using: str | None = None,
         update_fields: Iterable[str] | None = None,
@@ -45,6 +47,7 @@ class OnSaveGenerateImageMixin(IsSaveable):
                 update_fields = {Wish.Fields.IMAGE}.union(update_fields)
 
         super().save(
+            *args,
             force_insert=force_insert,
             force_update=force_update,
             using=using,
