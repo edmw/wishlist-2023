@@ -25,6 +25,6 @@ class ListExportView(
         wishlist = cast(Wishlist, self.get_object())
         filename = f"{slugify(wishlist.name)}.yaml"
         yaml = SerializationService.wishlist_yaml(wishlist=wishlist)
-        response = HttpResponse(content=yaml, content_type="application/yaml")
+        response = HttpResponse(content=yaml, content_type="application/yaml; charset=utf-8")
         response["Content-Disposition"] = f"attachment; filename={filename};"
         return response
