@@ -2,7 +2,10 @@
 
 ## [x.x.x]
 
-* 🛠️ cleanup code
+## [2.3.1]
+
+* 🛠️ minor fixes
+* 🛠️ cleanup code (fix typing errors)
 
 ## [2.3.0]
 
