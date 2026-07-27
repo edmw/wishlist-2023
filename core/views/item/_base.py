@@ -13,11 +13,18 @@ logger = logging.getLogger(__name__)
 
 
 class IsItemView(HasUser, HasModel, Protocol):
-    ...
+    def assert_permission_for_wish(self, wish: Wish) -> Wish: ...
 
 
 class HasPermissionForItemViewMixin(HasPermissionForItemsViewMixin, SingleObjectMixin):
     """Verifies the requesting user is allowed to access the user’s items."""
+
+    def assert_permission_for_wish(self: IsItemView, wish: Wish) -> Wish:
+        """Returns the wish after asserting the requesting user may access it."""
+        return PermissionService.assert_wish_object(
+            requesting_user=self.try_user(),
+            wish_object=wish,
+        )
 
     def get_object(self: IsItemView, queryset: QuerySet[Wish] | None = None) -> Model:
         """Returns the view object after verifying the requesting user is
@@ -30,7 +37,4 @@ class HasPermissionForItemViewMixin(HasPermissionForItemsViewMixin, SingleObject
         assert self.model == Wish  # nosec
 
         item_object = cast(Wish, super().get_object(queryset))
-        return PermissionService.assert_wish_object(
-            requesting_user=self.try_user(),
-            wish_object=item_object,
-        )
+        return self.assert_permission_for_wish(item_object)
