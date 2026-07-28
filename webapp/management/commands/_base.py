@@ -4,7 +4,7 @@ import argparse
 import logging
 import os
 from pathlib import Path
-from typing import Any
+from typing import Any, Protocol
 
 from django.apps import apps
 from django.conf import settings as django_settings
@@ -116,17 +116,25 @@ class WebappBaseCommand(BaseCommand):
         ...
 
 
-class _MixinBase:
-    def handle(self, *args: Any, **options: Any) -> None:
-        """The actual logic of the command."""
+class _HandleProtocol(Protocol):
+    def handle(self, *args: Any, **options: Any) -> None: ...
 
 
-class HasArguments:
-    def add_arguments(self, parser: CommandParser) -> None:
-        """no-op"""
+class _IsCommand:
+    def handle(self: _HandleProtocol, *args: Any, **options: Any) -> None:
+        super().handle(*args, **options)
 
 
-class SupportsLogging(HasArguments, _MixinBase):
+class _AddArgumentsProtocol(Protocol):
+    def add_arguments(self, parser: CommandParser) -> None: ...
+
+
+class _HasArguments:
+    def add_arguments(self: _AddArgumentsProtocol, parser: CommandParser) -> None:
+        super().add_arguments(parser=parser)
+
+
+class SupportsLogging(_HasArguments, _IsCommand):
     """Mixin for commands which want to support logging."""
 
     def add_arguments(self, parser: CommandParser) -> None:
@@ -149,7 +157,7 @@ class SupportsLogging(HasArguments, _MixinBase):
         super().handle(*args, **options)
 
 
-class SupportsDebugging(HasArguments, _MixinBase):
+class SupportsDebugging(_HasArguments, _IsCommand):
     """Mixin for commands which want to support debugging."""
 
     def add_arguments(self, parser: CommandParser) -> None:
@@ -191,7 +199,7 @@ class SupportsDebugging(HasArguments, _MixinBase):
         debugpy.wait_for_client()
 
 
-class SupportsAutoreloading(_MixinBase):
+class SupportsAutoreloading(_IsCommand):
     """Mixin for commands which want to support auto-reloading."""
 
     @property
