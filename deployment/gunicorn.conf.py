@@ -75,7 +75,7 @@ class JsonFormatter(pythonjsonlogger.json.JsonFormatter):
             for field in self.fields or self._required_fields:
                 default_name = field
                 name = self.rename_fields.get(field, default_name)
-                if name not in log_data:
+                if name not in log_data or log_data[name] is None:
                     if hasattr(record, "args") and record.args:
                         if isinstance(record.args, dict):
                             log_data[name] = record.args.get(field)
