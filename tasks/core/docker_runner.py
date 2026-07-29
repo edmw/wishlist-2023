@@ -36,7 +36,7 @@ class Compose:
 # region ⭐ Runner ⭐
 
 
-class RunnerException(Exception):
+class RunnerError(Exception):
     pass
 
 
@@ -89,7 +89,7 @@ class RunnerBase(DockerBase):
         )
         webapp_key = keyring.get_password("wishlist-webapp_key", environment.value)
         if webapp_key is None:
-            raise RunnerException(
+            raise RunnerError(
                 f"WEBAPP KEY for Mode {Markup.mode(mode)} "
                 f"in Environment {Markup.environment(environment)} "
                 f"not found in Keyring. "
@@ -155,7 +155,7 @@ class RunnerUsesManageCommand(RunnerUsesManageCommandProtocol):
         try:
             webapp_key = self.get_webapp_key(Mode.DEVELOP)
             self.run_in_context(command, env={"WEBAPP_KEY": webapp_key, "COMPOSE_MENU": "false"})
-        except RunnerException as e:
+        except RunnerError as e:
             self.exit_with_banner("🚨🚨🚨", str(e))
 
 
@@ -205,7 +205,7 @@ class DockerRunner:
             try:
                 webapp_key = self.get_webapp_key(mode)
                 self.run_in_context(command, env={"WEBAPP_KEY": webapp_key, "COMPOSE_MENU": "false"})
-            except RunnerException as e:
+            except RunnerError as e:
                 self.exit_with_banner("🚨🚨🚨", str(e))
 
         def stop(self, mode: Mode = Mode.DEVELOP_DEBUG) -> None:

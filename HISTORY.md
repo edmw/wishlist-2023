@@ -2,10 +2,13 @@
 
 ## [x.x.x]
 
+* 🛠️ switch from minio to seaweedfs in development
+* 🪛 cleanup code (fix typing errors)
+
 ## [2.3.1]
 
-* 🛠️ minor fixes
-* 🛠️ cleanup code (fix typing errors)
+* 🪛 minor fixes
+* 🪛 cleanup code (fix typing errors)
 
 ## [2.3.0]
 
