@@ -116,22 +116,25 @@ class WebappBaseCommand(BaseCommand):
         ...
 
 
-class BaseCommandProtocol(Protocol):
-    """Protocol for command Mixins."""
-
-    def handle(self, *args: Any, **options: Any) -> None:
-        """The actual logic of the command."""
-        ...
+class _HandleProtocol(Protocol):
+    def handle(self, *args: Any, **options: Any) -> None: ...
 
 
-class HasArguments:
-    class AddArgumentsCallable(Protocol):
-        def __call__(self, parser: CommandParser) -> None: ...
-
-    add_arguments: AddArgumentsCallable
+class _IsCommand:
+    def handle(self: _HandleProtocol, *args: Any, **options: Any) -> None:
+        super().handle(*args, **options)
 
 
-class SupportsLogging(HasArguments, BaseCommandProtocol):
+class _AddArgumentsProtocol(Protocol):
+    def add_arguments(self, parser: CommandParser) -> None: ...
+
+
+class _HasArguments:
+    def add_arguments(self: _AddArgumentsProtocol, parser: CommandParser) -> None:
+        super().add_arguments(parser=parser)
+
+
+class SupportsLogging(_HasArguments, _IsCommand):
     """Mixin for commands which want to support logging."""
 
     def add_arguments(self, parser: CommandParser) -> None:
@@ -154,7 +157,7 @@ class SupportsLogging(HasArguments, BaseCommandProtocol):
         super().handle(*args, **options)
 
 
-class SupportsDebugging(HasArguments, BaseCommandProtocol):
+class SupportsDebugging(_HasArguments, _IsCommand):
     """Mixin for commands which want to support debugging."""
 
     def add_arguments(self, parser: CommandParser) -> None:
@@ -196,7 +199,7 @@ class SupportsDebugging(HasArguments, BaseCommandProtocol):
         debugpy.wait_for_client()
 
 
-class SupportsAutoreloading(BaseCommandProtocol):
+class SupportsAutoreloading(_IsCommand):
     """Mixin for commands which want to support auto-reloading."""
 
     @property

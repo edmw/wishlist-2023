@@ -8,7 +8,6 @@ from django.http import HttpRequest
 from django.http.response import HttpResponseBase
 from django.utils.cache import add_never_cache_headers
 from django.views.decorators.cache import cache_page
-from django.views.generic.base import View
 
 
 class ViewCallable(Protocol):
@@ -19,7 +18,14 @@ class ViewCallable(Protocol):
         ...
 
 
-class CacheMixin(View):
+class _SupportsAsView(Protocol):
+    cache_timeout: int
+
+    @classmethod
+    def as_view(cls, **initkwargs: Any) -> ViewCallable: ...
+
+
+class CacheMixin:
     """Adds caching to the view.
 
     Uses the requests fully-qualified URL as cache key. This means every request
@@ -30,15 +36,21 @@ class CacheMixin(View):
     cache_timeout = 60
 
     @classmethod
-    def as_view(cls: Type[CacheMixin], **initkwargs: Any) -> ViewCallable:
+    def as_view(cls: Type[_SupportsAsView], **initkwargs: Any) -> ViewCallable:
         """Wraps the the view with the cache handler."""
         return cache_page(cls.cache_timeout)(super().as_view(**initkwargs))
 
 
-class AddNeverCacheMixin(View):
+class _SupportsDispatch(Protocol):
+    def dispatch(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponseBase: ...
+
+
+class AddNeverCacheMixin:
     """Adds never caching cache control headers to GET requests."""
 
-    def dispatch(self: View, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponseBase:
+    def dispatch(
+        self: _SupportsDispatch, request: HttpRequest, *args: Any, **kwargs: Any
+    ) -> HttpResponseBase:
         """Adds never caching cache control headers to GET requests."""
         response = super().dispatch(request, *args, **kwargs)
         if request.method and request.method.upper() == "GET":

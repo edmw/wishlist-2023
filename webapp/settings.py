@@ -150,7 +150,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "csp",
     "django_probes",
-    "webapp",
+    "webapp.apps.WebappConfig",
     "webapp.apps.StaticFilesConfig",
     "webapp.apps.CeleryBeatConfig",
     "webapp.apps.CeleryResultsConfig",
@@ -921,6 +921,9 @@ LOGGING = {
         "level": LOGGING_LEVEL_WARNING,
     },
     "loggers": {
+        "webapp": {
+            "level": LOGGING_LEVEL,
+        },
         "core": {
             "level": LOGGING_LEVEL,
         },

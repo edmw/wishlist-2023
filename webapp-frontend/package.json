@@ -12,7 +12,7 @@
         "build": "npm ci && npm run dist-prepare && npm run dist-build"
     },
     "dependencies": {
-        "bootstrap": "^5.2.3",
-        "htmx.org": "^1.8.4"
+        "bootstrap": "^5.3.8",
+        "htmx.org": "^2.0.10"
     }
 }
