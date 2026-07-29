@@ -1,3 +1,4 @@
+import sys
 from typing import Protocol
 
 from invoke.context import Context
@@ -10,6 +11,8 @@ class DockerProtocol(Protocol):
     context: Context
 
     def print_banner(self, title: str, message: str) -> None: ...
+
+    def exit_with_banner(self, title: str, message: str) -> None: ...
 
     def run_in_context(self, command: list[str], env: dict | None = None) -> Result | None: ...
 
@@ -24,6 +27,10 @@ class DockerBase:
         if self.simulation:
             message += f"\n{Markup.info("SIMULATION", ")")}"
         Printer.print_banner(title, message)
+
+    def exit_with_banner(self, title: str, message: str) -> None:
+        self.print_banner(title, message)
+        sys.exit(1)
 
     def run_in_context(self, command: list[str], env: dict | None = None) -> Result | None:
         command_string = " ".join(command)
