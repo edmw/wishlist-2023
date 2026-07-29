@@ -1,4 +1,4 @@
-# 3. How to add a user using the console?
+# 4. How to add a user using the console?
 
 Date: 2024-01-01
 

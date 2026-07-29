@@ -9,6 +9,7 @@ from django_celery_results import apps as celery_results_apps
 class WebappConfig(AppConfig):
     """Webapp application configuration."""
 
+    name = "webapp"
     verbose_name = "Webapp"
 
     def ready(self) -> None:
