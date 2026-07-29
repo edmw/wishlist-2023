@@ -40,8 +40,12 @@ services:
     networks:
       - wishlist-webapp
     depends_on:
-      - database
-      - datastore
+      database:
+        condition: service_started
+      datastore:
+        condition: service_started
+      files-init:
+        condition: service_completed_successfully
     restart: on-failure:2
 
   # Containers for Django Celery.
@@ -122,21 +126,55 @@ services:
 
   files:
     container_name: wishlist-files
-    command: ["server", "--console-address", ":9001", "/files"]
+    command:
+      [
+        "server",
+        "-ip=files",
+        "-s3",
+        "-s3.port=8333",
+        "-s3.config=/etc/seaweedfs/s3.conf",
+        "-dir=/data",
+      ]
     env_file:
-      - environments/local/minio.env
+      - environments/local/seaweedfs.env
     volumes:
-      - ./webapp-files:/files
+      - ./webapp-files:/data
+      - ./environments/local/seaweedfs.conf:/etc/seaweedfs/s3.conf:ro
     ports:
-      - 127.0.0.1:13138:9000
-      - 127.0.0.1:13139:9001
+      - 127.0.0.1:13138:8333
+      - 127.0.0.1:13139:9333
     networks:
       - wishlist-webapp
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
-      interval: 30s
-      timeout: 20s
-      retries: 3
+
+  files-init:
+    # Ensure the configured S3 bucket exists before app traffic starts.
+    container_name: wishlist-files-init
+    entrypoint:
+      - /bin/sh
+      - -ec
+      - |
+        until AWS_ACCESS_KEY_ID="$$SEAWEEDFS_ACCESS_KEY" AWS_SECRET_ACCESS_KEY="$$SEAWEEDFS_SECRET_KEY" \
+          aws --endpoint-url "http://files:8333" s3api list-buckets >/dev/null 2>&1; do
+          sleep 1
+        done
+
+        AWS_ACCESS_KEY_ID="$$SEAWEEDFS_ACCESS_KEY" AWS_SECRET_ACCESS_KEY="$$SEAWEEDFS_SECRET_KEY" \
+          aws --endpoint-url "http://files:8333" s3api head-bucket --bucket "$$STORAGE_BUCKET_FILES" >/dev/null 2>&1 \
+          || AWS_ACCESS_KEY_ID="$$SEAWEEDFS_ACCESS_KEY" AWS_SECRET_ACCESS_KEY="$$SEAWEEDFS_SECRET_KEY" \
+          aws --endpoint-url "http://files:8333" s3api create-bucket --bucket "$$STORAGE_BUCKET_FILES"
+
+        AWS_ACCESS_KEY_ID="$$SEAWEEDFS_ACCESS_KEY" AWS_SECRET_ACCESS_KEY="$$SEAWEEDFS_SECRET_KEY" \
+          aws --endpoint-url "http://files:8333" s3api put-bucket-policy \
+            --bucket "$$STORAGE_BUCKET_FILES" \
+            --policy "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Sid\":\"PublicReadGetObject\",\"Effect\":\"Allow\",\"Principal\":\"*\",\"Action\":\"s3:GetObject\",\"Resource\":\"arn:aws:s3:::$$STORAGE_BUCKET_FILES/*\"}]}"
+    env_file:
+      - environments/local/seaweedfs.env
+      - environments/local/webapp.env
+    networks:
+      - wishlist-webapp
+    depends_on:
+      - files
+    restart: "no"
 
 volumes:
   data:

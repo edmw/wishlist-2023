@@ -116,7 +116,7 @@ def env_decrpyt(key: str, default: str | None, fernet: Fernet | None) -> str | N
 #  ##  ##  ##  ##  ##    ## ##     ## ##        ##  ##    ##    ##
 #   ###  ###  ####  ######  ##     ## ######## ####  ######     ##
 
-WISH_IMAGE_PIXELS_MAX = 20_000_000
+WISH_IMAGE_PIXELS_MAX = 40_000_000
 
 # endregion WISHLIST
 
@@ -459,6 +459,9 @@ with env.prefixed("STORAGE_"):
     AWS_S3_ENDPOINT_URL = env.str("URL", None)
     AWS_ACCESS_KEY_ID = env.str("ACCESS_KEY", None)
     AWS_STORAGE_BUCKET_NAME = env.str("BUCKET_FILES", "wishlist")
+    AWS_S3_REGION_NAME = env.str("REGION", "us-east-1")
+    AWS_S3_ADDRESSING_STYLE = env.str("ADDRESSING_STYLE", "path")
+    AWS_S3_SIGNATURE_VERSION = env.str("SIGNATURE_VERSION", "s3v4")
 
 AWS_SECRET_ACCESS_KEY = webapp_env_decrypt("STORAGE_SECRET_KEY", None)
 
