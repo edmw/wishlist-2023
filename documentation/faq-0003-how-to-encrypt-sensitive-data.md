@@ -36,7 +36,7 @@ To encrypt a secret value, use Python's `cryptography` library:
 from cryptography.fernet import Fernet
 
 # Use your WEBAPP_KEY (base64-encoded)
-master_key = "S5OA3a2sChQqZF3BIW2wSlgTjr0KwdQqXkTNJcc1YIs="
+master_key = "<WEBAPP_KEY_BASE64>="
 secret_value = "my_actual_secret_password"
 
 # Encrypt
@@ -72,7 +72,7 @@ print(encrypted)
 
 3. **For Testing Only**: A hardcoded key can be placed in `environments/testing/webapp.env`:
    ```
-   WEBAPP_KEY="S5OA3a2sChQqZF3BIW2wSlgTjr0KwdQqXkTNJcc1YIs="
+   WEBAPP_KEY="<WEBAPP_KEY_BASE64>="
    ```
    ⚠️ **Never commit real secrets to version control!**
 
