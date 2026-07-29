@@ -1,7 +1,5 @@
-# !!! HISTORICAL CODE: Artifact from V1 database era !!!
-# !!! This DB version likely does NOT exist anywhere in the world anymore !!!
-# !!! For archival purposes only – DO NOT use for new projects !!!
-# # type: ignore
+# Historical command for importing a legacy dataset. Kept for archival and reference only.
+# type: ignore
 """Import DBv1 command."""
 
 import json
