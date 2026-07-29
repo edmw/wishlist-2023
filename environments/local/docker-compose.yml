@@ -128,11 +128,12 @@ services:
     container_name: wishlist-files
     command:
       [
-        "server",
+        "mini",
         "-ip=files",
         "-s3",
         "-s3.port=8333",
         "-s3.config=/etc/seaweedfs/s3.conf",
+        "-bucket=wishlist",
         "-dir=/data",
       ]
     env_file:
@@ -147,7 +148,7 @@ services:
       - wishlist-webapp
 
   files-init:
-    # Ensure the configured S3 bucket exists before app traffic starts.
+    # Apply public-read policy so browser media URLs are accessible.
     container_name: wishlist-files-init
     entrypoint:
       - /bin/sh
@@ -157,11 +158,6 @@ services:
           aws --endpoint-url "http://files:8333" s3api list-buckets >/dev/null 2>&1; do
           sleep 1
         done
-
-        AWS_ACCESS_KEY_ID="$$SEAWEEDFS_ACCESS_KEY" AWS_SECRET_ACCESS_KEY="$$SEAWEEDFS_SECRET_KEY" \
-          aws --endpoint-url "http://files:8333" s3api head-bucket --bucket "$$STORAGE_BUCKET_FILES" >/dev/null 2>&1 \
-          || AWS_ACCESS_KEY_ID="$$SEAWEEDFS_ACCESS_KEY" AWS_SECRET_ACCESS_KEY="$$SEAWEEDFS_SECRET_KEY" \
-          aws --endpoint-url "http://files:8333" s3api create-bucket --bucket "$$STORAGE_BUCKET_FILES"
 
         AWS_ACCESS_KEY_ID="$$SEAWEEDFS_ACCESS_KEY" AWS_SECRET_ACCESS_KEY="$$SEAWEEDFS_SECRET_KEY" \
           aws --endpoint-url "http://files:8333" s3api put-bucket-policy \
