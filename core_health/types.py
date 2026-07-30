@@ -1,7 +1,5 @@
 """Types used by the Core Health application."""
 
-from __future__ import annotations
-
 from collections.abc import Iterator
 from typing import Iterable, NamedTuple, Protocol, Tuple, overload, override
 

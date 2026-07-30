@@ -495,14 +495,13 @@ debugpy==1.8.21 \
     --hash=sha256:fe0744a12353406de0ae8ccff0d0a4a666f00801a3db8fd04e7a5f761cd520e8 \
     --hash=sha256:ffd932c6796afadab6993ec96745918a8cb2444dbd392074f769db5ea40ab440
     # via wishlist (pyproject.toml)
-django==5.2.16 \
-    --hash=sha256:04f354bf9d807a86ad1a8392fe3808d362358a8eafc322848e0e43e59b24371d \
-    --hash=sha256:59ea02020c3136fce14bef0bbece21a10a4febef5eed1c51c22ae468efa22200
+django==6.0.7 \
+    --hash=sha256:2998503fc083124fb58037084bfa00de323c7c743f05f1b4284e77bff0ab8890 \
+    --hash=sha256:a037427c2288443a8c02a1b02295a31c239663aa682bc50b1976afb7cf6a769e
     # via
     #   django-allauth
     #   django-celery-beat
     #   django-celery-results
-    #   django-csp
     #   django-debug-toolbar
     #   django-probes
     #   django-storages
@@ -529,10 +528,6 @@ django-cleanup==9.0.0 \
     --hash=sha256:19f8b0e830233f9f0f683b17181f414672a0f48afe3ea3cc80ba47ae40ad880c \
     --hash=sha256:bb9fb560aaf62959c81e31fa40885c36bbd5854d5aa21b90df2c7e4ba633531e
     # via wishlist (pyproject.toml)
-django-csp==4.0 \
-    --hash=sha256:b27010bb702eb20a3dad329178df2b61a2b82d338b70fbdc13c3a3bd28712833 \
-    --hash=sha256:d5a0a05463a6b75a4f1fc1828c58c89af8db9364d09fc6e12f122b4d7f3d00dc
-    # via wishlist (pyproject.toml)
 django-debug-toolbar==7.0.0 \
     --hash=sha256:656161388ce48384276342eeb16d532113ec670816fa1546cc3753730aa51b3d \
     --hash=sha256:ef7494c5b459c149e87cc2da88d86e944064945e86bd7b2d879093586b5fefbf
@@ -545,9 +540,9 @@ django-storages==1.14.6 \
     --hash=sha256:11b7b6200e1cb5ffcd9962bd3673a39c7d6a6109e8096f0e03d46fab3d3aabd9 \
     --hash=sha256:7a25ce8f4214f69ac9c7ce87e2603887f7ae99326c316bc8d2d75375e09341c9
     # via wishlist (pyproject.toml)
-django-stubs==5.2.9 \
-    --hash=sha256:2317a7130afdaa76f6ff7f623650d7f3bf1b6c86a60f95840e14e6ec6de1a7cd \
-    --hash=sha256:c192257120b08785cfe6f2f1c91f1797aceae8e9daa689c336e52c91e8f6a493
+django-stubs==6.0.7 \
+    --hash=sha256:7ed9a14c438e589272ca04e966dee82a4d1ff7ca5c2171bc986c50a0d03ec35b \
+    --hash=sha256:bc55431c0af745a64e39cf33a8d36c87dccbedeae2fe26fab47dd355270e8538
     # via
     #   djangorestframework-stubs
     #   wishlist (pyproject.toml)
@@ -832,7 +827,6 @@ packaging==26.2 \
     # via
     #   black
     #   build
-    #   django-csp
     #   gunicorn
     #   kombu
     #   pytest

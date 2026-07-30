@@ -1,9 +1,9 @@
-import asyncio
+import inspect
 import logging
 import re
 from collections import namedtuple
 from contextlib import contextmanager
-from typing import Callable, Iterator
+from typing import Callable, Generator
 
 from django.conf import settings as django_settings
 from django.http import HttpRequest, HttpResponse
@@ -89,7 +89,7 @@ def language_code_from_http_header(request: HttpRequest, language_codes: list[st
 
 
 @contextmanager
-def language_for_request(request: HttpRequest, language_codes: list[str]) -> Iterator[None]:
+def language_for_request(request: HttpRequest, language_codes: list[str]) -> Generator[None]:
     language_code = None
 
     if request.path.startswith("/admin"):
@@ -118,7 +118,7 @@ def language_for_request(request: HttpRequest, language_codes: list[str]) -> Ite
 def language_middleware(get_response: Callable) -> Callable:
     available_language_codes = [language[0] for language in django_settings.LANGUAGES]
 
-    if asyncio.iscoroutinefunction(get_response):
+    if inspect.iscoroutinefunction(get_response):
 
         async def async_middleware(request: HttpRequest) -> HttpResponse:
             with language_for_request(request, available_language_codes):

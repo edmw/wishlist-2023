@@ -1,5 +1,5 @@
 # Base
-ARG BASE_IMAGE=python:3.12-slim-bookworm
+ARG BASE_IMAGE=python:3.14-slim-bookworm
 # This is the base for either the development image or the deployment image.
 # The development image will be build *upon* the contents this image,
 # while the deployment image will be build *with* the contents of this image.

@@ -1,5 +1,4 @@
 """Provides service functions and a context manager for value caching."""
-from __future__ import annotations
 
 import dataclasses
 import hashlib

@@ -1,5 +1,4 @@
 """Model class representing a reservation for wishes."""
-from __future__ import annotations
 
 import logging
 
