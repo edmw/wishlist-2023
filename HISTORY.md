@@ -3,6 +3,7 @@
 ## [x.x.x]
 
 * 🛠️ switch from minio to seaweedfs in development
+* 🛠️ make checks run in testing environment
 * 🪛 cleanup code (fix typing errors)
 
 ## [2.3.1]
