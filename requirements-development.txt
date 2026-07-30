@@ -495,14 +495,13 @@ debugpy==1.8.21 \
     --hash=sha256:fe0744a12353406de0ae8ccff0d0a4a666f00801a3db8fd04e7a5f761cd520e8 \
     --hash=sha256:ffd932c6796afadab6993ec96745918a8cb2444dbd392074f769db5ea40ab440
     # via wishlist (pyproject.toml)
-django==5.2.16 \
-    --hash=sha256:04f354bf9d807a86ad1a8392fe3808d362358a8eafc322848e0e43e59b24371d \
-    --hash=sha256:59ea02020c3136fce14bef0bbece21a10a4febef5eed1c51c22ae468efa22200
+django==6.0.7 \
+    --hash=sha256:2998503fc083124fb58037084bfa00de323c7c743f05f1b4284e77bff0ab8890 \
+    --hash=sha256:a037427c2288443a8c02a1b02295a31c239663aa682bc50b1976afb7cf6a769e
     # via
     #   django-allauth
     #   django-celery-beat
     #   django-celery-results
-    #   django-csp
     #   django-debug-toolbar
     #   django-probes
     #   django-storages
@@ -528,10 +527,6 @@ django-celery-results==2.6.0 \
 django-cleanup==9.0.0 \
     --hash=sha256:19f8b0e830233f9f0f683b17181f414672a0f48afe3ea3cc80ba47ae40ad880c \
     --hash=sha256:bb9fb560aaf62959c81e31fa40885c36bbd5854d5aa21b90df2c7e4ba633531e
-    # via wishlist (pyproject.toml)
-django-csp==4.0 \
-    --hash=sha256:b27010bb702eb20a3dad329178df2b61a2b82d338b70fbdc13c3a3bd28712833 \
-    --hash=sha256:d5a0a05463a6b75a4f1fc1828c58c89af8db9364d09fc6e12f122b4d7f3d00dc
     # via wishlist (pyproject.toml)
 django-debug-toolbar==7.0.0 \
     --hash=sha256:656161388ce48384276342eeb16d532113ec670816fa1546cc3753730aa51b3d \
@@ -832,7 +827,6 @@ packaging==26.2 \
     # via
     #   black
     #   build
-    #   django-csp
     #   gunicorn
     #   kombu
     #   pytest

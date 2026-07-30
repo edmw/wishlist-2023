@@ -2,7 +2,9 @@
 
 ## [x.x.x]
 
-* 🛠️ switch from minio to seaweedfs in development
+* 🛠️ upgrade to django 6
+* 🛠️ switch to django content security policy middleware
+* 🛠️ replace minio with seaweedfs in development
 * 🛠️ make checks run in testing environment
 * 🪛 cleanup code (fix typing errors)
 
