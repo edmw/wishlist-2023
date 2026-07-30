@@ -1,5 +1,4 @@
 """Model class representing a favorite wish lists."""
-from __future__ import annotations
 
 import logging
 

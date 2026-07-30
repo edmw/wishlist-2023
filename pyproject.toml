@@ -6,7 +6,7 @@ authors = [
 description = "Wishlist"
 license = {file = "LICENSE"}
 name = "wishlist"
-requires-python = ">=3.12"
+requires-python = ">=3.14"
 version = "0.0.0"
 
 dependencies = [
@@ -76,7 +76,7 @@ tool = [
 ]
 
 [deployment]
-base_image = "python:3.12-slim-bookworm"
+base_image = "python:3.14-slim-bookworm"
 
 [build-system]
 build-backend = "hatchling.build"
@@ -143,6 +143,7 @@ mypy-init-return = true
 convention = "pep257"
 
 [tool.pyright]
+pythonVersion = "3.14"
 exclude = ["core/migrations/*", ".venv/**"]
 ignore = ["~/.pyenv/**", ".pyenv/**", ".python-typings"]
 stubPath = ".python-typings"

@@ -5,8 +5,6 @@ user. A wish list has a visibility for how it can be viewed by other users.
 Items on a wish list have a sort order.
 """
 
-from __future__ import annotations
-
 import logging
 from typing import TYPE_CHECKING, Any, Iterable, override
 
