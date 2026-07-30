@@ -51,7 +51,7 @@ build = [
 check = [
   "ruff",
   "bandit[toml]",
-  "django-stubs == 5.2.9",
+  "django-stubs == 6.0.7",
   "djangorestframework-stubs == 3.16.9",
   "celery-types",
   "types-requests",
@@ -143,9 +143,16 @@ mypy-init-return = true
 convention = "pep257"
 
 [tool.pyright]
-pythonVersion = "3.14"
-exclude = ["core/migrations/*", ".venv/**"]
+exclude = [
+  "core/migrations/*",
+  "**/.*",
+  ".git/**",
+  ".venv/**",
+  "**/node_modules",
+  "**/__pycache__",
+]
 ignore = ["~/.pyenv/**", ".pyenv/**", ".python-typings"]
+pythonVersion = "3.14"
 stubPath = ".python-typings"
 typeCheckingMode = "standard"
 
