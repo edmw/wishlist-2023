@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from typing import Any, Iterable, override
 
 from django.core.exceptions import ValidationError

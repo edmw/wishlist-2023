@@ -4,8 +4,6 @@ The Core’s user model substitutes the default user model by subclassing
 `AbstractUser` and adding custom attributes and behavior.
 """
 
-from __future__ import annotations
-
 import logging
 from typing import Any, Iterable, override
 

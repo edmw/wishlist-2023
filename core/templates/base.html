@@ -7,12 +7,12 @@
         <meta name="version" content="{{ webapp.VERSION }}" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         {% block title %}<title>Webapp</title>{% endblock title %}
-        <link rel="stylesheet" media="all" href="{% static 'vendor/styles/bootstrap.min.css' %}" nonce="{{ request.csp_nonce }}" />
-        <link rel="stylesheet" media="all" href="{% static 'core/styles/webapp.css' %}" nonce="{{ request.csp_nonce }}" />
+        <link rel="stylesheet" media="all" href="{% static 'vendor/styles/bootstrap.min.css' %}" nonce="{{ csp_nonce }}" />
+        <link rel="stylesheet" media="all" href="{% static 'core/styles/webapp.css' %}" nonce="{{ csp_nonce }}" />
         {% include "base-head-icons.html" %}
-        <script src="{% static 'core/scripts/webapp.js' %}" type="text/javascript" nonce="{{request.csp_nonce}}"></script>
+        <script src="{% static 'core/scripts/webapp.js' %}" type="text/javascript" nonce="{{ csp_nonce }}"></script>
         {% include "base-head-htmx.html" %}
     </head>
     {% block body %}{% endblock body %}
-    <script src="{% static 'vendor/scripts/bootstrap.min.js' %}" type="text/javascript" nonce="{{request.csp_nonce}}"></script>
+    <script src="{% static 'vendor/scripts/bootstrap.min.js' %}" type="text/javascript" nonce="{{ csp_nonce }}"></script>
 </html>

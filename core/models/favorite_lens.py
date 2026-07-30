@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from django.db.models import Prefetch
 
 from core.models._base import LensBase, LensHasIdMixin, LensHasOrderMixin

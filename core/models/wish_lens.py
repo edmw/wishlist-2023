@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from typing import Self
 
 from core.models._base import LensBase, LensHasIdMixin, LensHasOrderMixin

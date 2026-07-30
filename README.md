@@ -1,7 +1,5 @@
 # Wishlist
 
-[![Build, Check, Test](https://github.com/edmw/wishlist-2023/actions/workflows/main.yml/badge.svg)](https://github.com/edmw/wishlist-2023/actions/workflows/main.yml)
-
 Wishlist is a web application written in Python with the Django framework for managing wish lists. It allows users to create lists of items they want most and share them with others.
 
 This is a rewrite of the [2019 Wishlist web application written in Swift](https://github.com/edmw/wishlist).
@@ -12,14 +10,14 @@ The application is built and run using Docker containers for development.
 
 ### Setup Environment on Host
 
-The following instructions create a virtual environment for the project using Python 3.12, install `invoke` with dependencies into that environment, and, finally, perform all necessary steps to obtain a working development environment (pyenv must be available).
+The following instructions create a virtual environment for the project using Python 3.14, install `invoke` with dependencies into that environment, and, finally, perform all necessary steps to obtain a working development environment (pyenv must be available).
 
 ```
 $ cd <PROJECT_DIRECTORY>
-$ pyenv install 3.12
-$ pyenv virtualenv 3.12 wishlist-12
-$ pyenv local wishlist-12
-$ pyenv shell wishlist-12
+$ pyenv install 3.14
+$ pyenv local 3.14
+$ pyenv exec python -m venv .venv
+$ source .venv/bin/activate
 $ python -m pip install --upgrade pip
 $ python -m pip install invoke semver keyring rich pyyaml
 $ inv make.install-development
@@ -36,10 +34,10 @@ Of course, a separate virtual environment should still be created for the projec
 
 ```
 $ cd <PROJECT_DIRECTORY>
-$ pyenv install 3.12
-$ pyenv virtualenv 3.12 wishlist-12
-$ pyenv local wishlist-12
-$ pyenv shell wishlist-12
+$ pyenv install 3.14
+$ pyenv local 3.14
+$ pyenv exec python -m venv .venv
+$ source .venv/bin/activate
 $ inv make.install-development
 ```
 
