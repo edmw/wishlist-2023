@@ -1,7 +1,5 @@
 # Wishlist
 
-[![Build, Check, Test](https://github.com/edmw/wishlist-2023/actions/workflows/main.yml/badge.svg)](https://github.com/edmw/wishlist-2023/actions/workflows/main.yml)
-
 Wishlist is a web application written in Python with the Django framework for managing wish lists. It allows users to create lists of items they want most and share them with others.
 
 This is a rewrite of the [2019 Wishlist web application written in Swift](https://github.com/edmw/wishlist).
