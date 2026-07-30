@@ -239,6 +239,25 @@ class DockerRunner:
 
     # endregion ApplicationTest
 
+    # region ApplicationCheck
+
+    class ApplicationCheck(RunnerBase, RunnerUsesManageCommand):
+
+        def __init__(self, context: Context) -> None:
+            super().__init__(context, context.config.get("simulation", False))
+
+            self.service = CONFIGURATION.environments[Environment.LOCAL].service_app
+
+        def start(self, spec: str | None = None) -> None:
+            command = ["webapp_check"]
+            self.run_manage_command(Environment.TESTING, command, python_options=["-Xfrozen_modules=off"])
+
+        def stop(self) -> None:
+            command = self.build_down_command(Environment.TESTING)
+            self.run_in_context(command)
+
+    # endregion ApplicationCheck
+
     # region ApplicationCommand
 
     class ApplicationCommand(RunnerBase, RunnerUsesManageCommand):
