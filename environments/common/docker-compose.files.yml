@@ -1,4 +1,6 @@
 ---
 services:
   files:
-    image: quay.io/minio/minio
+    image: chrislusf/seaweedfs:4.40
+  files-init:
+    image: amazon/aws-cli:2.31.1

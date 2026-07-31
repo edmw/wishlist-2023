@@ -23,6 +23,8 @@ from .list import (
     ListUpdateView,
 )
 from .lists import ListsView
+from .membership import MembershipDeleteView
+from .memberships import MembershipsView
 from .privacy_policy import PrivacyPolicyView
 from .reservation import ReservationCreateView, ReservationUndoView
 from .start import StartView

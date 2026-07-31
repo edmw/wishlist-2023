@@ -1,6 +1,7 @@
 from celery import Task, shared_task
 from celery.exceptions import MaxRetriesExceededError
 from celery.utils.log import get_task_logger
+from django.conf import settings as django_settings
 from django.utils.translation import gettext as _
 
 from core.models import FavoriteLens, WishID
@@ -34,7 +35,7 @@ def notify_on_create(self: Task, wish_id: WishID) -> bool:
     wish = WishService.get_wish(id=wish_id)
     wishlist = wish.wishlist
 
-    for favorite in FavoriteLens.view().by_wishlist(wishlist=wishlist).for_iterating().queryset.all():
+    for favorite in FavoriteLens.view().by_wishlist(wishlist=wishlist).for_iterating().qs():
         if favorite.notify_on_item_create:
             user = favorite.user
             with LanguageService.activated(language_code=user.get_language().get_code()):
@@ -158,7 +159,10 @@ def generate_image_from_reference_photo(self: Task, wish_id: WishID) -> bool:
     wish = WishService.get_wish(id=wish_id)
     if reference_photo := wish.reference_photo:
         try:
-            image = ImageService.generate_jpeg_image_from_url(url=reference_photo)
+            image = ImageService.generate_jpeg_image_from_url(
+                url=reference_photo,
+                max_image_pixels=django_settings.WISH_IMAGE_PIXELS_MAX,
+            )
             wish.image_field.update(name=reference_photo, image=image)
         except ImageServiceUnidentifiedImageError:
             TaskLoggingService.task_fail(

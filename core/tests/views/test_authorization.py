@@ -1,5 +1,5 @@
 from http import HTTPMethod, HTTPStatus
-from typing import Any
+from typing import Any, cast
 from urllib.parse import quote
 from uuid import UUID
 
@@ -9,6 +9,8 @@ from django.test import Client
 from django.urls import reverse
 
 from core import constants, urls
+from core.models import WishlistMembership
+from core.models.types import WishlistMembershipRole
 from core.services import URLService
 from core.tests.conftest import CoreFixture
 from core.tests.constants import (
@@ -26,6 +28,7 @@ KWARGS_ITEM = {**KWARGS_LIST, constants.ITEM_ID_KEY: UUID(ITEM_ID_ALICE)}
 KWARGS_ITEM_RESERVED = {**KWARGS_LIST, constants.ITEM_ID_KEY: UUID(ITEM_ID_ALICE_RESERVED_BY_ALICE)}
 KWARGS_FAVORITE = {**KWARGS_USER, constants.FAVORITE_ID_KEY: UUID(FAVORITE_ID_ALICE)}
 KWARGS_RESERVATION = {**KWARGS_USER, constants.RESERVATION_ID_KEY: UUID(RESERVATION_ID_ALICE)}
+KWARGS_MEMBERSHIP = {**KWARGS_LIST, constants.MEMBERSHIP_ID_KEY: UUID(int=0)}
 KWARGS_WISHLIST = {constants.LIST_ID_KEY: UUID(LIST_ID_ALICE)}
 
 PARAMS_LIST = {constants.LIST_ID_KEY: [LIST_ID_ALICE]}
@@ -71,6 +74,11 @@ VIEWS_ITEMS = [
     (constants.VIEW_ITEM_DELETE, HTTPMethod.GET, KWARGS_ITEM, None),
     (constants.VIEW_ITEM_DELETE, HTTPMethod.POST, KWARGS_ITEM, None),
 ]
+VIEWS_MEMBERSHIPS = [
+    (constants.VIEW_MEMBERSHIPS, HTTPMethod.GET, KWARGS_LIST, None),
+    (constants.VIEW_MEMBERSHIP_DELETE, HTTPMethod.GET, KWARGS_MEMBERSHIP, None),
+    (constants.VIEW_MEMBERSHIP_DELETE, HTTPMethod.POST, KWARGS_MEMBERSHIP, None),
+]
 VIEWS_FAVORITES = [
     (constants.VIEW_FAVORITES, HTTPMethod.GET, KWARGS_USER, None),
     (constants.VIEW_FAVORITE_CREATE, HTTPMethod.GET, KWARGS_USER, PARAMS_LIST),
@@ -90,7 +98,15 @@ VIEWS_RESERVATIONS = [
     (constants.VIEW_RESERVATION_UNDO, HTTPMethod.POST, KWARGS_RESERVATION, None),
 ]
 
-VIEWS_ALL = VIEWS_USER + VIEWS_LISTS + VIEWS_ITEMS + VIEWS_FAVORITES + VIEWS_WISHLIST + VIEWS_RESERVATIONS
+VIEWS_ALL = (
+    VIEWS_USER
+    + VIEWS_LISTS
+    + VIEWS_ITEMS
+    + VIEWS_MEMBERSHIPS
+    + VIEWS_FAVORITES
+    + VIEWS_WISHLIST
+    + VIEWS_RESERVATIONS
+)
 
 
 def _get_response_from_view(
@@ -113,7 +129,7 @@ def _get_response_from_view(
             response = client.post(url)
         case _:
             raise ValueError("invalid method")
-    return response, url
+    return cast(HttpResponse, response), url
 
 
 def _assert_authorization_required(
@@ -127,7 +143,7 @@ def _assert_authorization_required(
     # without authorization must redirect to login
     response, url = _get_response_from_view(client, view_name, view_method, view_kwargs, view_params)
     assert response.status_code == HTTPStatus.FOUND
-    assert response.url == f"/accounts/login/?next={quote(url)}"
+    assert response.headers["Location"] == f"/accounts/login/?next={quote(url)}"
     views.setdefault(view_name, []).append(view_method)
 
 
@@ -154,5 +170,14 @@ def test_authorization_ok(
     client: Client,
 ) -> None:
     client.force_login(core.user_alice)
+
+    if view_name == constants.VIEW_MEMBERSHIP_DELETE:
+        membership, _ = WishlistMembership.objects.get_or_create(
+            wishlist=core.list_alice,
+            user=core.user_bob,
+            defaults={WishlistMembership.Fields.ROLE: WishlistMembershipRole.EDITOR},
+        )
+        view_kwargs = {**view_kwargs, constants.MEMBERSHIP_ID_KEY: membership.id}
+
     response, _ = _get_response_from_view(client, view_name, view_method, view_kwargs, view_params)
     assert response.status_code in [HTTPStatus.OK, HTTPStatus.FOUND]

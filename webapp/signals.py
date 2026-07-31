@@ -20,8 +20,9 @@ def log_google_uid(
     provider = sociallogin.account.provider
     if settings.ENVIRONMENT_IS_DEVELOPMENT and provider == "google":
         user = sociallogin.user
-        if user is None:
+        account = sociallogin.account
+        if user is None or account is None:
             return
-        uid = sociallogin.account.uid
-        email = user.email
+        uid = getattr(account, "uid", None)
+        email = getattr(user, "email", None)
         logger.info(f"[Allauth] Google login for {email}, uid={uid}")

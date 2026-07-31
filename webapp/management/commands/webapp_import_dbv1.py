@@ -1,3 +1,5 @@
+# Historical command for importing a legacy dataset. Kept for archival and reference only.
+# type: ignore
 """Import DBv1 command."""
 
 import json

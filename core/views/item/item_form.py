@@ -45,7 +45,7 @@ class DescriptionWidget(
     placeholder_text = gettext_noop("Enter wish’s description")
 
 
-class PreferenceWidget(
+class PreferenceWidget(  # pyright: ignore[reportIncompatibleMethodOverride]
     LabelBeforeMixin,
     AriaDescribedByMixin,
     SelectStylesMixin,

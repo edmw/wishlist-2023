@@ -6,8 +6,8 @@ import logging
 from datetime import datetime, timezone
 from typing import Any, cast
 
+import pythonjsonlogger
 from gunicorn import glogging
-from pythonjsonlogger import jsonlogger
 
 PROJECT_NAME = "Wishlist"
 
@@ -51,7 +51,7 @@ class Logger(glogging.Logger):
 logger_class = Logger
 
 
-class JsonFormatter(jsonlogger.JsonFormatter):
+class JsonFormatter(pythonjsonlogger.json.JsonFormatter):
     """Log formatter for structured logging using JSON."""
 
     def __init__(self, *args: Any, **kwargs: Any):
@@ -75,8 +75,10 @@ class JsonFormatter(jsonlogger.JsonFormatter):
             for field in self.fields or self._required_fields:
                 default_name = field
                 name = self.rename_fields.get(field, default_name)
-                if not log_data[name] and record.args:
-                    log_data[name] = record.args.get(field)
+                if name not in log_data or log_data[name] is None:
+                    if hasattr(record, "args") and record.args:
+                        if isinstance(record.args, dict):
+                            log_data[name] = record.args.get(field)
 
 
 # Configure log formatter for structured logging using JSON

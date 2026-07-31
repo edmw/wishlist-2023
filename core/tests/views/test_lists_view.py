@@ -1,4 +1,5 @@
 from http import HTTPStatus
+from typing import cast
 
 import pytest
 from django.http import HttpResponse
@@ -25,7 +26,7 @@ class TestListsView(AssertLoggingMixin):
                 kwargs={constants.USER_ID_KEY: user_id},
             )
         )
-        return response
+        return cast(HttpResponse, response)
 
     def test_lists_view_ok(self, core: CoreFixture, client: Client) -> None:
         """Alice requesting alice’s wish lists."""
@@ -42,6 +43,41 @@ class TestListsView(AssertLoggingMixin):
         assert "Wishes for Bob" in response.content.decode("utf-8")
         assert "Wishes for Alice" in response.content.decode("utf-8")
         assert "shared by alice" in response.content.decode("utf-8")
+
+    def test_lists_view_shows_membership_action_for_owner_list_with_memberships(
+        self, core: CoreFixture, client: Client
+    ) -> None:
+        client.force_login(core.user_alice)
+        WishlistCollaborationService.add_editor(wishlist=core.list_alice, user=core.user_bob)
+
+        response = self._get(client, core.user_alice.id)
+
+        assert response.status_code == HTTPStatus.OK
+        memberships_url = reverse(
+            constants.VIEW_MEMBERSHIPS,
+            kwargs={
+                constants.USER_ID_KEY: core.user_alice.id,
+                constants.LIST_ID_KEY: core.list_alice.id,
+            },
+        )
+        assert memberships_url in response.content.decode("utf-8")
+
+    def test_lists_view_hides_membership_action_for_owner_list_without_memberships(
+        self, core: CoreFixture, client: Client
+    ) -> None:
+        client.force_login(core.user_alice)
+
+        response = self._get(client, core.user_alice.id)
+
+        assert response.status_code == HTTPStatus.OK
+        memberships_url = reverse(
+            constants.VIEW_MEMBERSHIPS,
+            kwargs={
+                constants.USER_ID_KEY: core.user_alice.id,
+                constants.LIST_ID_KEY: core.list_alice.id,
+            },
+        )
+        assert memberships_url not in response.content.decode("utf-8")
 
     def test_lists_view_not_allowed(
         self, core: CoreFixture, client: Client, caplog: pytest.LogCaptureFixture

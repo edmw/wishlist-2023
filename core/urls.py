@@ -29,6 +29,8 @@ from core.views import (
     ListShareView,
     ListsView,
     ListUpdateView,
+    MembershipDeleteView,
+    MembershipsView,
     PrivacyPolicyView,
     ReservationCreateView,
     ReservationUndoView,
@@ -184,6 +186,22 @@ pages_user_items: list[URLPattern] = [
         name=constants.VIEW_ITEM_MANAGE,
     ),
 ]
+pages_user_memberships: list[URLPattern] = [
+    path(
+        f"user/<b62uuid:{constants.USER_ID_KEY}>/lists/<b62uuid:{constants.LIST_ID_KEY}>/memberships",
+        MembershipsView.as_view(),
+        name=constants.VIEW_MEMBERSHIPS,
+    ),
+    path(
+        (
+            f"user/<b62uuid:{constants.USER_ID_KEY}>/"
+            f"lists/<b62uuid:{constants.LIST_ID_KEY}>/"
+            f"memberships/<b62uuid:{constants.MEMBERSHIP_ID_KEY}>/delete"
+        ),
+        MembershipDeleteView.as_view(),
+        name=constants.VIEW_MEMBERSHIP_DELETE,
+    ),
+]
 pages_user_favorites: list[URLPattern] = [
     path(
         f"user/<b62uuid:{constants.USER_ID_KEY}>/favorites",
@@ -232,6 +250,7 @@ pages = (
     pages_user
     + pages_user_lists
     + pages_user_items
+    + pages_user_memberships
     + pages_user_favorites
     + pages_wishlist
     + pages_reservations

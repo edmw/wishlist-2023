@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from typing import Self
+from datetime import datetime
+from typing import TYPE_CHECKING, Any, Protocol, Self, cast
 
 from django.db.models import (
     BooleanField,
@@ -9,15 +10,67 @@ from django.db.models import (
     Count,
     OuterRef,
     Q,
+    QuerySet,
     Subquery,
     Value,
     When,
 )
 
+from core.models import types
 from core.models._base import LensBase, LensHasIdMixin, LensHasOrderMixin
 from core.models.user import User
 from core.models.wishlist import Wishlist
 from core.models.wishlist_membership import WishlistMembership
+
+
+class EditableWishlist(Protocol):
+    """Wishlist shape as returned by WishlistLens.editable_by().
+
+    Exposes the public Wishlist surface plus collaboration annotations.
+    """
+
+    if TYPE_CHECKING:
+        from core.models.wish import Wish
+
+    id: types.WishlistID
+    pk: types.WishlistID
+    owner: User
+    owner_id: types.UserID
+    name: types.Name
+    description: types.Description
+    visibility: types.Visibility
+    item_ordering: types.ItemOrdering
+    mask_reservations: bool
+    created_at: datetime
+    modified_at: datetime
+    wishes: QuerySet["Wish"]
+    wishes_count: int
+    wishes_count_not_archived: int
+    collaboration_memberships: QuerySet[WishlistMembership]
+    is_collaboration: bool
+    collaboration_role: str | None
+
+    def captionable(self) -> str: ...
+
+    def previewable(self) -> str: ...
+
+
+def assert_editable_wishlist(obj: Any) -> EditableWishlist:
+    """Cast obj to EditableWishlist, asserting it's a Wishlist instance
+    with the collaboration annotations present."""
+    if not isinstance(obj, Wishlist):
+        raise TypeError(f"Expected Wishlist instance, got {type(obj)!r}")
+    if not hasattr(obj, "is_collaboration"):
+        raise TypeError(
+            "Wishlist is missing is_collaboration annotation "
+            "(expected queryset from WishlistLens.editable_by())"
+        )
+    if not hasattr(obj, "collaboration_role"):
+        raise TypeError(
+            "Wishlist is missing collaboration_role annotation "
+            "(expected queryset from WishlistLens.editable_by())"
+        )
+    return cast(EditableWishlist, obj)
 
 
 class WishlistLens(LensHasIdMixin, LensHasOrderMixin, LensBase[Wishlist]):
@@ -34,6 +87,7 @@ class WishlistLens(LensHasIdMixin, LensHasOrderMixin, LensBase[Wishlist]):
 
     filter_for_owner: int | None = None
     filter_for_editable_by: int | None = None
+    filter_for_with_memberships: bool = False
     exclude_for_lists: list[int] | None = None
     annotate_wishes_count: bool = False
 
@@ -55,14 +109,14 @@ class WishlistLens(LensHasIdMixin, LensHasOrderMixin, LensBase[Wishlist]):
                         Q(owner=user) | Q(collaboration_memberships__user=user),
                     )
                     .annotate(
-                        collaboration_role=Subquery(
-                            membership_role,
-                            output_field=CharField(),
-                        ),
                         is_collaboration=Case(
                             When(owner=user, then=Value(False)),
                             default=Value(True),
                             output_field=BooleanField(),
+                        ),
+                        collaboration_role=Subquery(
+                            membership_role,
+                            output_field=CharField(),
                         ),
                     )
                     .distinct()
@@ -99,6 +153,17 @@ class WishlistLens(LensHasIdMixin, LensHasOrderMixin, LensBase[Wishlist]):
                 return self
             case _:
                 raise WishlistLens.ViewAlreadyNarrowedDownToOwnerError
+
+    def with_memberships(self) -> Self:
+        """Narrows the view to wishlists with at least one membership."""
+        self._assert_not_consumed()
+        match self.filter_for_with_memberships:
+            case False:
+                self.filter_for_with_memberships = True
+                self.queryset = self.queryset.filter(collaboration_memberships__isnull=False).distinct()
+                return self
+            case _:
+                return self
 
     def without_lists(self, *, lists: list[Wishlist] | None) -> Self:
         """Narrows the view of this lens to all wish lists except the ones

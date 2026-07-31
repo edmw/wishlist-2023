@@ -1,5 +1,7 @@
 from typing import Any, Iterable, Protocol, cast
 
+from django.db.models.base import ModelBase
+
 from core.models._typing import HasModelState, HasPrimaryKey, IsSaveable
 
 
@@ -10,7 +12,8 @@ class ModelSupportsSave(HasPrimaryKey, HasModelState, Protocol):
 class OnSaveNotifyMixin(IsSaveable):
     def save(
         self: ModelSupportsSave,
-        force_insert: bool = False,
+        *args: Any,
+        force_insert: bool | tuple[ModelBase, ...] = False,
         force_update: bool = False,
         using: str | None = None,
         update_fields: Iterable[str] | None = None,
@@ -22,6 +25,7 @@ class OnSaveNotifyMixin(IsSaveable):
 
         created = self._state.adding
         super().save(
+            *args,
             force_insert=force_insert,
             force_update=force_update,
             using=using,

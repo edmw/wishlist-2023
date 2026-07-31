@@ -455,6 +455,9 @@ msgstr ""
 msgid "Manage your Wish"
 msgstr ""
 
+msgid "Manage Wish"
+msgstr ""
+
 #, python-format
 msgid ""
 "... to move the wish named <strong>%(item_name)s</strong> from list "
@@ -462,6 +465,10 @@ msgid ""
 msgstr ""
 
 msgid "Select a list to move your wish to"
+msgstr ""
+
+#, python-format
+msgid "shared by %(ownername)s"
 msgstr ""
 
 msgid "This wish can not be moved."
@@ -693,8 +700,7 @@ msgstr ""
 msgid "Edit items"
 msgstr ""
 
-#, python-format
-msgid "shared by %(ownername)s"
+msgid "Show contributors"
 msgstr ""
 
 msgid "Export list"
@@ -713,6 +719,39 @@ msgid "Import list"
 msgstr ""
 
 msgid "Wishlists"
+msgstr ""
+
+#, python-format
+msgid ""
+"... you want to <span class=\"text-danger\">remove</span> the contributor "
+"<strong>%(username)s</strong> from list <strong>%(list_name)s</strong>?"
+msgstr ""
+
+msgid "Remove a Contributor"
+msgstr ""
+
+msgid "Remove Contributor"
+msgstr ""
+
+msgid "The contributor has been successfully removed."
+msgstr ""
+
+msgid "This wish list currently has no additional contributors."
+msgstr ""
+
+msgid "Contributors"
+msgstr ""
+
+msgid "User"
+msgstr ""
+
+msgid "Role"
+msgstr ""
+
+msgid "Added"
+msgstr ""
+
+msgid "Remove contributor"
 msgstr ""
 
 #, python-format

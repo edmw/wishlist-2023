@@ -3,13 +3,15 @@
 The Core’s user model substitutes the default user model by subclassing
 `AbstractUser` and adding custom attributes and behavior.
 """
+
 from __future__ import annotations
 
 import logging
-from typing import Iterable
+from typing import Any, Iterable, override
 
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.db.models.base import ModelBase
 from django.db.models.functions import Lower
 from django.urls import reverse
 
@@ -201,12 +203,15 @@ class User(IDMixin[UserID], AbstractUser):
             name=f"{first_name} {last_name}",
         )
 
+    @override
     def save(
         self,
-        force_insert: bool = False,
+        *args: Any,
+        force_insert: bool | tuple[ModelBase, ...] = False,
         force_update: bool = False,
         using: str | None = None,
         update_fields: Iterable[str] | None = None,
+        **kwargs: Any,
     ) -> None:
         """Save the current instance.
 
@@ -220,10 +225,12 @@ class User(IDMixin[UserID], AbstractUser):
         if update_fields is not None:
             update_fields = {User.Fields.FULL_NAME}.union(update_fields)
         super().save(
+            *args,
             force_insert=force_insert,
             force_update=force_update,
             using=using,
             update_fields=update_fields,
+            **kwargs,
         )
 
     def __repr__(self) -> str:

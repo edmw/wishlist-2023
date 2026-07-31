@@ -27,6 +27,6 @@ class FavoritesView(
 
         user = self.try_user()
         context["your_favorites_count"] = FavoriteService.count_favorites_for_user(user=user)
-        context["your_favorites"] = FavoriteLens.view().by_user(user=user).for_listing().queryset.all()
+        context["your_favorites"] = FavoriteLens.view().by_user(user=user).for_listing().qs()
 
         return context

@@ -1,4 +1,5 @@
 from http import HTTPStatus
+from typing import cast
 
 import pytest
 from django.http import HttpResponse
@@ -20,7 +21,7 @@ class TestUserProfileView(AssertLoggingMixin):
                 kwargs={constants.USER_ID_KEY: user_id},
             )
         )
-        return response
+        return cast(HttpResponse, response)
 
     def test_profile_view_ok(self, core: CoreFixture, client: Client) -> None:
         """Alice requesting alice’s profile."""
@@ -49,7 +50,7 @@ class TestUserProfileUpdateView(AssertLoggingMixin):
                 kwargs={constants.USER_ID_KEY: user_id},
             )
         )
-        return response
+        return cast(HttpResponse, response)
 
     def _post_update(self, client: Client, user_id: UserID) -> HttpResponse:
         response = client.post(
@@ -61,7 +62,7 @@ class TestUserProfileUpdateView(AssertLoggingMixin):
                 User.Fields.USERNAME: "aliiiiice",
             },
         )
-        return response
+        return cast(HttpResponse, response)
 
     def test_profile_update_view_ok(self, core: CoreFixture, client: Client) -> None:
         """Alice updating alice’s profile."""
@@ -95,7 +96,7 @@ class TestUserSettingsView(AssertLoggingMixin):
                 kwargs={constants.USER_ID_KEY: user_id},
             )
         )
-        return response
+        return cast(HttpResponse, response)
 
     def test_settings_view_ok(self, core: CoreFixture, client: Client) -> None:
         """Alice requesting alice’s profile."""
@@ -124,7 +125,7 @@ class TestUserSettingsUpdateView(AssertLoggingMixin):
                 kwargs={constants.USER_ID_KEY: user_id},
             )
         )
-        return response
+        return cast(HttpResponse, response)
 
     def _post_update(self, client: Client, user_id: UserID) -> HttpResponse:
         response = client.post(
@@ -136,7 +137,7 @@ class TestUserSettingsUpdateView(AssertLoggingMixin):
                 UserSettings.Fields.EMAIL_ENABLED: "true",
             },
         )
-        return response
+        return cast(HttpResponse, response)
 
     def test_settings_update_view_ok(self, core: CoreFixture, client: Client) -> None:
         """Alice updating alice’s settings."""

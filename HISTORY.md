@@ -2,6 +2,24 @@
 
 ## [x.x.x]
 
+* 🛠️ switch from minio to seaweedfs in development
+* 🛠️ make checks run in testing environment
+* 🪛 cleanup code (fix typing errors)
+
+## [2.3.1]
+
+* 🪛 minor fixes
+* 🪛 cleanup code (fix typing errors)
+
+## [2.3.0]
+
+* 🖼️ add removal of memberships by wishlist owner
+* 🖌️ fix missing translation
+
+## [2.2.0]
+
+* 🖼️ enable viewing memberships for wishlists
+
 ## [2.1.0]
 
 * 🛠️ upgrade django to 5.2

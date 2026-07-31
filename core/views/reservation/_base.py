@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 class IsReservationView(HasUser, HasModel, HasRequest, Protocol): ...
 
 
-class HasPermissionForReservationViewMixin(DoesViewDispatching, SingleObjectMixin):
+class HasPermissionForReservationViewMixin(SingleObjectMixin):
     """Verifies the requesting user is allowed to access the user’s reservations."""
 
     request: HttpRequest
@@ -38,8 +38,7 @@ class HasPermissionForReservationViewMixin(DoesViewDispatching, SingleObjectMixi
             requesting_user=self.try_user(),
             user_object_id=user_id,
         )
-
-        return super().dispatch(request, *args, **kwargs)
+        return cast(DoesViewDispatching, super()).dispatch(request, *args, **kwargs)
 
     def get_object(self: IsReservationView, queryset: QuerySet[Reservation] | None = None) -> Model:
         """Returns the reservation the view is displaying after verifying the

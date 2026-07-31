@@ -4,6 +4,7 @@ An entity that uses a Name, Description, and reference to a web page or photo
 to describe a wish on a wish list. A wish has a priority for how much it is
 wanted.
 """
+
 from __future__ import annotations
 
 from django.db import models
@@ -44,7 +45,7 @@ class Wish(
 
     preference_field = fields.PreferenceField()
 
-    image_field: fields.WishImageFieldFile = fields.WishImageField()
+    image_field = fields.WishImageField()
 
     # Relations
 

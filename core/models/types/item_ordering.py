@@ -36,9 +36,7 @@ class ItemOrdering(str):
     def display(self) -> str:
         """Returns a string that can be used for display in the UI.
 
-        The returned string is not localized.
-
         Returns:
             String for display use.
         """
-        return self.ITEM_ORDERINGS_DICT.get(self, "")
+        return str(self.ITEM_ORDERINGS_DICT.get(self, ""))

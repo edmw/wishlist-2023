@@ -8,11 +8,12 @@ Items on a wish list have a sort order.
 from __future__ import annotations
 
 import logging
-from typing import Iterable
+from typing import TYPE_CHECKING, Any, Iterable, override
 
 from django.conf import settings as django_settings
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.db.models.base import ModelBase
 from django.utils.translation import gettext_lazy
 
 from core.models import concerns, fields, types
@@ -23,6 +24,10 @@ from .wishlist_types import TypesMixin
 from .wishlist_urls import URLMixin
 
 logger = logging.getLogger(__name__)
+
+if TYPE_CHECKING:
+    from core.models.wish import Wish
+    from core.models.wishlist_membership import WishlistMembership
 
 
 class Wishlist(
@@ -56,11 +61,11 @@ class Wishlist(
 
     # Relations
 
-    wishes: models.QuerySet  # relation
+    wishes: models.QuerySet["Wish"]  # relation
     wishes_count: int  # annotation
     wishes_count_not_archived: int  # annotation
 
-    collaboration_memberships: models.QuerySet  # relation
+    collaboration_memberships: models.QuerySet["WishlistMembership"]  # relation
 
     # Lifecycle
 
@@ -105,6 +110,28 @@ class Wishlist(
         """
         return f"<{self.__class__.__name__}[{str(self.id)}]: {self.name}; owner={self.owner_id}>"
 
+    @override
+    def save(
+        self,
+        *args: Any,
+        force_insert: bool | tuple[ModelBase, ...] = False,
+        force_update: bool = False,
+        using: str | None = None,
+        update_fields: Iterable[str] | None = None,
+        **kwargs: Any,
+    ) -> None:
+        self.full_clean()
+
+        super().save(
+            *args,
+            force_insert=force_insert,
+            force_update=force_update,
+            using=using,
+            update_fields=update_fields,
+            **kwargs,
+        )
+
+    @override
     def captionable(self) -> str:
         """Returns a caption text for this wish list.
 
@@ -134,23 +161,8 @@ class Wishlist(
                 raise ValidationError(
                     {
                         Wishlist.Fields.VISIBILITY: gettext_lazy(
-                            'Visibility cannot be changed to "Only you" while editors still have access to this list.'
+                            'Visibility cannot be changed to "Only you" '
+                            "while editors still have access to this list."
                         )
                     }
                 )
-
-    def save(
-        self,
-        force_insert: bool = False,
-        force_update: bool = False,
-        using: str | None = None,
-        update_fields: Iterable[str] | None = None,
-    ) -> None:
-        self.full_clean()
-
-        super().save(
-            force_insert=force_insert,
-            force_update=force_update,
-            using=using,
-            update_fields=update_fields,
-        )

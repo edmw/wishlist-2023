@@ -118,6 +118,8 @@ def env_decrpyt(key: str, default: str | None, fernet: Fernet | None) -> str | N
 
 WISHLIST_INVITATION_EXPIRES_AFTER = 10 * 24 * 3600  # ten days in seconds
 
+WISH_IMAGE_PIXELS_MAX = 40_000_000
+
 # endregion WISHLIST
 
 # region DJANGO
@@ -150,7 +152,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "csp",
     "django_probes",
-    "webapp",
+    "webapp.apps.WebappConfig",
     "webapp.apps.StaticFilesConfig",
     "webapp.apps.CeleryBeatConfig",
     "webapp.apps.CeleryResultsConfig",
@@ -452,13 +454,16 @@ with env.prefixed("WEBAPP_MEDIA_"):
     WEBAPP_MEDIA_PATH = env.str("PATH", "/media")
     WEBAPP_MEDIA_URL = urljoin(WEBAPP_MEDIA_LOCATION, WEBAPP_MEDIA_PATH)
 
-AWS_S3_URL_PROTOCOL = ""  # use protocol relative urls
+AWS_S3_URL_PROTOCOL = f"{WEBAPP_SCHEME}:"
 AWS_S3_CUSTOM_DOMAIN = f"{WEBAPP_MEDIA_HOST}{WEBAPP_MEDIA_PATH}"
 
 with env.prefixed("STORAGE_"):
     AWS_S3_ENDPOINT_URL = env.str("URL", None)
     AWS_ACCESS_KEY_ID = env.str("ACCESS_KEY", None)
     AWS_STORAGE_BUCKET_NAME = env.str("BUCKET_FILES", "wishlist")
+    AWS_S3_REGION_NAME = env.str("REGION", "us-east-1")
+    AWS_S3_ADDRESSING_STYLE = env.str("ADDRESSING_STYLE", "path")
+    AWS_S3_SIGNATURE_VERSION = env.str("SIGNATURE_VERSION", "s3v4")
 
 AWS_SECRET_ACCESS_KEY = webapp_env_decrypt("STORAGE_SECRET_KEY", None)
 
@@ -918,6 +923,9 @@ LOGGING = {
         "level": LOGGING_LEVEL_WARNING,
     },
     "loggers": {
+        "webapp": {
+            "level": LOGGING_LEVEL,
+        },
         "core": {
             "level": LOGGING_LEVEL,
         },

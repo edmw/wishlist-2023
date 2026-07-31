@@ -36,6 +36,10 @@ class Compose:
 # region ⭐ Runner ⭐
 
 
+class RunnerError(Exception):
+    pass
+
+
 class RunnerProtocol(DockerProtocol):
     options_project: list[str]
     options_environment: dict[Environment, list[str]]
@@ -80,8 +84,19 @@ class RunnerBase(DockerBase):
             )
 
     def get_webapp_key(self, mode: Mode) -> str | None:
-        name = "local" if mode in [Mode.DEVELOP, Mode.DEVELOP_DEBUG] else "local-deploy"
-        return keyring.get_password("wishlist-webapp_key", name)
+        environment = (
+            Environment.LOCAL if mode in [Mode.DEVELOP, Mode.DEVELOP_DEBUG] else Environment.LOCAL_DEPLOY
+        )
+        webapp_key = keyring.get_password("wishlist-webapp_key", environment.value)
+        if webapp_key is None:
+            raise RunnerError(
+                f"WEBAPP KEY for Mode {Markup.mode(mode)} "
+                f"in Environment {Markup.environment(environment)} "
+                f"not found in Keyring. "
+                f"See {Markup.info('FAQ#2')} and {Markup.info('FAQ#3')} "
+                f"for instructions on how to configure secrets."
+            )
+        return webapp_key
 
     def get_command_options(self, environment: Environment) -> list[str]:
         return self.options_project + self.options_environment[environment]
@@ -136,10 +151,12 @@ class RunnerUsesManageCommand(RunnerUsesManageCommandProtocol):
         )
         self.print_banner("🚀🚀🚀", message)
 
-        self.run_in_context(
-            self.build_run_manage_command(environment, command, python_options=python_options),
-            env={"WEBAPP_KEY": self.get_webapp_key(Mode.DEVELOP)},
-        )
+        command = self.build_run_manage_command(environment, command, python_options=python_options)
+        try:
+            webapp_key = self.get_webapp_key(Mode.DEVELOP)
+            self.run_in_context(command, env={"WEBAPP_KEY": webapp_key, "COMPOSE_MENU": "false"})
+        except RunnerError as e:
+            self.exit_with_banner("🚨🚨🚨", str(e))
 
 
 class DockerRunner:
@@ -185,9 +202,11 @@ class DockerRunner:
             self.print_banner("🚀🚀🚀", message)
 
             command = self.build_command(mode, start=True)
-            self.run_in_context(
-                command, env={"WEBAPP_KEY": self.get_webapp_key(mode), "COMPOSE_MENU": "false"}
-            )
+            try:
+                webapp_key = self.get_webapp_key(mode)
+                self.run_in_context(command, env={"WEBAPP_KEY": webapp_key, "COMPOSE_MENU": "false"})
+            except RunnerError as e:
+                self.exit_with_banner("🚨🚨🚨", str(e))
 
         def stop(self, mode: Mode = Mode.DEVELOP_DEBUG) -> None:
             command = self.build_command(mode, start=False)
@@ -219,6 +238,25 @@ class DockerRunner:
             self.run_in_context(command)
 
     # endregion ApplicationTest
+
+    # region ApplicationCheck
+
+    class ApplicationCheck(RunnerBase, RunnerUsesManageCommand):
+
+        def __init__(self, context: Context) -> None:
+            super().__init__(context, context.config.get("simulation", False))
+
+            self.service = CONFIGURATION.environments[Environment.LOCAL].service_app
+
+        def start(self, spec: str | None = None) -> None:
+            command = ["webapp_check"]
+            self.run_manage_command(Environment.TESTING, command, python_options=["-Xfrozen_modules=off"])
+
+        def stop(self) -> None:
+            command = self.build_down_command(Environment.TESTING)
+            self.run_in_context(command)
+
+    # endregion ApplicationCheck
 
     # region ApplicationCommand
 

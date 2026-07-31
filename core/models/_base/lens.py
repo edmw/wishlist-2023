@@ -22,7 +22,7 @@ class LensBase(Generic[M], object):
 
     def __init__(self) -> None:
         """Initialises the lens with a view on all objects."""
-        self.queryset = self.model.objects
+        self.queryset = self.model.objects.all()
         self._is_consumed = False
 
     @classmethod
@@ -38,7 +38,7 @@ class LensBase(Generic[M], object):
 
     def qs(self) -> QuerySet[M]:
         self._assert_not_consumed()
-        return self.queryset
+        return self.queryset.all()
 
     def count(self) -> int:
         self._assert_not_consumed()
@@ -65,6 +65,13 @@ class LensBase(Generic[M], object):
         self._assert_not_consumed()
         try:
             return self.queryset.first()
+        finally:
+            self._consume()
+
+    def ids(self) -> list[int]:
+        self._assert_not_consumed()
+        try:
+            return cast(list[int], list(self.queryset.values_list("pk", flat=True)))
         finally:
             self._consume()
 

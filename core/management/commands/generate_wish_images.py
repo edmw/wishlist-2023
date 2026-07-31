@@ -66,12 +66,12 @@ class Command(CoreBaseCommand):
         self.banner(["WISH IMAGE FROM REFERENCE PHOTO", *textwrap.wrap(self.help)])
 
         if options.get("all"):
-            wishes = WishLens().queryset.all()
+            wishes = WishLens().qs()
         elif wish_id := options.get("wish_id"):
             wishes = [WishService.get_wish(id=wish_id)]
         elif wishlist_id := options.get("wishlist_id"):
             wishlist = WishlistService.get_wishlist(id=wishlist_id)
-            wishes = WishLens().by_wishlist(list=wishlist).queryset.all()
+            wishes = WishLens().by_wishlist(list=wishlist).qs()
         else:
             raise ArgumentError(None, "No wishes specified.")
 
