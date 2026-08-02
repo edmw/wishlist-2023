@@ -3,7 +3,6 @@ from typing import Any
 
 from django.db.models import QuerySet
 from django.forms import EmailField, EmailInput, Form
-from django.utils.translation import gettext as _
 from django.utils.translation import gettext_noop
 
 from core.models import Wishlist, WishlistLens

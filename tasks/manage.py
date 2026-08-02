@@ -42,6 +42,12 @@ def migrations(context: Context) -> None:
 
 
 @task(pre=[build_development])
+def migrations_merge(context: Context) -> None:
+    """Merges migrations for the Django webapp."""
+    DockerRunner.ApplicationCommand(context).run_manage(command=["webapp_make_migrations", "--merge"])
+
+
+@task(pre=[build_development])
 def dumpdata(context: Context) -> None:
     """Dumps the data from the database of the Django webapp to a file."""
     DockerRunner.ApplicationCommand(context).run_manage(
