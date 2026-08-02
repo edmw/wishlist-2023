@@ -5,8 +5,6 @@ to describe a wish on a wish list. A wish has a priority for how much it is
 wanted.
 """
 
-from __future__ import annotations
-
 from django.db import models
 
 from core.models import concerns, fields, types

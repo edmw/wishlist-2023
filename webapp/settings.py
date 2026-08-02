@@ -7,16 +7,15 @@ import re
 from enum import StrEnum
 from pathlib import Path
 from urllib.parse import urljoin
-from warnings import filterwarnings
 
 import environs
 import structlog
 import structlog.types
 from celery.schedules import crontab
 from cryptography.fernet import Fernet
-from csp.constants import NONCE, SELF
 from django.core.exceptions import ImproperlyConfigured
 from django.http import HttpRequest
+from django.utils.csp import CSP
 from marshmallow.validate import OneOf
 
 from core.apps import CoreAccess, CoreConfig
@@ -150,7 +149,6 @@ INSTALLED_APPS = [
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
-    "csp",
     "django_probes",
     "webapp.apps.WebappConfig",
     "webapp.apps.StaticFilesConfig",
@@ -174,7 +172,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "csp.middleware.CSPMiddleware",
+    "django.middleware.csp.ContentSecurityPolicyMiddleware",
     "allauth.account.middleware.AccountMiddleware",
     "webapp.middlewares.request_middleware.request_middleware",
     "webapp.middlewares.logging_middleware.logging_middleware",
@@ -191,11 +189,6 @@ STORAGES = {
         "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
     },
 }
-
-# Silence deprecation warning for URLField default scheme.
-# see https://adamj.eu/tech/2023/12/07/django-fix-urlfield-assume-scheme-warnings/
-filterwarnings("ignore", "The FORMS_URLFIELD_ASSUME_HTTPS transitional setting is deprecated.")
-FORMS_URLFIELD_ASSUME_HTTPS = True
 
 # endregion DJANGO
 
@@ -312,13 +305,11 @@ CSRF_COOKIE_HTTPONLY = False
 CSRF_HEADER_NAME = "HTTP_X_CSRFTOKEN"
 CSRF_TRUSTED_ORIGINS = [WEBAPP_LOCATION]
 
-CONTENT_SECURITY_POLICY = {
-    "DIRECTIVES": {
-        "default-src": [SELF],
-        "style-src": [SELF, NONCE],
-        "script-src": [SELF, NONCE],
-        "img-src": [SELF, "data:"],
-    }
+SECURE_CSP = {
+    "default-src": [CSP.SELF],
+    "style-src": [CSP.SELF, CSP.NONCE],
+    "script-src": [CSP.SELF, CSP.NONCE],
+    "img-src": [CSP.SELF, "data:"],
 }
 
 # endregion SECURITY
@@ -467,8 +458,8 @@ with env.prefixed("STORAGE_"):
 
 AWS_SECRET_ACCESS_KEY = webapp_env_decrypt("STORAGE_SECRET_KEY", None)
 
-CONTENT_SECURITY_POLICY["DIRECTIVES"]["img-src"] = [
-    *CONTENT_SECURITY_POLICY["DIRECTIVES"]["img-src"],
+SECURE_CSP["img-src"] = [
+    *SECURE_CSP["img-src"],
     WEBAPP_MEDIA_LOCATION,
 ]
 
@@ -537,6 +528,7 @@ TEMPLATES = [
             "context_processors": [
                 "django.template.context_processors.debug",
                 "django.template.context_processors.request",
+                "django.template.context_processors.csp",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
                 "webapp.views.context.settings",

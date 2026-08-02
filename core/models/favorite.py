@@ -1,7 +1,5 @@
 """Model class representing a favorite wish lists."""
 
-from __future__ import annotations
-
 import logging
 
 from django.conf import settings as django_settings

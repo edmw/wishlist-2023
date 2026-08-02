@@ -1,4 +1,4 @@
-import asyncio
+import inspect
 import logging
 from contextlib import contextmanager
 from typing import Callable, Generator
@@ -24,7 +24,7 @@ def logging_for_request(request: HttpRequest) -> Generator[None, None, None]:
 
 @sync_and_async_middleware
 def logging_middleware(get_response: Callable) -> Callable:
-    if asyncio.iscoroutinefunction(get_response):
+    if inspect.iscoroutinefunction(get_response):
 
         async def async_middleware(request: HttpRequest) -> HttpResponse:
             with logging_for_request(request):

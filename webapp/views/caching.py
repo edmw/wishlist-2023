@@ -1,7 +1,5 @@
 """Caching services for views."""
 
-from __future__ import annotations
-
 from typing import Any, Protocol, Type
 
 from django.http import HttpRequest
