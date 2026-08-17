@@ -5,6 +5,11 @@ webapp-frontend/node_modules
 # general
 .cache
 
+# agents
+.agents
+CONTEXT.md
+.skills-lock.json
+
 # python
 .python-version
 .python-typings
