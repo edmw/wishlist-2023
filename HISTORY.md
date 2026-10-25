@@ -2,6 +2,7 @@
 
 ## [x.x.x]
 
+* 🪛 fix missing page title on account pages
 * 🛠️ upgrade python to 3.14
 * 🛠️ upgrade django to 6.0
 * 🛠️ switch to django content security policy middleware

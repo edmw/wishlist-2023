@@ -530,6 +530,7 @@ TEMPLATES = [
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
                 "webapp.views.context.settings",
+                "webapp.views.context.page_title",
                 "core.views.context.settings",
                 "core.views.context.constants",
             ],

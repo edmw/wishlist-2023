@@ -1,0 +1,31 @@
+# Translation of Webapp components into English.
+# This file is distributed under the same license as the Wishlist package.
+# Michael Baumgärtner <mib@yamanote.de>, 2026.
+msgid ""
+msgstr ""
+"Project-Id-Version: wishlist\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2001-01-01 00:00+0000\n"
+"PO-Revision-Date: 2001-01-01 00:00+0000\n"
+"Last-Translator: Michael Baumgärtner <mib@yamanote.de>\n"
+"Language-Team: English <mib@yamanote.de>\n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Sign in"
+msgstr ""
+
+msgid "Sign up"
+msgstr ""
+
+msgid "Sign out"
+msgstr ""
+
+msgid "Account inactive"
+msgstr ""
+
+msgid "Login cancelled"
+msgstr ""
