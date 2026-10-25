@@ -157,11 +157,15 @@ class Configuration:
         }
 
 
-try:
-    CONFIGURATION: Final[Configuration] = Configuration()
-except ConfigurationError as e:
-    Printer.print_error("Unable to Load Project Configuration", str(e))
-    sys.exit(1)
+def _load_configuration() -> Configuration:
+    try:
+        return Configuration()
+    except ConfigurationError as e:
+        Printer.print_error("Unable to Load Project Configuration", str(e))
+        sys.exit(1)
+
+
+CONFIGURATION: Final = _load_configuration()
 
 
 def get_version() -> semver.VersionInfo:
