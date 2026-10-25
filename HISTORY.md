@@ -6,6 +6,7 @@
 * 🪛 fix missing page title on account pages
 * 🛠️ upgrade python to 3.14
 * 🛠️ upgrade django to 6.0
+* 🛠️ upgrade project dependencies
 * 🛠️ switch to django content security policy middleware
 * 🛠️ replace minio with seaweedfs in development
 * 🛠️ make checks run in testing environment

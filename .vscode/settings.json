@@ -13,6 +13,9 @@
             "source.organizeImports": "explicit"
         }
     },
+    "[markdown]": {
+        "editor.defaultFormatter": null
+    },
     "black-formatter.importStrategy": "useBundled",
     "black-formatter.args": [
         "--line-length=108"

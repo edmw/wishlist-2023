@@ -104,6 +104,9 @@ exclude = [
 ]
 line-length = 108
 
+[tool.ruff.format]
+exclude = ["*.md"]
+
 [tool.ruff.lint]
 fixable = []
 ignore = ["ANN401", "D205", "D400", "D401"]

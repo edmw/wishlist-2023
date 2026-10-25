@@ -85,9 +85,7 @@ def _diff_requirements(
     ]
 
 
-def _preview_update(
-    context: Context, printer: Printer, output_file: Path, compile_args: list[str]
-) -> None:
+def _preview_update(context: Context, printer: Printer, output_file: Path, compile_args: list[str]) -> None:
     """Runs pip-compile into a temporary file and prints which dependencies
     would be added, removed or changed. The actual requirements file is not
     modified."""
