@@ -142,7 +142,11 @@ class RunnerUsesManageCommand(RunnerUsesManageCommandProtocol):
         ]
 
     def run_manage_command(
-        self, environment: Environment, command: list[str], python_options: list[str] | None = None
+        self,
+        environment: Environment,
+        command: list[str],
+        interactive: bool = False,
+        python_options: list[str] | None = None,
     ) -> None:
         message = (
             f"Running Command {Markup.ok(command[0])} "
@@ -154,9 +158,17 @@ class RunnerUsesManageCommand(RunnerUsesManageCommandProtocol):
         command = self.build_run_manage_command(environment, command, python_options=python_options)
         try:
             webapp_key = self.get_webapp_key(Mode.DEVELOP)
-            self.run_in_context(command, env={"WEBAPP_KEY": webapp_key, "COMPOSE_MENU": "false"})
         except RunnerError as e:
             self.exit_with_banner("🚨🚨🚨", str(e))
+
+        env = {
+            "WEBAPP_KEY": webapp_key,
+            "COMPOSE_MENU": "false",
+        }
+        if interactive:
+            self.run_interactive(command, env=env)
+        else:
+            self.run_in_context(command, env=env)
 
 
 class DockerRunner:
@@ -271,8 +283,8 @@ class DockerRunner:
 
             self.service = service
 
-        def run_manage(self, command: list[str]) -> None:
-            self.run_manage_command(Environment.LOCAL, command)
+        def run_manage(self, command: list[str], interactive: bool = False) -> None:
+            self.run_manage_command(Environment.LOCAL, command, interactive=interactive)
 
         def stop(self) -> None:
             command = self.build_down_command(Environment.LOCAL)
@@ -289,7 +301,7 @@ class DockerRunner:
 
             self.container = container
 
-        def execute(self, service: str, command: list[str]) -> None:
+        def execute(self, service: str, command: list[str], interactive: bool = False) -> None:
             environment = Environment.LOCAL
 
             message = (
@@ -299,15 +311,17 @@ class DockerRunner:
             )
             self.print_banner("🔧🔨🪛", message)
 
-            self.run_in_context(
-                [
-                    "docker compose",
-                    *self.get_command_options(environment),
-                    "exec",
-                    service,
-                    *command,
-                ]
-            )
+            command = [
+                "docker compose",
+                *self.get_command_options(environment),
+                "exec",
+                service,
+                *command,
+            ]
+            if interactive:
+                self.run_interactive(command)
+            else:
+                self.run_in_context(command)
 
         def stop(self) -> None:
             command = self.build_down_command(Environment.LOCAL)

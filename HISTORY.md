@@ -10,6 +10,7 @@
 * 🛠️ switch to django content security policy middleware
 * 🛠️ replace minio with seaweedfs in development
 * 🛠️ make checks run in testing environment
+* 🪛 fix interactive commands
 * 🪛 cleanup code (fix typing errors)
 
 ## [2.3.1]
