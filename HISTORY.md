@@ -2,6 +2,7 @@
 
 ## [x.x.x]
 
+* 🛠️ add management command to a create user 
 * 🛠️ make dependency update tasks preview-only by default
 * 🪛 fix missing page title on account pages
 * 🛠️ upgrade python to 3.14

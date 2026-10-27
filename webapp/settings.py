@@ -834,7 +834,7 @@ if ENVIRONMENT_IS_DEVELOPMENT:
         RequestExpander(),
         KeyRenamer(keep_logging=True),
         structlog.stdlib.ProcessorFormatter.remove_processors_meta,
-        structlog.dev.ConsoleRenderer(event_key=constants.LOG_MESSAGE_KEY, pad_event=0),
+        structlog.dev.ConsoleRenderer(event_key=constants.LOG_MESSAGE_KEY, pad_event_to=0),
     ]
 else:
     STRUCTLOG_PROCESSORS = [
