@@ -2,6 +2,8 @@
 
 ## [x.x.x]
 
+## [2.4.0]
+
 * 🛠️ add management command to a create user 
 * 🛠️ make dependency update tasks preview-only by default
 * 🪛 fix missing page title on account pages
