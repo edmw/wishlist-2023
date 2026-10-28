@@ -2,6 +2,8 @@
 
 ## [x.x.x]
 
+* 🖌️ fix sign out button missing its background
+
 ## [2.4.0]
 
 * 🛠️ add management command to a create user 

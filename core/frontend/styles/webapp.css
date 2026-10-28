@@ -266,7 +266,8 @@ main .content>h2::first-letter,
 main .content>.h2>h2::first-letter {
     font-size: 2.25rem;
 }
-main .content h3 ~ h3 {
+
+main .content h3~h3 {
     margin-top: 2.5rem;
 }
 
@@ -551,6 +552,11 @@ h4 {
     padding: 0.5rem 1rem;
 }
 
+/* bootstrap 5.3 resets .nav-link background to transparent, which removes the button look of header nav buttons */
+header .content .nav .btn {
+    background-color: var(--bs-btn-bg);
+}
+
 .btn-sm {
     padding: .25rem .75rem;
     font-size: 0.875rem;
@@ -565,6 +571,7 @@ h4 {
     box-shadow: 0 0 0 4px var(--bs-gray-300);
     border-radius: 50vh !important;
 }
+
 .btn-action:hover {
     background-color: var(--bs-gray-300);
 }
@@ -632,6 +639,7 @@ h4 {
 .form-switch {
     padding-left: 3em;
 }
+
 .form-switch .form-check-input {
     width: 2.5em;
     height: 1.25em;
