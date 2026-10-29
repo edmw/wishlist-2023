@@ -532,6 +532,7 @@ TEMPLATES = [
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
                 "webapp.views.context.settings",
+                "webapp.views.context.page_title",
                 "core.views.context.settings",
                 "core.views.context.constants",
             ],
@@ -835,7 +836,7 @@ if ENVIRONMENT_IS_DEVELOPMENT:
         RequestExpander(),
         KeyRenamer(keep_logging=True),
         structlog.stdlib.ProcessorFormatter.remove_processors_meta,
-        structlog.dev.ConsoleRenderer(event_key=constants.LOG_MESSAGE_KEY, pad_event=0),
+        structlog.dev.ConsoleRenderer(event_key=constants.LOG_MESSAGE_KEY, pad_event_to=0),
     ]
 else:
     STRUCTLOG_PROCESSORS = [

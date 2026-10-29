@@ -15,7 +15,7 @@ from .core.docker_runner import DockerRunner
 def run_command(context: Context, command: str | None = None) -> None:
     """Runs a Django management command in the webapp container.
 
-    If no command is provided, starts the interactive management command menu.
+    If no command is provided, shows the management command list.
     """
     if command is None:
         DockerRunner.ApplicationCommand(context).run_manage(command=["webapp_commands"])
@@ -26,7 +26,7 @@ def run_command(context: Context, command: str | None = None) -> None:
 @task(pre=[build_development])
 def console(context: Context) -> None:
     """Starts a Python console for the Django webapp."""
-    DockerRunner.ApplicationCommand(context).run_manage(command=["shell"])
+    DockerRunner.ApplicationCommand(context).run_manage(command=["shell"], interactive=True)
 
 
 @task(pre=[build_development])
@@ -70,7 +70,7 @@ def shell(
 ) -> None:
     """Starts a shell in a local service container (default: app) after the server has been started."""
     CONFIGURATION.environments[Environment.LOCAL].try_service(service)
-    DockerRunner.ShellCommand(context).execute(service=service, command=["bash"])
+    DockerRunner.ShellCommand(context).execute(service=service, command=["bash"], interactive=True)
 
 
 @task(pre=[build_development])
@@ -79,6 +79,7 @@ def connect_database(context: Context) -> None:
     DockerRunner.ShellCommand(context).execute(
         service=CONFIGURATION.environments[Environment.LOCAL].service_database,
         command=["psql", "-U", "postgres"],
+        interactive=True,
     )
 
 
@@ -86,7 +87,9 @@ def connect_database(context: Context) -> None:
 def connect_datastore(context: Context) -> None:
     """Connects to the datastore console of the local service container after the server has been started."""  # noqa
     DockerRunner.ShellCommand(context).execute(
-        service=CONFIGURATION.environments[Environment.LOCAL].service_datastore, command=["redis-cli"]
+        service=CONFIGURATION.environments[Environment.LOCAL].service_datastore,
+        command=["redis-cli"],
+        interactive=True,
     )
 
 
