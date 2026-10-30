@@ -1,4 +1,5 @@
 """Model class representing a general invitation."""
+
 from __future__ import annotations
 
 import logging
@@ -29,6 +30,8 @@ class Invitation(
         related_name="%(class)ss",
     )
     inviter_id: types.UserID
+
+    invitee_email_field = fields.InvitationEmailField()
 
     code_field = fields.InvitationCodeField()
 
@@ -63,6 +66,7 @@ class Invitation(
 
         ID = "id_field"
         INVITER = "inviter"
+        INVITEE_EMAIL = "invitee_email_field"
         CREATED_AT = "created_at"
         SENT = "sent"
         SENT_AT = "sent_at"
@@ -109,6 +113,30 @@ class Invitation(
             code: The invitation code.
         """
         self.code_field = code
+
+    @property
+    def invitee_email(self) -> types.InvitationEmail | None:
+        """The email address for the invitee of this invitation. This computed
+        property returns the correctly typed value instead of an indeterminate
+        string, or `None` if no invitee has been specified yet.
+
+        Returns:
+            The email address of the invitee.
+        """
+        if not self.invitee_email_field:
+            return None
+        return types.InvitationEmail(self.invitee_email_field)
+
+    @invitee_email.setter
+    def invitee_email(self, invitee_email: types.InvitationEmail | None) -> None:
+        """The setter for the email address of the invitee. This custom setter
+        accepts a correctly typed value, only, instead of an indeterminate
+        string.
+
+        Arguments:
+            invitee_email: The email address of the invitee.
+        """
+        self.invitee_email_field = "" if invitee_email is None else str(invitee_email)
 
     # Custom properties
 

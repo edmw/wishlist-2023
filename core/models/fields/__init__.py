@@ -5,6 +5,7 @@ from .email_enabled import EmailEnabledField
 from .favorite_id import FavoriteIDField
 from .fullname import FullnameField
 from .invitation_code import InvitationCodeField
+from .invitation_email import InvitationEmailField
 from .invitation_id import InvitationIDField
 from .item_ordering import ItemOrderingField
 from .language import LanguageField
