@@ -54,13 +54,11 @@ Creating and sending an invitation is a two-step process. This also allows a pre
 
 ### WishlistInvitation
 
-To allow users to send an invitation to make someone aware of a wish list, the class `WishlistInvitation` implements the abstract `EmailInvitation` and extends it with a reference to the wish list to which the invitation should apply.
+To allow users to send an invitation to make someone aware of a wish list, the class `WishlistInvitation` implements the abstract `Invitation` directly and extends it with a reference to the wish list to which the invitation should apply.
+
+The delivery channel (e.g. email) is not part of the model hierarchy: sending is performed by the service layer through transport adapters, so that additional channels can be added without introducing new invitation model types.
 
 Invitations to wish lists cannot be sent for private wish lists.
-
-
-
-
 
 After accepting an wishlist invitation an already registered user has direct access. Users who are not yet registered for the project can register first and will then be taken to the wish list.
 
