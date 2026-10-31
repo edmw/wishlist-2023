@@ -3,6 +3,7 @@
 ## [x.x.x]
 
 * 🖌️ fix sign out button missing its background
+* 🪛 fix passing parameters to management commands
 
 ## [2.4.0]
 

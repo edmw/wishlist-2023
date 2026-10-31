@@ -20,7 +20,12 @@ def run_command(context: Context, command: str | None = None) -> None:
     if command is None:
         DockerRunner.ApplicationCommand(context).run_manage(command=["webapp_commands"])
     else:
-        DockerRunner.ApplicationCommand(context).run_manage(command=[shlex.quote(command)])
+        # Split the user-provided string into individual arguments and quote each
+        # one, so that parameters (also values containing spaces) survive the
+        # shell re-parsing of the joined command string.
+        DockerRunner.ApplicationCommand(context).run_manage(
+            command=[shlex.quote(part) for part in shlex.split(command)]
+        )
 
 
 @task(pre=[build_development])
