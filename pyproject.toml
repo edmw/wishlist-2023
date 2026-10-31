@@ -78,10 +78,6 @@ tool = [
 [deployment]
 base_image = "python:3.14-slim-bookworm"
 
-[build-system]
-build-backend = "hatchling.build"
-requires = ["hatchling"]
-
 [tool.black]
 line-length = 108
 
