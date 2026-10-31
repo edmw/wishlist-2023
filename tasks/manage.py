@@ -11,7 +11,13 @@ from .core.docker_runner import DockerRunner
 # region ⭐ Manage Tasks ⭐
 
 
-@task(name="run", pre=[build_development], default=True)
+@task(name="list", pre=[build_development], default=True)
+def list_commands(context: Context) -> None:
+    """Shows the list of available management commands."""
+    DockerRunner.ApplicationCommand(context).run_manage(command=["webapp_commands"])
+
+
+@task(name="run", pre=[build_development], positional=["command"])
 def run_command(context: Context, command: str | None = None) -> None:
     """Runs a Django management command in the webapp container.
 

@@ -69,8 +69,9 @@ def task(*task_args: Any, **task_kwargs: Any) -> Callable:
             # the wrapped original task, so that other pre- and post-tasks will
             # get the correct arguments.
             context = args[0]
+            dry = kwargs.pop("dry", False)
             if not hasattr(context.config, "simulation"):
-                context.config.simulation = kwargs.pop("dry", False)
+                context.config.simulation = dry
             if not hasattr(context.config, "_wrapper_kwargs_by_function"):
                 context.config._wrapper_kwargs_by_function = {}
             context.config._wrapper_kwargs_by_function[str(id(task_function_to_wrap))] = kwargs
@@ -81,7 +82,7 @@ def task(*task_args: Any, **task_kwargs: Any) -> Callable:
             # configuration dictionary and pass them to the wrapped original
             # task.
             wrapper_kwargs_by_function = context.config.get("_wrapper_kwargs_by_function", {})
-            wrapper_kwargs = wrapper_kwargs_by_function.get(str(id(task_function_to_wrap)), *kwargs)
+            wrapper_kwargs = wrapper_kwargs_by_function.get(str(id(task_function_to_wrap)), kwargs)
             return task_function_to_wrap(context, *args, **wrapper_kwargs)
 
         # Update the wrapper to look like the wrapped function.

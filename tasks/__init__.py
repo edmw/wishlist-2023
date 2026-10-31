@@ -37,6 +37,7 @@ from .manage import (
     connect_datastore,
     console,
     dumpdata,
+    list_commands,
     migrations,
     migrations_merge,
     run_command,
@@ -165,6 +166,7 @@ collection_make.add_task(cast(Task, install_production))
 collection_make.add_task(cast(Task, sync_development))
 collection_make.add_task(cast(Task, sync_production))
 
+collection_manage.add_task(cast(Task, list_commands))
 collection_manage.add_task(cast(Task, run_command))
 collection_manage.add_task(cast(Task, console))
 collection_manage.add_task(cast(Task, migrations))
