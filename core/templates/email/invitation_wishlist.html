@@ -1,0 +1,11 @@
+{% load i18n %}{% blocktranslate with inviter_name=inviter_name wishlist_name=wishlist_name %}<h1>{{ inviter_name }} has invited you to the wish list <strong>'{{ wishlist_name }}'</strong>.</h1>{% endblocktranslate %}
+
+<hr/>
+<p>
+    {% translate "Open the following link to accept the invitation:" %}<br/>
+    <a href="{{ invitation_url }}">{{ invitation_url }}</a>
+</p>
+<p>{% blocktranslate with inviter_name=inviter_name %}The invitation was sent by {{ inviter_name }}.{% endblocktranslate %}</p>
+
+<hr/>
+<p>{% translate "Please do not reply." %}</p>

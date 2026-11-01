@@ -67,6 +67,7 @@ class Invitation(
         ID = "id_field"
         INVITER = "inviter"
         INVITEE_EMAIL = "invitee_email_field"
+        CODE = "code_field"
         CREATED_AT = "created_at"
         SENT = "sent"
         SENT_AT = "sent_at"
