@@ -13,3 +13,9 @@
         <small id="description_email" class="form-text text-muted">{% render_errors form.email.errors %}</small>
     </div>
 {% endblock form_extra %}
+
+{% block note %}
+    <p class="text-muted mt-4 mb-0">
+        {% translate "The person will receive an email with a link to the wish list. The invitation expires after ten days." %}
+    </p>
+{% endblock note %}

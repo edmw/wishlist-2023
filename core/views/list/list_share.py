@@ -1,11 +1,16 @@
 import logging
-from typing import Any
+from typing import Any, cast
 
+from django.contrib import messages
 from django.db.models import QuerySet
-from django.forms import EmailField, EmailInput, Form
+from django.forms import EmailField, EmailInput, Form, ModelForm
+from django.http import HttpResponse
+from django.http.response import HttpResponseRedirect
+from django.utils.translation import gettext as _
 from django.utils.translation import gettext_noop
 
 from core.models import Wishlist, WishlistLens
+from core.services import InvitationPrivateWishlistError, InvitationService
 from core.views._base import LoginRequiredMixin, UpdateView, WishlistModelMixin
 from core.views._forms import (
     AriaDescribedByMixin,
@@ -56,7 +61,28 @@ class ListShareView(
 
     success_url = "/"
     success_message = gettext_noop("An invitation for sharing your wish list has been successfully sent.")
+    error_message_private_wishlist = gettext_noop(
+        "Private wish lists cannot be shared. Please change the visibility of the list before you share it."
+    )
 
     def get_queryset(self) -> QuerySet[Wishlist]:
         user = self.try_user()
         return WishlistLens.view().by_owner(user=user).queryset
+
+    def form_valid(self, form: ModelForm) -> HttpResponse:
+        wishlist = cast(Wishlist, self.get_object())
+        email = str(form.cleaned_data["email"])
+        try:
+            invitation = InvitationService.create_invitation(
+                wishlist=wishlist,
+                inviter=self.try_user(),
+                invitee_email=email,
+            )
+            InvitationService.send_invitation(invitation=invitation)
+        except InvitationPrivateWishlistError:
+            logger.warning("Invitation for private wish list %r requested.", wishlist.id)
+            return self.redirect_back_with_error_message(_(self.error_message_private_wishlist))
+
+        if message := getattr(self, "success_message", None):
+            messages.success(self.request, _(message))
+        return HttpResponseRedirect(self.get_success_url())
