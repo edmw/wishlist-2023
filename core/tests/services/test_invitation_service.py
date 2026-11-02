@@ -85,6 +85,33 @@ class TestSendInvitation:
         assert str(invitation.code) in message.body
         assert f"/invitations/{invitation.code}/" in message.body
 
+    def test_email_contains_expiry_hint(self, core: CoreFixture) -> None:
+        """The email states how long the invitation stays valid."""
+        invitation = InvitationService.create_invitation(
+            wishlist=core.list_alice,
+            inviter=core.user_alice,
+            invitee_email=INVITEE_EMAIL,
+        )
+
+        InvitationService.send_invitation(invitation=invitation)
+
+        message = mail.outbox[0]
+        assert "The invitation expires after 10 days." in message.body
+
+    def test_email_expiry_hint_follows_setting(self, core: CoreFixture, settings: Any) -> None:
+        """A changed expiry setting is reflected in the email hint."""
+        settings.WISHLIST_INVITATION_EXPIRES_AFTER = 3 * 24 * 3600
+
+        invitation = InvitationService.create_invitation(
+            wishlist=core.list_alice,
+            inviter=core.user_alice,
+            invitee_email=INVITEE_EMAIL,
+        )
+        InvitationService.send_invitation(invitation=invitation)
+
+        message = mail.outbox[0]
+        assert "The invitation expires after 3 days." in message.body
+
     def test_falls_back_to_username_if_no_full_name(self, core: CoreFixture) -> None:
         """The inviter’s username is used if the user has no full name set."""
         inviter = User.objects.create(username="noname", email="noname@example.com")
@@ -116,6 +143,8 @@ class TestSendInvitation:
         assert message.subject == "Einladung zu einem Wunschzettel"
         assert f"hat dich zum Wunschzettel '{core.list_alice.name}' eingeladen" in message.body
         assert "Die Einladung wurde von Alice Rivest gesendet." in message.body
+        # The expiry hint is humanized and translated into the invitee's language.
+        assert "Die Einladung ist gültig für 10 Tage." in message.body
 
     def test_falls_back_to_inviter_language_if_invitee_is_unknown(self, core: CoreFixture) -> None:
         """The email is rendered in the inviter's language if the invitee has no account."""

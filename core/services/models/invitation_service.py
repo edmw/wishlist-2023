@@ -2,8 +2,11 @@
 
 import logging
 import secrets
-from typing import Any, Mapping
+from datetime import timedelta
+from typing import Any
 
+import humanize
+from django.conf import settings as django_settings
 from django.template.loader import render_to_string
 from django.utils import timezone
 from django.utils.translation import gettext as _
@@ -118,7 +121,7 @@ class InvitationService:
         # the email never contains an empty or dangling name.
         inviter_name = str(inviter.full_name) or inviter.username
 
-        context: Mapping[str, Any] = {
+        context: dict[str, Any] = {
             "invitation": invitation,
             "inviter_name": inviter_name,
             "wishlist_name": str(invitation.wishlist.name),
@@ -130,6 +133,9 @@ class InvitationService:
                 invitee_email=str(invitee_email), inviter=inviter
             ).get_code()
         ):
+            # Render the expiry duration in the email's active language so that
+            # it matches the rest of the message.
+            context["expires_after"] = InvitationService.expires_after_duration()
             subject = _("Invitation to a wish list")
             message = render_to_string(
                 template_name="email/invitation_wishlist.txt",
@@ -150,6 +156,21 @@ class InvitationService:
         invitation.sent = True
         invitation.sent_at = timezone.now()
         invitation.save(update_fields=[WishlistInvitation.Fields.SENT, WishlistInvitation.Fields.SENT_AT])
+
+    @staticmethod
+    def expires_after_duration() -> str:
+        """Returns the configured invitation expiry duration as a humanized
+        string in the active language (e.g. "10 days").
+
+        The duration is read from the settings key referenced by the
+        `WishlistInvitation` model, so that the displayed value always matches
+        the actual expiration rule.
+
+        Returns:
+            Humanized representation of the expiry duration.
+        """
+        expires_after = getattr(django_settings, WishlistInvitation.EXPIRES_AFTER_SETTINGS_KEY)
+        return humanize.naturaldelta(timedelta(seconds=expires_after))
 
     @staticmethod
     def _language_for_email(*, invitee_email: str, inviter: User) -> Language:
@@ -233,6 +254,4 @@ class InvitationService:
         """
         # NOTE: The path must match the route of the public accept view (see
         # PLAN.md, Phase 4). Once that view exists, switch this to reverse().
-        from django.conf import settings as django_settings
-
         return f"{django_settings.WEBAPP_LOCATION}/invitations/{code}/"

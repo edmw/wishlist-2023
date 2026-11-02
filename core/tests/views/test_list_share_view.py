@@ -66,6 +66,23 @@ class TestListShareView:
         client.force_login(core.user_alice)
         assert self._get_share(client, core.user_alice.id, core.list_alice.id).status_code == HTTPStatus.OK
 
+    def test_share_view_expiry_note(self, core: CoreFixture, client: Client) -> None:
+        """The share page shows the expiry duration derived from the setting."""
+        client.force_login(core.user_alice)
+        response = self._get_share(client, core.user_alice.id, core.list_alice.id)
+
+        content = response.content.decode()
+        assert "The invitation expires after 10 days." in content
+
+    def test_share_view_expiry_note_setting(self, core: CoreFixture, client: Client, settings: Any) -> None:
+        """A changed expiry setting is reflected in the share page note."""
+        settings.WISHLIST_INVITATION_EXPIRES_AFTER = 3 * 24 * 3600
+
+        client.force_login(core.user_alice)
+        response = self._get_share(client, core.user_alice.id, core.list_alice.id)
+
+        assert "The invitation expires after 3 days." in response.content.decode()
+
     def test_share_view_sends_invitation(self, core: CoreFixture, client: Client) -> None:
         """Alice sharing her public wish list creates and sends an invitation."""
         client.force_login(core.user_alice)

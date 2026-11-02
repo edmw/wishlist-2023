@@ -2,6 +2,7 @@
 
 ## [x.x.x]
 
+* 🖼️ add invitation expiry hint to invitation emails
 * 🖼️ fill in missing first and last names from Google at login
 * 🛠️ allow setting first and last name when creating a user via console
 * 🖌️ fix sign out button missing its background

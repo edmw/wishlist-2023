@@ -6,6 +6,7 @@
     <a href="{{ invitation_url }}">{{ invitation_url }}</a>
 </p>
 <p>{% blocktranslate with inviter_name=inviter_name %}The invitation was sent by {{ inviter_name }}.{% endblocktranslate %}</p>
+<p>{% blocktranslate with duration=expires_after %}The invitation expires after {{ duration }}.{% endblocktranslate %}</p>
 
 <hr/>
 <p>{% translate "Please do not reply." %}</p>

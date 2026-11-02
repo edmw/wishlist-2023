@@ -5,5 +5,7 @@
 
 {% blocktranslate with inviter_name=inviter_name %}The invitation was sent by {{ inviter_name }}.{% endblocktranslate %}
 
+{% blocktranslate with duration=expires_after %}The invitation expires after {{ duration }}.{% endblocktranslate %}
+
 --
 {% translate "Please do not reply." %}

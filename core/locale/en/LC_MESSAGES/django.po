@@ -155,6 +155,10 @@ msgstr ""
 msgid "The invitation was sent by %(inviter_name)s."
 msgstr ""
 
+#, python-format
+msgid "The invitation expires after %(duration)s."
+msgstr ""
+
 msgid "Please do not reply."
 msgstr ""
 
@@ -709,9 +713,10 @@ msgstr ""
 msgid "... to share the wish list named <strong>%(list_name)s</strong>?"
 msgstr ""
 
+#, python-format
 msgid ""
 "The person will receive an email with a link to the wish list. The "
-"invitation expires after ten days."
+"invitation expires after %(duration)s."
 msgstr ""
 
 msgid "Enter email"

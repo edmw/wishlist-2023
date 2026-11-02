@@ -166,6 +166,10 @@ msgstr "Öffne den folgenden Link, um die Einladung anzunehmen:"
 msgid "The invitation was sent by %(inviter_name)s."
 msgstr "Die Einladung wurde von %(inviter_name)s gesendet."
 
+#, python-format
+msgid "The invitation expires after %(duration)s."
+msgstr "Die Einladung ist gültig für %(duration)s."
+
 msgid "Please do not reply."
 msgstr "Bitte nicht antworten."
 
@@ -806,12 +810,13 @@ msgstr "Dein aktualisierter Wunschzettel wurden erfolgreich gespeichert."
 msgid "... to share the wish list named <strong>%(list_name)s</strong>?"
 msgstr "... den Wunschzettel <strong>%(list_name)s</strong> zu teilen?"
 
+#, python-format
 msgid ""
 "The person will receive an email with a link to the wish list. The "
-"invitation expires after ten days."
+"invitation expires after %(duration)s."
 msgstr ""
 "Die Person erhält eine E-Mail mit einem Link zum Wunschzettel. Die Einladung"
-" läuft nach zehn Tagen ab."
+" ist gültig für %(duration)s."
 
 msgid "Enter email"
 msgstr "E-Mail-Adresse eingeben"

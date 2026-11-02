@@ -69,6 +69,13 @@ class ListShareView(
         user = self.try_user()
         return WishlistLens.view().by_owner(user=user).queryset
 
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        # The expiry duration is humanized in the active language so that it
+        # matches what the invitee will see in the invitation email.
+        context["expires_after"] = InvitationService.expires_after_duration()
+        return context
+
     def form_valid(self, form: ModelForm) -> HttpResponse:
         wishlist = cast(Wishlist, self.get_object())
         email = str(form.cleaned_data["email"])
