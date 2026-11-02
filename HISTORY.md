@@ -2,6 +2,8 @@
 
 ## [x.x.x]
 
+* 🖼️ fill in missing first and last names from Google at login
+* 🛠️ allow setting first and last name when creating a user via console
 * 🖌️ fix sign out button missing its background
 * 🪛 fix passing parameters to management commands
 

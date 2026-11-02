@@ -2,7 +2,10 @@ import logging
 from typing import Any, cast
 
 from allauth.account.signals import user_logged_in
+from allauth.socialaccount.models import SocialLogin
+from allauth.socialaccount.signals import pre_social_login
 from django.dispatch import receiver
+from django.http import HttpRequest
 
 from core.models import Language, User
 from webapp.services import LanguageService, SignalLoggingService
@@ -29,3 +32,42 @@ def allauth_user_logged_in_callback(sender: Any, **kwargs: Any) -> None:
         if user.language_soft != language:
             user.language_soft = language
             user.save(update_fields=[User.Fields.LANGUAGE_SOFT])
+
+
+@receiver(pre_social_login)
+def allauth_pre_social_login_callback(
+    sender: Any, request: HttpRequest, sociallogin: SocialLogin, **kwargs: Any
+) -> None:
+    """Fills in the first and last name of an existing user from the data
+    provided by the social account provider.
+
+    The names are only populated if they are still empty on the local user;
+    values set locally (or previously filled in) are never overwritten. This
+    applies to logins of existing users, only: for new signups, django-allauth
+    already populates the names during signup.
+
+    NOTE: The names are read from the social account's extra data, not from
+    `sociallogin.user`. For existing users, django-allauth's lookup replaces
+    the temporary (populated) user with the database user before this signal
+    is sent, so only the extra data still carries the provider's values.
+    """
+    SignalLoggingService.signal_receive(
+        "Pre social login",
+        logger=logger,
+        extra={"sociallogin": sociallogin},
+    )
+    if not sociallogin.is_existing:
+        return
+    user = cast(User, sociallogin.user)
+    extra_data = sociallogin.account.extra_data or {}
+    update_fields: list[str] = []
+    first_name = extra_data.get("given_name")
+    last_name = extra_data.get("family_name")
+    if not user.first_name and isinstance(first_name, str) and first_name:
+        user.first_name = first_name
+        update_fields.append(User.Fields.FIRST_NAME)
+    if not user.last_name and isinstance(last_name, str) and last_name:
+        user.last_name = last_name
+        update_fields.append(User.Fields.LAST_NAME)
+    if update_fields:
+        user.save(update_fields=update_fields)

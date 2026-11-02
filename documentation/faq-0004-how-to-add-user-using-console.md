@@ -24,6 +24,17 @@ python manage.py create_user user@example.com --username johndoe42
 The name must be valid, not reserved, and not already taken — otherwise the
 command fails without creating anything.
 
+To set first and last names, pass them explicitly (both are optional):
+
+```bash
+python manage.py create_user user@example.com --first-name John --last-name Doe
+```
+
+If omitted, the names remain empty. Note that for users linked to a Google
+account, empty names are filled in automatically from the Google profile at
+the next login — so omitting them is usually fine. The command fails if a
+name exceeds 150 characters.
+
 To link a Google account to the user, pass its Google user ID:
 
 ```bash

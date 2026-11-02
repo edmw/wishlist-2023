@@ -56,6 +56,44 @@ class TestCreateUserCommand:
         }
         assert "Linked Google account" in out.getvalue()
 
+    def test_create_user_with_names(self) -> None:
+        out = StringIO()
+
+        call_command(
+            "create_user",
+            "john.doe@example.com",
+            "--first-name",
+            "John",
+            "--last-name",
+            "Doe",
+            stdout=out,
+        )
+
+        user = User.objects.get(email="john.doe@example.com")
+        assert user.first_name == "John"
+        assert user.last_name == "Doe"
+        assert str(user.full_name) == "John Doe"
+
+    def test_create_user_with_first_name_only(self) -> None:
+        call_command("create_user", "jane.doe@example.com", "--first-name", "Jane")
+
+        user = User.objects.get(email="jane.doe@example.com")
+        assert user.first_name == "Jane"
+        assert user.last_name == ""
+        assert str(user.full_name) == "Jane"
+
+    def test_reject_oversized_first_name(self) -> None:
+        with pytest.raises(CommandError):
+            call_command("create_user", "john.doe@example.com", "--first-name", "x" * 151)
+
+        assert User.objects.filter(email="john.doe@example.com").count() == 0
+
+    def test_reject_oversized_last_name(self) -> None:
+        with pytest.raises(CommandError):
+            call_command("create_user", "john.doe@example.com", "--last-name", "x" * 151)
+
+        assert User.objects.filter(email="john.doe@example.com").count() == 0
+
     def test_reject_existing_email(self) -> None:
         User.objects.create_user(username="existing", email="taken@example.com", password=None)
 

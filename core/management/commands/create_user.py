@@ -20,9 +20,10 @@ class Command(CoreBaseCommand):
 
     The user is created without a usable password (social login only). By
     default, the username is derived from the local part of the email address
-    and can be overridden with an explicit name. By default, the email address
-    is registered as verified and primary. If a Google ID is specified, a
-    Google social account is linked to the user.
+    and can be overridden with an explicit name. First and last names are
+    optional; if omitted, they remain empty. By default, the email address is
+    registered as verified and primary. If a Google ID is specified, a Google
+    social account is linked to the user.
     """
 
     help = "Creates a user by email address."
@@ -42,6 +43,16 @@ class Command(CoreBaseCommand):
             ),
         )
         parser.add_argument(
+            "--first-name",
+            metavar="NAME",
+            help="First name for the new user. If omitted, no first name is set.",
+        )
+        parser.add_argument(
+            "--last-name",
+            metavar="NAME",
+            help="Last name for the new user. If omitted, no last name is set.",
+        )
+        parser.add_argument(
             "--google-id",
             metavar="ID",
             help=("Google user ID to link as social account. If omitted, no " "social account is created."),
@@ -59,6 +70,8 @@ class Command(CoreBaseCommand):
 
         email = options.get("email")
         username = options.get("username")
+        first_name = options.get("first_name") or ""
+        last_name = options.get("last_name") or ""
         google_id = options.get("google_id")
         skip_email_verification = options.get("skip_email_verification", False)
 
@@ -83,7 +96,12 @@ class Command(CoreBaseCommand):
         else:
             username = self.derive_username(email=email)
 
-        user = User.objects.create_user(username=username, email=email, password=None)
+        self.validate_name(field="first_name", value=first_name)
+        self.validate_name(field="last_name", value=last_name)
+
+        user = User.objects.create_user(
+            username=username, email=email, password=None, first_name=first_name, last_name=last_name
+        )
 
         if skip_email_verification:
             self.print(
@@ -124,6 +142,21 @@ class Command(CoreBaseCommand):
             raise CommandError(
                 f"A user with the username '{username}' already exists (ID {existing_user.id})."
             )
+
+    def validate_name(self, *, field: str, value: str) -> None:
+        """Validates a name for length.
+
+        Raises a `CommandError` if the name exceeds the maximum length of the
+        corresponding user model field.
+
+        Arguments:
+            field: The name of the user model field to validate against.
+            value: The name value to validate.
+        """
+        max_length = getattr(User._meta.get_field(field), "max_length", None)
+        if max_length is not None and len(value) > max_length:
+            message = f"The {field.replace('_', ' ')} is too long (maximum {max_length} characters)."
+            raise CommandError(message)
 
     def derive_username(self, *, email: str) -> str:
         """Derives a unique username from the local part of an email address.
