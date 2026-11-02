@@ -109,15 +109,20 @@ class InvitationService:
         if not (invitee_email := invitation.invitee_email):
             raise InvitationNotSendableError()
 
+        inviter = invitation.inviter
+        # Fall back to the username if the user has no full name set, so that
+        # the email never contains an empty or dangling name.
+        inviter_name = str(inviter.full_name) or inviter.username
+
         subject = _("Invitation to a wish list")
         context: Mapping[str, Any] = {
             "invitation": invitation,
-            "inviter_name": str(invitation.inviter.full_name),
+            "inviter_name": inviter_name,
             "wishlist_name": str(invitation.wishlist.name),
             "invitation_url": InvitationService.build_invitation_url(code=invitation.code),
         }
 
-        with LanguageService.activated(language_code=invitation.inviter.get_language().get_code()):
+        with LanguageService.activated(language_code=inviter.get_language().get_code()):
             message = render_to_string(
                 template_name="email/invitation_wishlist.txt",
                 context=context,

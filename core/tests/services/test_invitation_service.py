@@ -85,6 +85,22 @@ class TestSendInvitation:
         assert str(invitation.code) in message.body
         assert f"/invitations/{invitation.code}/" in message.body
 
+    def test_falls_back_to_username_if_no_full_name(self, core: CoreFixture) -> None:
+        """The inviter’s username is used if the user has no full name set."""
+        inviter = User.objects.create(username="noname", email="noname@example.com")
+        assert str(inviter.full_name) == ""
+
+        invitation = InvitationService.create_invitation(
+            wishlist=core.list_alice,
+            inviter=inviter,
+            invitee_email=INVITEE_EMAIL,
+        )
+        InvitationService.send_invitation(invitation=invitation)
+
+        message = mail.outbox[0]
+        assert "noname has invited you" in message.body
+        assert "The invitation was sent by noname." in message.body
+
     def test_raises_if_already_sent(self, core: CoreFixture) -> None:
         invitation = InvitationService.create_invitation(
             wishlist=core.list_alice,
