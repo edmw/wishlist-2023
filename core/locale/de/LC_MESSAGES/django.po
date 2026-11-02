@@ -351,8 +351,8 @@ msgid ""
 "... to archive the wish named <strong>%(item_name)s</strong> on wish list "
 "<strong>%(list_name)s</strong>?"
 msgstr ""
-"... daß du den Wunsch <strong>%(item_name)s</strong> auf dem Wunschzettel "
-"<strong>%(list_name)s</strong> archivieren möchtest?"
+"... den Wunsch <strong>%(item_name)s</strong> auf dem Wunschzettel "
+"<strong>%(list_name)s</strong> archivieren?"
 
 msgid "This wish can not be archived."
 msgstr "Dieser Wunsch kann nicht archiviert werden."
@@ -808,7 +808,7 @@ msgstr "Dein aktualisierter Wunschzettel wurden erfolgreich gespeichert."
 
 #, python-format
 msgid "... to share the wish list named <strong>%(list_name)s</strong>?"
-msgstr "... den Wunschzettel <strong>%(list_name)s</strong> zu teilen?"
+msgstr "... den Wunschzettel <strong>%(list_name)s</strong> teilen?"
 
 #, python-format
 msgid ""
