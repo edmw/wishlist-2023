@@ -101,6 +101,37 @@ class TestSendInvitation:
         assert "noname has invited you" in message.body
         assert "The invitation was sent by noname." in message.body
 
+    def test_uses_invitee_language_if_invitee_has_account(self, core: CoreFixture) -> None:
+        """The email is rendered in the invitee's language if they have an account."""
+        User.objects.create(username="invitee", email=INVITEE_EMAIL, language_field="de")
+
+        invitation = InvitationService.create_invitation(
+            wishlist=core.list_alice,
+            inviter=core.user_alice,
+            invitee_email=INVITEE_EMAIL,
+        )
+        InvitationService.send_invitation(invitation=invitation)
+
+        message = mail.outbox[0]
+        assert message.subject == "Einladung zu einem Wunschzettel"
+        assert f"hat dich zum Wunschzettel '{core.list_alice.name}' eingeladen" in message.body
+        assert "Die Einladung wurde von Alice Rivest gesendet." in message.body
+
+    def test_falls_back_to_inviter_language_if_invitee_is_unknown(self, core: CoreFixture) -> None:
+        """The email is rendered in the inviter's language if the invitee has no account."""
+        inviter = User.objects.create(username="german", email="german@example.com", language_field="de")
+
+        invitation = InvitationService.create_invitation(
+            wishlist=core.list_alice,
+            inviter=inviter,
+            invitee_email=INVITEE_EMAIL,
+        )
+        InvitationService.send_invitation(invitation=invitation)
+
+        message = mail.outbox[0]
+        assert message.subject == "Einladung zu einem Wunschzettel"
+        assert f"hat dich zum Wunschzettel '{core.list_alice.name}' eingeladen" in message.body
+
     def test_raises_if_already_sent(self, core: CoreFixture) -> None:
         invitation = InvitationService.create_invitation(
             wishlist=core.list_alice,

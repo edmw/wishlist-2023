@@ -93,6 +93,9 @@ msgstr ""
 msgid "{} ago"
 msgstr ""
 
+msgid "Invitation to a wish list"
+msgstr ""
+
 msgid "Wish added"
 msgstr ""
 
@@ -137,6 +140,26 @@ msgid "Are you sure you want to sign out?"
 msgstr ""
 
 msgid "Sign out"
+msgstr ""
+
+#, python-format
+msgid ""
+"<h1>%(inviter_name)s has invited you to the wish list "
+"<strong>'%(wishlist_name)s'</strong>.</h1>"
+msgstr ""
+
+msgid "Open the following link to accept the invitation:"
+msgstr ""
+
+#, python-format
+msgid "The invitation was sent by %(inviter_name)s."
+msgstr ""
+
+msgid "Please do not reply."
+msgstr ""
+
+#, python-format
+msgid "%(inviter_name)s has invited you to the wish list '%(wishlist_name)s'."
 msgstr ""
 
 msgid "Home"
@@ -551,9 +574,6 @@ msgid ""
 "<strong>'%(wishlist_name)s'</strong>.</h1>"
 msgstr ""
 
-msgid "Please do not reply."
-msgstr ""
-
 #, python-format
 msgid "A new wish has been added to the wish list '%(wishlist_name)s'."
 msgstr ""
@@ -685,6 +705,32 @@ msgstr ""
 msgid "Your updated wish list has been successfully saved."
 msgstr ""
 
+#, python-format
+msgid "... to share the wish list named <strong>%(list_name)s</strong>?"
+msgstr ""
+
+msgid ""
+"The person will receive an email with a link to the wish list. The "
+"invitation expires after ten days."
+msgstr ""
+
+msgid "Enter email"
+msgstr ""
+
+msgid "Share your List"
+msgstr ""
+
+msgid "Share List"
+msgstr ""
+
+msgid "An invitation for sharing your wish list has been successfully sent."
+msgstr ""
+
+msgid ""
+"Private wish lists cannot be shared. Please change the visibility of the "
+"list before you share it."
+msgstr ""
+
 msgid "Your Lists"
 msgstr ""
 
@@ -692,6 +738,9 @@ msgstr ""
 msgid ""
 "You don't have a wish list yet. Start collecting your wishes on a <a "
 "href=\"%(url)s\">new wish list</a> right now."
+msgstr ""
+
+msgid "Share list"
 msgstr ""
 
 msgid "Edit items"

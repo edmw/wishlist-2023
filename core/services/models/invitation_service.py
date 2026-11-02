@@ -9,8 +9,9 @@ from django.utils import timezone
 from django.utils.translation import gettext as _
 
 from core.models import User, Wishlist, WishlistInvitation
-from core.models.types import InvitationCode, InvitationEmail, Visibility
+from core.models.types import InvitationCode, InvitationEmail, Language, Visibility
 from core.services.adapter.email_service import EmailService
+from core.services.models.user_service import UserService
 from webapp.services import LanguageService
 
 logger = logging.getLogger(__name__)
@@ -94,6 +95,9 @@ class InvitationService:
         delivery channel is chosen at this service layer; it is not part of
         the model hierarchy (see ADR-1000).
 
+        The email is rendered in the invitee's language if they have an
+        account, and in the inviter's language otherwise.
+
         Arguments:
             invitation: Invitation to send. It must have been created before
                 and must not have been sent yet.
@@ -114,7 +118,6 @@ class InvitationService:
         # the email never contains an empty or dangling name.
         inviter_name = str(inviter.full_name) or inviter.username
 
-        subject = _("Invitation to a wish list")
         context: Mapping[str, Any] = {
             "invitation": invitation,
             "inviter_name": inviter_name,
@@ -122,7 +125,12 @@ class InvitationService:
             "invitation_url": InvitationService.build_invitation_url(code=invitation.code),
         }
 
-        with LanguageService.activated(language_code=inviter.get_language().get_code()):
+        with LanguageService.activated(
+            language_code=InvitationService._language_for_email(
+                invitee_email=str(invitee_email), inviter=inviter
+            ).get_code()
+        ):
+            subject = _("Invitation to a wish list")
             message = render_to_string(
                 template_name="email/invitation_wishlist.txt",
                 context=context,
@@ -142,6 +150,26 @@ class InvitationService:
         invitation.sent = True
         invitation.sent_at = timezone.now()
         invitation.save(update_fields=[WishlistInvitation.Fields.SENT, WishlistInvitation.Fields.SENT_AT])
+
+    @staticmethod
+    def _language_for_email(*, invitee_email: str, inviter: User) -> Language:
+        """Determines the language for an invitation email.
+
+        The email is rendered in the invitee's language if they have an
+        account; otherwise it falls back to the inviter's language. An
+        unregistered invitee has no known preference, and the inviter knows
+        the recipient best.
+
+        Arguments:
+            invitee_email: Email address of the person being invited.
+            inviter: User who issues the invitation.
+
+        Returns:
+            The language to render the email in.
+        """
+        if (invitee := UserService.find_user_for_email(email=invitee_email)) is not None:
+            return invitee.get_language()
+        return inviter.get_language()
 
     @staticmethod
     def accept_invitation(*, code: str, user: User) -> WishlistInvitation:

@@ -98,6 +98,9 @@ msgstr "vor einer Stunde"
 msgid "{} ago"
 msgstr "vor {}"
 
+msgid "Invitation to a wish list"
+msgstr "Einladung zu einem Wunschzettel"
+
 msgid "Wish added"
 msgstr "Wunsch hinzugefügt"
 
@@ -147,6 +150,29 @@ msgstr "Bist du sicher, daß du dich abmelden möchtest?"
 
 msgid "Sign out"
 msgstr "Abmelden"
+
+#, python-format
+msgid ""
+"<h1>%(inviter_name)s has invited you to the wish list "
+"<strong>'%(wishlist_name)s'</strong>.</h1>"
+msgstr ""
+"<h1>%(inviter_name)s hat dich zum Wunschzettel "
+"<strong>'%(wishlist_name)s'</strong> eingeladen.</h1>"
+
+msgid "Open the following link to accept the invitation:"
+msgstr "Öffne den folgenden Link, um die Einladung anzunehmen:"
+
+#, python-format
+msgid "The invitation was sent by %(inviter_name)s."
+msgstr "Die Einladung wurde von %(inviter_name)s gesendet."
+
+msgid "Please do not reply."
+msgstr "Bitte nicht antworten."
+
+#, python-format
+msgid "%(inviter_name)s has invited you to the wish list '%(wishlist_name)s'."
+msgstr ""
+"%(inviter_name)s hat dich zum Wunschzettel '%(wishlist_name)s' eingeladen."
 
 msgid "Home"
 msgstr "Startseite"
@@ -620,9 +646,6 @@ msgstr ""
 "<h1>Ein neuer Wunsch wurde zum Wunschzettel "
 "<strong>'%(wishlist_name)s'</strong> hinzugefügt.</h1>"
 
-msgid "Please do not reply."
-msgstr "Bitte nicht antworten."
-
 #, python-format
 msgid "A new wish has been added to the wish list '%(wishlist_name)s'."
 msgstr ""
@@ -779,6 +802,37 @@ msgstr "Wunschzettel bearbeiten"
 msgid "Your updated wish list has been successfully saved."
 msgstr "Dein aktualisierter Wunschzettel wurden erfolgreich gespeichert."
 
+#, python-format
+msgid "... to share the wish list named <strong>%(list_name)s</strong>?"
+msgstr "... den Wunschzettel <strong>%(list_name)s</strong> zu teilen?"
+
+msgid ""
+"The person will receive an email with a link to the wish list. The "
+"invitation expires after ten days."
+msgstr ""
+"Die Person erhält eine E-Mail mit einem Link zum Wunschzettel. Die Einladung"
+" läuft nach zehn Tagen ab."
+
+msgid "Enter email"
+msgstr "E-Mail-Adresse eingeben"
+
+msgid "Share your List"
+msgstr "Deinen Wunschzettel teilen"
+
+msgid "Share List"
+msgstr "Wunschzettel teilen"
+
+msgid "An invitation for sharing your wish list has been successfully sent."
+msgstr ""
+"Eine Einladung zum Teilen deines Wunschzettels wurde erfolgreich gesendet."
+
+msgid ""
+"Private wish lists cannot be shared. Please change the visibility of the "
+"list before you share it."
+msgstr ""
+"Private Wunschzettel können nicht geteilt werden. Bitte ändere zuerst die "
+"Sichtbarkeit des Wunschzettels."
+
 msgid "Your Lists"
 msgstr "Deine Wunschzettel"
 
@@ -789,6 +843,9 @@ msgid ""
 msgstr ""
 "Du hast noch keinen Wunschzettel. Beginne jetzt dein Wünsche auf einem <a "
 "href=\"%(url)s\">neuen Wunschzettel</a> zu sammeln."
+
+msgid "Share list"
+msgstr "Wunschzettel teilen"
 
 msgid "Edit items"
 msgstr "Wünsche bearbeiten"
