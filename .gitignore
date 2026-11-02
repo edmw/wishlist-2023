@@ -4,13 +4,14 @@ webapp-frontend/node_modules
 
 # general
 .cache
+TODO.md
 
 # agents
 .agents
 AGENTS.md
 CONTEXT.md
 PLAN.md
-.skills-lock.json
+skills-lock.json
 
 # python
 .python-version
