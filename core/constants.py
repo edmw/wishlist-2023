@@ -8,6 +8,7 @@ ITEM_ID_KEY: Final[str] = "item_id"
 FAVORITE_ID_KEY: Final[str] = "favorite_id"
 RESERVATION_ID_KEY: Final[str] = "reservation_id"
 MEMBERSHIP_ID_KEY: Final[str] = "membership_id"
+INVITATION_CODE_KEY: Final[str] = "invitation_code"
 
 VIEW_USER_PROFILE: Final[str] = "user-profile"
 VIEW_USER_PROFILE_UPDATE: Final[str] = "user-profile-update"
@@ -39,6 +40,7 @@ VIEW_FAVORITE_UPDATE: Final[str] = "favorite-update"
 VIEW_WISHLIST: Final[str] = "wishlist"
 VIEW_RESERVATION_CREATE: Final[str] = "reservation-create"
 VIEW_RESERVATION_UNDO: Final[str] = "reservation-undo"
+VIEW_INVITATION_ACCEPT: Final[str] = "invitation-accept"
 
 ONE_MINUTE_IN_SECONDS: Final[int] = 60
 TWO_MINUTES_IN_SECONDS: Final[int] = 2 * ONE_MINUTE_IN_SECONDS

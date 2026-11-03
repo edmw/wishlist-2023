@@ -12,6 +12,7 @@ from core.views import (
     FavoriteDeleteView,
     FavoritesView,
     FavoriteUpdateView,
+    InvitationAcceptView,
     ItemArchiveView,
     ItemCreateView,
     ItemDeleteView,
@@ -258,6 +259,11 @@ pages = (
 
 pages_public = [
     path("", StartView.as_view(), name="start"),
+    path(
+        f"invitations/<str:{constants.INVITATION_CODE_KEY}>/",
+        InvitationAcceptView.as_view(),
+        name=constants.VIEW_INVITATION_ACCEPT,
+    ),
     path("legal-notice", LegalNoticeView.as_view(), name="legal-notice"),
     path("privacy-policy", PrivacyPolicyView.as_view(), name="privacy-policy"),
 ]

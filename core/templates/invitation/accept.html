@@ -1,0 +1,21 @@
+{% extends "page.html" %}
+
+{% load i18n %}
+
+{% block header %}
+    {% with title="Invitation" %}{{ block.super }}{% endwith %}
+{% endblock header %}
+{% block content %}
+    <div class="content">
+        {% if outcome == "invalid" %}
+            <h2>{% translate "This invitation is not valid." %}</h2>
+            <p>{% translate "The invitation link you followed does not exist or has been removed. Please ask the person who invited you to send a new invitation." %}</p>
+        {% elif outcome == "expired" %}
+            <h2>{% translate "This invitation has expired." %}</h2>
+            <p>{% translate "The invitation link you followed is no longer valid. Please ask the person who invited you to send a new invitation." %}</p>
+        {% else %}
+            <h2>{% translate "This invitation has already been accepted." %}</h2>
+            <p>{% translate "The invitation link you followed was used before, so it cannot be accepted again. Please ask the person who invited you to send a new invitation if you need one." %}</p>
+        {% endif %}
+    </div>
+{% endblock content %}

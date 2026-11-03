@@ -209,6 +209,37 @@ msgstr "Profil"
 msgid "Sign in"
 msgstr "Anmelden"
 
+#, fuzzy
+#| msgid "The invitation expires after %(duration)s."
+msgid "This invitation is not valid."
+msgstr "Die Einladung ist gültig für %(duration)s."
+
+msgid ""
+"The invitation link you followed does not exist or has been removed. Please "
+"ask the person who invited you to send a new invitation."
+msgstr ""
+
+#, fuzzy
+#| msgid "The invitation expires after %(duration)s."
+msgid "This invitation has expired."
+msgstr "Die Einladung ist gültig für %(duration)s."
+
+msgid ""
+"The invitation link you followed is no longer valid. Please ask the person "
+"who invited you to send a new invitation."
+msgstr ""
+
+#, fuzzy
+#| msgid "This wish has already been reserved."
+msgid "This invitation has already been accepted."
+msgstr "Dieser Wunsch wurde bereits reserviert."
+
+msgid ""
+"The invitation link you followed was used before, so it cannot be accepted "
+"again. Please ask the person who invited you to send a new invitation if you"
+" need one."
+msgstr ""
+
 msgid "Close"
 msgstr "Schliessen"
 
@@ -345,6 +376,19 @@ msgstr "Zurück"
 
 msgid "Favorites"
 msgstr "Favoriten"
+
+msgid "Invitation"
+msgstr ""
+
+#, fuzzy
+#| msgid "The invitation was sent by %(inviter_name)s."
+msgid "The invitation has been accepted."
+msgstr "Die Einladung wurde von %(inviter_name)s gesendet."
+
+#, fuzzy
+#| msgid "Open the following link to accept the invitation:"
+msgid "Please sign in or create an account to accept the invitation."
+msgstr "Öffne den folgenden Link, um die Einladung anzunehmen:"
 
 #, python-format
 msgid ""

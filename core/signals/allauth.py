@@ -2,12 +2,20 @@ import logging
 from typing import Any, cast
 
 from allauth.account.signals import user_logged_in
+from allauth.core.exceptions import ImmediateHttpResponse
 from allauth.socialaccount.models import SocialLogin
 from allauth.socialaccount.signals import pre_social_login
 from django.dispatch import receiver
 from django.http import HttpRequest
+from django.shortcuts import redirect
 
 from core.models import Language, User
+from core.services import (
+    InvitationAlreadyAcceptedError,
+    InvitationExpiredError,
+    InvitationNotFoundError,
+    InvitationService,
+)
 from webapp.services import LanguageService, SignalLoggingService
 
 logger = logging.getLogger(__name__)
@@ -32,6 +40,41 @@ def allauth_user_logged_in_callback(sender: Any, **kwargs: Any) -> None:
         if user.language_soft != language:
             user.language_soft = language
             user.save(update_fields=[User.Fields.LANGUAGE_SOFT])
+
+
+@receiver(user_logged_in)
+def allauth_user_logged_in_accept_invitation_callback(sender: Any, **kwargs: Any) -> None:
+    """Accepts an invitation parked in the session and redirects to the list.
+
+    When an anonymous user follows an invitation link, `InvitationAcceptView`
+    parks the invitation code in their session and sends them to sign in or
+    sign up. This signal fires once authentication is complete — for logins of
+    existing users as well as for new sign-ups — so that the parked invitation
+    can be accepted automatically without the invitee having to present the
+    code again (see ADR-1000).
+
+    If no invitation is parked, or if it can no longer be accepted, this
+    handler does nothing and allauth's own redirect applies.
+    """
+    request = kwargs.get("request")
+    user = kwargs.get("user")
+    if not isinstance(request, HttpRequest) or not isinstance(user, User):
+        return
+
+    code = InvitationService.take_parked_invitation_code(request=request)
+    if not code:
+        return
+
+    try:
+        invitation = InvitationService.accept_invitation(code=code, user=user)
+    except (InvitationNotFoundError, InvitationExpiredError, InvitationAlreadyAcceptedError) as exc:
+        logger.info(
+            "Parked invitation could not be accepted after login (%s).",
+            type(exc).__name__,
+        )
+        return
+
+    raise ImmediateHttpResponse(response=redirect(invitation.wishlist.get_absolute_url()))
 
 
 @receiver(pre_social_login)

@@ -196,6 +196,31 @@ msgstr ""
 msgid "Sign in"
 msgstr ""
 
+msgid "This invitation is not valid."
+msgstr ""
+
+msgid ""
+"The invitation link you followed does not exist or has been removed. Please "
+"ask the person who invited you to send a new invitation."
+msgstr ""
+
+msgid "This invitation has expired."
+msgstr ""
+
+msgid ""
+"The invitation link you followed is no longer valid. Please ask the person "
+"who invited you to send a new invitation."
+msgstr ""
+
+msgid "This invitation has already been accepted."
+msgstr ""
+
+msgid ""
+"The invitation link you followed was used before, so it cannot be accepted "
+"again. Please ask the person who invited you to send a new invitation if you"
+" need one."
+msgstr ""
+
 msgid "Close"
 msgstr ""
 
@@ -319,6 +344,15 @@ msgid "Back"
 msgstr ""
 
 msgid "Favorites"
+msgstr ""
+
+msgid "Invitation"
+msgstr ""
+
+msgid "The invitation has been accepted."
+msgstr ""
+
+msgid "Please sign in or create an account to accept the invitation."
 msgstr ""
 
 #, python-format

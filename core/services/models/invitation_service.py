@@ -3,14 +3,17 @@
 import logging
 import secrets
 from datetime import timedelta
-from typing import Any
+from typing import Any, Final
 
 import humanize
 from django.conf import settings as django_settings
+from django.http import HttpRequest
 from django.template.loader import render_to_string
+from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import gettext as _
 
+from core import constants
 from core.models import User, Wishlist, WishlistInvitation
 from core.models.types import InvitationCode, InvitationEmail, Language, Visibility
 from core.services.adapter.email_service import EmailService
@@ -18,6 +21,10 @@ from core.services.models.user_service import UserService
 from webapp.services import LanguageService
 
 logger = logging.getLogger(__name__)
+
+# Session key under which the code of an invitation is parked while its
+# invitee is not authenticated yet (see `park_invitation`).
+INVITATION_CODE_SESSION_KEY: Final[str] = "invitation_code"
 
 
 class InvitationServiceError(Exception):
@@ -218,10 +225,8 @@ class InvitationService:
             InvitationAlreadyAcceptedError: If the invitation was already
                 accepted.
         """
-        try:
-            invitation = WishlistInvitation.objects.get(code_field=code)
-        except WishlistInvitation.DoesNotExist as exc:
-            raise InvitationNotFoundError() from exc
+        if (invitation := InvitationService.get_invitation_by_code(code=code)) is None:
+            raise InvitationNotFoundError()
 
         if invitation.expired:
             raise InvitationExpiredError()
@@ -239,6 +244,75 @@ class InvitationService:
         return invitation
 
     @staticmethod
+    def get_invitation_by_code(*, code: str) -> WishlistInvitation | None:
+        """Returns the invitation with the specified code.
+
+        Arguments:
+            code: The invitation code to look up.
+
+        Returns:
+            The matching invitation, or `None` if no such invitation exists.
+        """
+        try:
+            return WishlistInvitation.objects.get(code_field=code)
+        except WishlistInvitation.DoesNotExist:
+            return None
+
+    @staticmethod
+    def park_invitation(*, request: HttpRequest, invitation: WishlistInvitation) -> None:
+        """Parks the code of the specified invitation in the session.
+
+        The code is parked when an anonymous user follows an invitation link;
+        it is picked up again once the user has logged in or signed up so that
+        the invitation can be accepted automatically (see ADR-1000).
+
+        Arguments:
+            request: The current request whose session is used for parking.
+            invitation: Invitation to park. Its code must have been validated
+                before parking.
+        """
+        request.session[INVITATION_CODE_SESSION_KEY] = str(invitation.code)
+
+    @staticmethod
+    def get_parked_invitation(*, request: HttpRequest) -> WishlistInvitation | None:
+        """Returns the invitation parked in the session if it is still valid.
+
+        The parked invitation is considered valid only while it exists and has
+        neither expired nor been accepted already. This check gates sign-up:
+        new accounts can be created only on the basis of a valid invitation.
+
+        Arguments:
+            request: The current request whose session is inspected.
+
+        Returns:
+            The parked invitation if existing and still valid, `None` otherwise.
+        """
+        code = request.session.get(INVITATION_CODE_SESSION_KEY)
+        if not code:
+            return None
+        invitation = InvitationService.get_invitation_by_code(code=str(code))
+        if invitation is None or invitation.expired or invitation.accepted:
+            return None
+        return invitation
+
+    @staticmethod
+    def take_parked_invitation_code(*, request: HttpRequest) -> str | None:
+        """Removes the parked invitation code from the session and returns it.
+
+        The code is consumed on purpose: once a login or sign-up has taken
+        place with a parked code, the invitation must not be accepted again on
+        a later login.
+
+        Arguments:
+            request: The current request whose session is inspected.
+
+        Returns:
+            The parked invitation code if present, `None` otherwise.
+        """
+        code = request.session.pop(INVITATION_CODE_SESSION_KEY, None)
+        return str(code) if code is not None else None
+
+    @staticmethod
     def build_invitation_url(*, code: InvitationCode) -> str:
         """Builds the absolute URL for accepting an invitation.
 
@@ -252,6 +326,8 @@ class InvitationService:
         Returns:
             Absolute URL for accepting the invitation.
         """
-        # NOTE: The path must match the route of the public accept view (see
-        # PLAN.md, Phase 4). Once that view exists, switch this to reverse().
-        return f"{django_settings.WEBAPP_LOCATION}/invitations/{code}/"
+        path = reverse(
+            constants.VIEW_INVITATION_ACCEPT,
+            kwargs={constants.INVITATION_CODE_KEY: str(code)},
+        )
+        return f"{django_settings.WEBAPP_LOCATION}{path}"

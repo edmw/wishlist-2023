@@ -17,6 +17,8 @@
         <li>
             <form action="{% provider_login_url 'google' %}" method="post">
                 {% csrf_token %}
+                {# Carry the "next" target (e.g. an invitation's wish list) through the OAuth round-trip. #}
+                <input type="hidden" name="next" value="{{ request.GET.next }}">
                 <button id="google-signin" class="btn btn-light px-4 mb-4" type="submit">{% translate "Sign in using Google" %}</button>
             </form>
         </li>
