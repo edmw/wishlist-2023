@@ -3,11 +3,10 @@
 import logging
 import secrets
 from datetime import timedelta
-from typing import Any, Final
+from typing import Any
 
 import humanize
 from django.conf import settings as django_settings
-from django.http import HttpRequest
 from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils import timezone
@@ -21,10 +20,6 @@ from core.services.models.user_service import UserService
 from webapp.services import LanguageService
 
 logger = logging.getLogger(__name__)
-
-# Session key under which the code of an invitation is parked while its
-# invitee is not authenticated yet (see `park_invitation`).
-INVITATION_CODE_SESSION_KEY: Final[str] = "invitation_code"
 
 
 class InvitationServiceError(Exception):
@@ -259,58 +254,27 @@ class InvitationService:
             return None
 
     @staticmethod
-    def park_invitation(*, request: HttpRequest, invitation: WishlistInvitation) -> None:
-        """Parks the code of the specified invitation in the session.
+    def is_signup_open(*, code: str | None) -> bool:
+        """Returns true if sign-up may proceed on the basis of the given
+        invitation code.
 
-        The code is parked when an anonymous user follows an invitation link;
-        it is picked up again once the user has logged in or signed up so that
-        the invitation can be accepted automatically (see ADR-1000).
-
-        Arguments:
-            request: The current request whose session is used for parking.
-            invitation: Invitation to park. Its code must have been validated
-                before parking.
-        """
-        request.session[INVITATION_CODE_SESSION_KEY] = str(invitation.code)
-
-    @staticmethod
-    def get_parked_invitation(*, request: HttpRequest) -> WishlistInvitation | None:
-        """Returns the invitation parked in the session if it is still valid.
-
-        The parked invitation is considered valid only while it exists and has
-        neither expired nor been accepted already. This check gates sign-up:
-        new accounts can be created only on the basis of a valid invitation.
+        Sign-up stays closed during the beta period (see ADR-1000): a new
+        account can be created only on the basis of an invitation that exists
+        and has neither expired nor been accepted already.
 
         Arguments:
-            request: The current request whose session is inspected.
+            code: The invitation code to check, or `None` if no invitation is
+                available.
 
         Returns:
-            The parked invitation if existing and still valid, `None` otherwise.
+            True if sign-up may proceed with this code, False otherwise.
         """
-        code = request.session.get(INVITATION_CODE_SESSION_KEY)
         if not code:
-            return None
-        invitation = InvitationService.get_invitation_by_code(code=str(code))
+            return False
+        invitation = InvitationService.get_invitation_by_code(code=code)
         if invitation is None or invitation.expired or invitation.accepted:
-            return None
-        return invitation
-
-    @staticmethod
-    def take_parked_invitation_code(*, request: HttpRequest) -> str | None:
-        """Removes the parked invitation code from the session and returns it.
-
-        The code is consumed on purpose: once a login or sign-up has taken
-        place with a parked code, the invitation must not be accepted again on
-        a later login.
-
-        Arguments:
-            request: The current request whose session is inspected.
-
-        Returns:
-            The parked invitation code if present, `None` otherwise.
-        """
-        code = request.session.pop(INVITATION_CODE_SESSION_KEY, None)
-        return str(code) if code is not None else None
+            return False
+        return True
 
     @staticmethod
     def build_invitation_url(*, code: InvitationCode) -> str:

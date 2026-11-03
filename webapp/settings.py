@@ -386,6 +386,12 @@ if not ENVIRONMENT_IS_BUILDING:
 
 SOCIALACCOUNT_AUTO_SIGNUP = CoreConfig.access == CoreAccess.PUBLIC
 
+# Pluggable authentication policies: dotted paths to callables provided by an
+# installed app. Unset means the generic default behavior applies (sign-up
+# open, no special error response).
+SIGNUP_POLICY = "core.adapters.allauth.signup_open"
+AUTHENTICATION_ERROR_RESPONSE = "core.adapters.allauth.authentication_error_response"
+
 # endregion AUTH
 
 # region STATIC

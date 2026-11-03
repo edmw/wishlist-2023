@@ -76,7 +76,7 @@ class InvitationAcceptView(UserMixin, AddNeverCacheMixin, TemplateView):
 
         # The user is not authenticated yet; park the code in the session so
         # that it can be accepted automatically after login or sign-up.
-        InvitationService.park_invitation(request=request, invitation=invitation)
+        request.session[constants.INVITATION_CODE_SESSION_KEY] = str(invitation.code)
         messages.info(request, _("Please sign in or create an account to accept the invitation."))
         next_url = urlencode({"next": invitation.wishlist.get_absolute_url()})
         return redirect(f"{reverse('account_login')}?{next_url}")

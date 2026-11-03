@@ -68,7 +68,7 @@ class CoreConfig(AppConfig):
         """Returns a redirect response to the start page if an authentication
         error occurred. Adds an error message to the response.
 
-        NOTE: This function is utilized by `webapp.authenticator`.
+        NOTE: This function is utilized by `core.adapters.allauth`.
         """
         request_id = getattr(request, "request_id", None)
         messages.error(

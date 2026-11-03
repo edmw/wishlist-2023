@@ -9,6 +9,7 @@ FAVORITE_ID_KEY: Final[str] = "favorite_id"
 RESERVATION_ID_KEY: Final[str] = "reservation_id"
 MEMBERSHIP_ID_KEY: Final[str] = "membership_id"
 INVITATION_CODE_KEY: Final[str] = "invitation_code"
+INVITATION_CODE_SESSION_KEY: Final[str] = "invitation_code"
 
 VIEW_USER_PROFILE: Final[str] = "user-profile"
 VIEW_USER_PROFILE_UPDATE: Final[str] = "user-profile-update"

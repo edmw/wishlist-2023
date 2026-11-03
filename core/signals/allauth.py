@@ -9,6 +9,7 @@ from django.dispatch import receiver
 from django.http import HttpRequest
 from django.shortcuts import redirect
 
+from core import constants
 from core.models import Language, User
 from core.services import (
     InvitationAlreadyAcceptedError,
@@ -61,7 +62,7 @@ def allauth_user_logged_in_accept_invitation_callback(sender: Any, **kwargs: Any
     if not isinstance(request, HttpRequest) or not isinstance(user, User):
         return
 
-    code = InvitationService.take_parked_invitation_code(request=request)
+    code = request.session.pop(constants.INVITATION_CODE_SESSION_KEY, None)
     if not code:
         return
 

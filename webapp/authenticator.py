@@ -1,4 +1,4 @@
-"""The webapp’s user authenticator."""
+"""The webapp’s generic user authenticator."""
 
 import logging
 
@@ -6,35 +6,45 @@ from allauth.account.adapter import DefaultAccountAdapter
 from allauth.core.exceptions import ImmediateHttpResponse
 from allauth.socialaccount.adapter import DefaultSocialAccountAdapter
 from allauth.socialaccount.models import SocialLogin
+from django.conf import settings as django_settings
 from django.http import HttpRequest
+from django.utils.module_loading import import_string
 
-from core.apps import CoreConfig
-from core.services import InvitationService
 from webapp.services import AuthLoggingService
 
 logger = logging.getLogger(__name__)
 
 
+def _is_open_for_signup(*, request: HttpRequest) -> bool:
+    """Returns true if sign-up is currently open.
+
+    The decision is delegated to the policy configured in `SIGNUP_POLICY` (a
+    dotted path to a callable taking the current request). If no policy is
+    configured, sign-up stays open.
+    """
+    if (policy := getattr(django_settings, "SIGNUP_POLICY", None)) is None:
+        return True
+    return import_string(policy)(request=request)
+
+
 class WebappAccountAdapter(DefaultAccountAdapter):
-    """Account adapter for use with django-allauth."""
+    """Generic account adapter for use with django-allauth."""
 
     def is_open_for_signup(self, request: HttpRequest) -> bool:
-        """Returns true only if a valid invitation to a wish list is parked in
-        the session. Otherwise sign-up stays closed (closed beta)."""
-        return InvitationService.get_parked_invitation(request=request) is not None
+        """Returns true if sign-up is currently open (see `_is_open_for_signup`)."""
+        return _is_open_for_signup(request=request)
 
 
 class WebappSocialAccountAdapter(DefaultSocialAccountAdapter):
-    """Social account adapter for use with django-allauth."""
+    """Generic social account adapter for use with django-allauth."""
 
     def is_open_for_signup(self, request: HttpRequest, sociallogin: SocialLogin) -> bool:
-        """Returns true only if a valid invitation to a wish list is parked in
-        the session. Otherwise sign-up stays closed (closed beta).
+        """Returns true if sign-up is currently open (see `_is_open_for_signup`).
 
         Overwrites `is_open_for_signup` from Account Adapter; without this
         override, sign-ups via social accounts would bypass the check above.
         """
-        return InvitationService.get_parked_invitation(request=request) is not None
+        return _is_open_for_signup(request=request)
 
     def authentication_error(
         self,
@@ -44,8 +54,13 @@ class WebappSocialAccountAdapter(DefaultSocialAccountAdapter):
         exception: Exception | None,
         extra_context: dict | None,
     ) -> None:
-        """Adds detailed logging for failed authentication requests and
-        returns a appropriate response if applicable.
+        """Adds detailed logging for failed authentication requests and returns
+        an appropriate response if applicable.
+
+        The response is provided by the handler configured in
+        `AUTHENTICATION_ERROR_RESPONSE` (a dotted path to a callable taking the
+        current request). If no handler is configured, or if it does not return
+        a response, allauth’s default behavior applies.
         """
         AuthLoggingService.login_fail(
             "Social account authentication error!",
@@ -56,5 +71,7 @@ class WebappSocialAccountAdapter(DefaultSocialAccountAdapter):
             exception=exception,
             context=extra_context,
         )
-        if response := CoreConfig.authentiction_error_response(request=request):
+        if (handler := getattr(django_settings, "AUTHENTICATION_ERROR_RESPONSE", None)) is None:
+            return
+        if response := import_string(handler)(request=request):
             raise ImmediateHttpResponse(response=response)
