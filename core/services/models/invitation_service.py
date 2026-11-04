@@ -14,9 +14,8 @@ from django.utils.translation import gettext as _
 from core import constants
 from core.models import User, Wishlist, WishlistInvitation
 from core.models.types import InvitationCode, InvitationEmail, Language, Visibility
-from core.services.adapter.email_service import EmailService
 from core.services.models.user_service import UserService
-from webapp.services import LanguageService
+from webapp.services import EmailTransportService, LanguageService
 
 logger = logging.getLogger(__name__)
 
@@ -147,7 +146,7 @@ class InvitationService:
                 context=context,
             )
 
-        EmailService.send_to_address(
+        EmailTransportService.send_to_address(
             address=str(invitee_email),
             subject=subject,
             message=message,
