@@ -8,12 +8,13 @@ from django.db import models
 from core.models import types
 from core.models.invitation import Invitation
 from core.models.invitation_expirable import ExpiresAfterFixedTime
+from core.models.invitation_urls import InvitationURLsMixin
 from core.models.wishlist import Wishlist
 
 logger = logging.getLogger(__name__)
 
 
-class WishlistInvitation(ExpiresAfterFixedTime, Invitation):
+class WishlistInvitation(ExpiresAfterFixedTime, Invitation, InvitationURLsMixin):
     """Model used to represent an invitation to a wishlist persisted in database.
 
     Accepting the invitation does not grant any additional access: invitations

@@ -8,10 +8,8 @@ from typing import Any
 import humanize
 from django.conf import settings as django_settings
 from django.template.loader import render_to_string
-from django.urls import reverse
 from django.utils.translation import gettext as _
 
-from core import constants
 from core.models import User, Wishlist, WishlistInvitation
 from core.models.types import InvitationCode, InvitationEmail, Language, Visibility
 from core.services.models.user_service import UserService
@@ -125,7 +123,7 @@ class InvitationService:
             "invitation": invitation,
             "inviter_name": inviter_name,
             "wishlist_name": str(invitation.wishlist.name),
-            "invitation_url": InvitationService.build_invitation_url(code=invitation.code),
+            "invitation_url": invitation.get_absolute_accept_url(),
         }
 
         with LanguageService.activated(
@@ -273,23 +271,3 @@ class InvitationService:
         if invitation is None or invitation.expired or invitation.accepted:
             return False
         return True
-
-    @staticmethod
-    def build_invitation_url(*, code: InvitationCode) -> str:
-        """Builds the absolute URL for accepting an invitation.
-
-        The invitation link contains the invitation code so that the
-        invitation is automatically marked as accepted after its first use
-        (see ADR-1000).
-
-        Arguments:
-            code: The invitation code to include in the url.
-
-        Returns:
-            Absolute URL for accepting the invitation.
-        """
-        path = reverse(
-            constants.VIEW_INVITATION_ACCEPT,
-            kwargs={constants.INVITATION_CODE_KEY: str(code)},
-        )
-        return f"{django_settings.WEBAPP_LOCATION}{path}"
