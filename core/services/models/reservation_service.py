@@ -1,8 +1,7 @@
 """Reservation services."""
 
 import logging
-
-from django.utils import timezone
+from datetime import UTC, datetime
 
 from core.models import Reservation, ReservationID
 from core.models.reservation_lens import ReservationLens
@@ -55,7 +54,7 @@ class ReservationService:
         """
         if not reservation.completed:
             reservation.completed = True
-            reservation.completed_at = timezone.now()
+            reservation.completed_at = datetime.now(UTC)
             if save:
                 reservation.save(
                     update_fields=[

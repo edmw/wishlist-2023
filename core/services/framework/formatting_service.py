@@ -1,9 +1,8 @@
 import logging
-from datetime import datetime
+from datetime import UTC, datetime
 
 import humanize
 from django.conf import settings as django_settings
-from django.utils import timezone
 from django.utils.translation import gettext as _
 
 from core.constants import (
@@ -43,8 +42,9 @@ class FormattingService:
 
     @staticmethod
     def natural_datetime(*, value: datetime, language_code: str) -> str:
-        datetime_local = timezone.localtime(value)
-        datetime_delta = timezone.localtime(timezone.now()) - datetime_local
+        # `value` is always timezone-aware (model fields with USE_TZ=True), so the
+        # difference to now yields the true elapsed time without any conversion.
+        datetime_delta = datetime.now(UTC) - value
         datetime_delta_seconds = datetime_delta.total_seconds()
 
         if _was_just_now(datetime_delta_seconds):

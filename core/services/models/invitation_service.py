@@ -2,14 +2,13 @@
 
 import logging
 import secrets
-from datetime import timedelta
+from datetime import UTC, datetime, timedelta
 from typing import Any
 
 import humanize
 from django.conf import settings as django_settings
 from django.template.loader import render_to_string
 from django.urls import reverse
-from django.utils import timezone
 from django.utils.translation import gettext as _
 
 from core import constants
@@ -156,7 +155,7 @@ class InvitationService:
         )
 
         invitation.sent = True
-        invitation.sent_at = timezone.now()
+        invitation.sent_at = datetime.now(UTC)
         invitation.save(update_fields=[WishlistInvitation.Fields.SENT, WishlistInvitation.Fields.SENT_AT])
 
     @staticmethod
@@ -230,7 +229,7 @@ class InvitationService:
             raise InvitationAlreadyAcceptedError()
 
         invitation.accepted = True
-        invitation.accepted_at = timezone.now()
+        invitation.accepted_at = datetime.now(UTC)
         invitation.save(
             update_fields=[WishlistInvitation.Fields.ACCEPTED, WishlistInvitation.Fields.ACCEPTED_AT]
         )

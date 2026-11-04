@@ -1,8 +1,7 @@
 """Wish services."""
 
 import logging
-
-from django.utils import timezone
+from datetime import UTC, datetime
 
 from core.models import Wish, WishID, WishLens
 
@@ -55,7 +54,7 @@ class WishService:
         """
         if wish.archivable:
             wish.archived = True
-            wish.archived_at = timezone.now()
+            wish.archived_at = datetime.now(UTC)
             if save:
                 wish.save(update_fields=[Wish.Fields.ARCHIVED, Wish.Fields.ARCHIVED_AT])
         else:
