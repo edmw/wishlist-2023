@@ -1,4 +1,4 @@
-{% load i18n %}{% blocktranslate with inviter_name=inviter_name wishlist_name=wishlist_name %}<h1>{{ inviter_name }} has invited you to the wish list <strong>'{{ wishlist_name }}'</strong>.</h1>{% endblocktranslate %}
+{% load core i18n %}{% blocktranslate with inviter_name=inviter_name wishlist_name=wishlist_name %}<h1>{{ inviter_name }} has invited you to the wish list <strong>'{{ wishlist_name }}'</strong>.</h1>{% endblocktranslate %}
 
 <hr/>
 <p>
@@ -6,7 +6,7 @@
     <a href="{{ invitation_url }}">{{ invitation_url }}</a>
 </p>
 <p>{% blocktranslate with inviter_name=inviter_name %}The invitation was sent by {{ inviter_name }}.{% endblocktranslate %}</p>
-<p>{% blocktranslate with duration=expires_after %}The invitation expires after {{ duration }}.{% endblocktranslate %}</p>
+<p>{% blocktranslate with duration=expires_after|natural_duration %}The invitation expires after {{ duration }}.{% endblocktranslate %}</p>
 
 <hr/>
 <p>{% translate "Please do not reply." %}</p>

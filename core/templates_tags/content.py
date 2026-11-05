@@ -1,8 +1,9 @@
 """The Core’s template tags for rendering content."""
 
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Any
 
+import humanize
 from django import template
 from django.template import defaulttags
 from django.templatetags.static import static
@@ -138,6 +139,23 @@ def datetime_natural(value: datetime, arg: str | None = None) -> str:
 
     language_code = LanguageService.get_language_code()
     return FormattingService.natural_datetime(value=value, language_code=language_code)
+
+
+@register.filter
+def natural_duration(value: int) -> str:
+    """Renders a duration in seconds as a humanized string.
+
+    The string is rendered in the active language, so that it matches the
+    surrounding text when templates are rendered under an activated language
+    (see `LanguageService`).
+    """
+    if value in (None, ""):
+        return ""
+
+    # This is a sanity check while developing which can be safely removed in production.
+    assert isinstance(value, int)  # nosec
+
+    return humanize.naturaldelta(timedelta(seconds=value))
 
 
 #  ####  ######   #######  ##    ##  ######

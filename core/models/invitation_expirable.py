@@ -36,3 +36,16 @@ class ExpiresAfterFixedTime:
 
         # Is not expired if the invitation has not yet been sent.
         return False
+
+    @classmethod
+    def expires_after_seconds(cls) -> int:
+        """Returns the configured expiration duration in seconds.
+
+        The duration is read from the settings key referenced by this
+        invitation type, so that the value always matches the actual
+        expiration rule.
+
+        Returns:
+            Expiration duration in seconds.
+        """
+        return getattr(django_settings, cls.EXPIRES_AFTER_SETTINGS_KEY)

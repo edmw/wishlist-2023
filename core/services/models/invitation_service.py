@@ -2,18 +2,15 @@
 
 import logging
 import secrets
-from datetime import UTC, datetime, timedelta
+from datetime import UTC, datetime
 from typing import Any
 
-import humanize
-from django.conf import settings as django_settings
-from django.template.loader import render_to_string
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext_noop
 
 from core.models import User, Wishlist, WishlistInvitation
 from core.models.types import InvitationCode, InvitationEmail, Language, Visibility
+from core.services.framework.notification_service import NotificationService
 from core.services.models.user_service import UserService
-from webapp.services import EmailTransportService, LanguageService
 
 logger = logging.getLogger(__name__)
 
@@ -124,51 +121,25 @@ class InvitationService:
             "inviter_name": inviter_name,
             "wishlist_name": str(invitation.wishlist.name),
             "invitation_url": invitation.get_absolute_accept_url(),
+            # The expiry duration is passed in seconds and humanized by the
+            # template filter in the email's active language.
+            "expires_after": WishlistInvitation.expires_after_seconds(),
         }
 
-        with LanguageService.activated(
+        NotificationService.send_email(
+            address=str(invitee_email),
+            subject=gettext_noop("Invitation to a wish list"),
+            template_name="email/invitation_wishlist.txt",
+            html_template_name="email/invitation_wishlist.html",
             language_code=InvitationService._language_for_email(
                 invitee_email=str(invitee_email), inviter=inviter
-            ).get_code()
-        ):
-            # Render the expiry duration in the email's active language so that
-            # it matches the rest of the message.
-            context["expires_after"] = InvitationService.expires_after_duration()
-            subject = _("Invitation to a wish list")
-            message = render_to_string(
-                template_name="email/invitation_wishlist.txt",
-                context=context,
-            )
-            html_message = render_to_string(
-                template_name="email/invitation_wishlist.html",
-                context=context,
-            )
-
-        EmailTransportService.send_to_address(
-            address=str(invitee_email),
-            subject=subject,
-            message=message,
-            html_message=html_message,
+            ).get_code(),
+            context=context,
         )
 
         invitation.sent = True
         invitation.sent_at = datetime.now(UTC)
         invitation.save(update_fields=[WishlistInvitation.Fields.SENT, WishlistInvitation.Fields.SENT_AT])
-
-    @staticmethod
-    def expires_after_duration() -> str:
-        """Returns the configured invitation expiry duration as a humanized
-        string in the active language (e.g. "10 days").
-
-        The duration is read from the settings key referenced by the
-        `WishlistInvitation` model, so that the displayed value always matches
-        the actual expiration rule.
-
-        Returns:
-            Humanized representation of the expiry duration.
-        """
-        expires_after = getattr(django_settings, WishlistInvitation.EXPIRES_AFTER_SETTINGS_KEY)
-        return humanize.naturaldelta(timedelta(seconds=expires_after))
 
     @staticmethod
     def _language_for_email(*, invitee_email: str, inviter: User) -> Language:

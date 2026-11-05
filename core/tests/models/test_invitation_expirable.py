@@ -44,3 +44,8 @@ def test_expired_missing_setting() -> None:
     )
     with pytest.raises(AttributeError):
         assert invitation.expired is True
+
+
+def test_expires_after_seconds(settings: Any) -> None:
+    settings.EXPIRES_TIMEOUT = 60
+    assert InvitationMock.expires_after_seconds() == 60

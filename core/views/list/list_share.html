@@ -16,6 +16,6 @@
 
 {% block note %}
     <p class="text-muted mt-4 mb-0">
-        {% blocktranslate with duration=expires_after %}The person will receive an email with a link to the wish list. The invitation expires after {{ duration }}.{% endblocktranslate %}
+        {% blocktranslate with duration=expires_after|natural_duration %}The person will receive an email with a link to the wish list. The invitation expires after {{ duration }}.{% endblocktranslate %}
     </p>
 {% endblock note %}

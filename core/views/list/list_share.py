@@ -9,7 +9,7 @@ from django.http.response import HttpResponseRedirect
 from django.utils.translation import gettext as _
 from django.utils.translation import gettext_noop
 
-from core.models import Wishlist, WishlistLens
+from core.models import Wishlist, WishlistInvitation, WishlistLens
 from core.services import InvitationPrivateWishlistError, InvitationService
 from core.views._base import LoginRequiredMixin, UpdateView, WishlistModelMixin
 from core.views._forms import (
@@ -71,9 +71,10 @@ class ListShareView(
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
-        # The expiry duration is humanized in the active language so that it
-        # matches what the invitee will see in the invitation email.
-        context["expires_after"] = InvitationService.expires_after_duration()
+        # The expiry duration is passed in seconds and humanized by the template
+        # filter in the active language, so that it matches what the invitee
+        # will see in the invitation email.
+        context["expires_after"] = WishlistInvitation.expires_after_seconds()
         return context
 
     def form_valid(self, form: ModelForm) -> HttpResponse:

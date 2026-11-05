@@ -2,7 +2,8 @@ import pytest
 from django.template import Context
 from django.test.client import RequestFactory
 
-from core.templates_tags.content import link_to_previous, progress_meter
+from core.templates_tags.content import link_to_previous, natural_duration, progress_meter
+from webapp.services import LanguageService
 
 
 def test_link_to_previous() -> None:
@@ -26,6 +27,15 @@ def test_link_to_previous_invalid_p() -> None:
     assert link_to_previous(Context({"request": request1}), "link") == ""
     request2 = RequestFactory().get("/?p=//example.com")
     assert link_to_previous(Context({"request": request2}), "link") == ""
+
+
+def test_natural_duration_english() -> None:
+    assert natural_duration(10 * 24 * 3600) == "10 days"
+
+
+def test_natural_duration_german() -> None:
+    with LanguageService.activated(language_code="de"):
+        assert natural_duration(10 * 24 * 3600) == "10 Tage"
 
 
 def test_progress_meter() -> None:
