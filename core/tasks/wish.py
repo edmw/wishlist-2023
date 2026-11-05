@@ -2,7 +2,7 @@ from celery import Task, shared_task
 from celery.exceptions import MaxRetriesExceededError
 from celery.utils.log import get_task_logger
 from django.conf import settings as django_settings
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext_noop
 
 from core.models import FavoriteLens, WishID
 from core.services import (
@@ -11,9 +11,10 @@ from core.services import (
     ImageServiceRetrieveTimeoutError,
     ImageServiceUnidentifiedImageError,
     NotificationService,
+    TemplatedNotification,
     WishService,
 )
-from webapp.services import LanguageService, TaskLoggingService
+from webapp.services import TaskLoggingService
 
 logger = get_task_logger(__name__)
 
@@ -38,18 +39,19 @@ def notify_on_create(self: Task, wish_id: WishID) -> bool:
     for favorite in FavoriteLens.view().by_wishlist(wishlist=wishlist).for_iterating().qs():
         if favorite.notify_on_item_create:
             user = favorite.user
-            with LanguageService.activated(language_code=user.get_language().get_code()):
-                NotificationService.send(
-                    user=user,
-                    subject=_("Wish added"),
+            NotificationService.send(
+                user=user,
+                notification=TemplatedNotification(
+                    subject=gettext_noop("Wish added"),
                     template_name="item/notifications/create.txt",
                     html_template_name="item/notifications/create.html",
                     simple_html_template_name="item/notifications/create_simple.html",
-                    context={
-                        "wish_name": wish.name,
-                        "wishlist_name": wishlist.name,
-                    },
-                )
+                ),
+                context={
+                    "wish_name": wish.name,
+                    "wishlist_name": wishlist.name,
+                },
+            )
 
     TaskLoggingService.task_end("Sending Notification for created Wish <%s>", wish_id, logger=logger)
 
@@ -76,19 +78,20 @@ def notify_on_reservation_create(self: Task, wish_id: WishID) -> bool:
     wishlist = wish.wishlist
     owner = wishlist.owner
 
-    with LanguageService.activated(language_code=owner.get_language().get_code()):
-        NotificationService.send(
-            user=owner,
-            subject=_("Wish reserved"),
+    NotificationService.send(
+        user=owner,
+        notification=TemplatedNotification(
+            subject=gettext_noop("Wish reserved"),
             template_name="reservation/notifications/create.txt",
             html_template_name="reservation/notifications/create.html",
             simple_html_template_name="reservation/notifications/create_simple.html",
-            context={
-                "wish_name": wish.name,
-                "wishlist_name": wishlist.name,
-                "wishlist_masked": wishlist.mask_reservations,
-            },
-        )
+        ),
+        context={
+            "wish_name": wish.name,
+            "wishlist_name": wishlist.name,
+            "wishlist_masked": wishlist.mask_reservations,
+        },
+    )
 
     TaskLoggingService.task_end(
         "Sending Notification for created Reservation on Wish <%s>", wish_id, logger=logger
@@ -117,19 +120,20 @@ def notify_on_reservation_delete(self: Task, wish_id: WishID) -> bool:
     wishlist = wish.wishlist
     owner = wishlist.owner
 
-    with LanguageService.activated(language_code=owner.get_language().get_code()):
-        NotificationService.send(
-            user=owner,
-            subject=_("Wish released"),
+    NotificationService.send(
+        user=owner,
+        notification=TemplatedNotification(
+            subject=gettext_noop("Wish released"),
             template_name="reservation/notifications/delete.txt",
             html_template_name="reservation/notifications/delete.html",
             simple_html_template_name="reservation/notifications/delete_simple.html",
-            context={
-                "wish_name": wish.name,
-                "wishlist_name": wishlist.name,
-                "wishlist_masked": wishlist.mask_reservations,
-            },
-        )
+        ),
+        context={
+            "wish_name": wish.name,
+            "wishlist_name": wishlist.name,
+            "wishlist_masked": wishlist.mask_reservations,
+        },
+    )
 
     TaskLoggingService.task_end(
         "Sending Notification for deleted Reservation on Wish <%s>", wish_id, logger=logger
@@ -170,7 +174,7 @@ def generate_image_from_reference_photo(self: Task, wish_id: WishID) -> bool:
                 logger=logger,
                 data={"wish.id": str(wish_id), "image.url": reference_photo},
             )
-        except (ImageServiceRetrieveTimeoutError, ImageServiceRetrieveConnectionError):
+        except ImageServiceRetrieveTimeoutError, ImageServiceRetrieveConnectionError:
             try:
                 TaskLoggingService.task_retry(
                     "Timeout while retrieving image for Reference Photo",

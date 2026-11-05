@@ -4,7 +4,7 @@ from .adapter.email_service import EmailService
 from .adapter.pushover_service import PushoverService
 from .adapter.serialization_service import SerializationService
 from .framework.formatting_service import FormattingService
-from .framework.notification_service import NotificationService
+from .framework.notification_service import NotificationService, TemplatedNotification
 from .framework.permission_service import PermissionService
 from .library.image_service import (
     ImageService,

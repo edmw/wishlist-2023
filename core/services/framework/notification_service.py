@@ -61,27 +61,61 @@ class NotificationServiceSendResult:
     pushover: bool | None = None
 
 
+@dataclass(frozen=True)
+class TemplatedNotification:
+    """A notification defined by its subject and templates.
+
+    The subject is expected in the default language (e.g. the result of
+    `gettext_noop`) and is translated when the notification is sent.
+
+    Attributes:
+        subject: Subject of the notification in the default language.
+        template_name: Template for the plain text body.
+        html_template_name: Optional template for the HTML alternative.
+        simple_html_template_name: Optional simplified HTML template used by
+            channels with limited rendering support such as push notifications.
+    """
+
+    subject: str
+    template_name: str
+    html_template_name: str | None = None
+    simple_html_template_name: str | None = None
+
+
 class NotificationService:
     @staticmethod
     def send(
         *,
         user: User,
-        subject: str,
-        template_name: str,
-        html_template_name: str | None = None,
-        simple_html_template_name: str | None = None,
+        notification: TemplatedNotification,
         context: Mapping[str, object] | None = None,
     ) -> NotificationServiceSendResult:
+        """Sends a templated notification to the specified user.
+
+        The subject is translated and the templates are rendered in the
+        user's language before the message is handed over to the channels
+        enabled in the user's settings (email and/or pushover).
+
+        Arguments:
+            user: User who should receive the notification.
+            notification: Subject and templates defining the notification's
+                presentation.
+            context: Context passed to the templates.
+
+        Returns:
+            The channels through which the notification was sent.
+        """
         result = NotificationServiceSendResult()
 
-        subject = f"🎁 {subject}"
-        message, html_message, simple_html_message = render_message(
-            user,
-            template_name,
-            html_template_name,
-            simple_html_template_name,
-            context=context,
-        )
+        with LanguageService.activated(language_code=user.get_language().get_code()):
+            subject = f"🎁 {_(notification.subject)}"
+            message, html_message, simple_html_message = render_message(
+                user,
+                notification.template_name,
+                notification.html_template_name,
+                notification.simple_html_template_name,
+                context=context,
+            )
 
         if user.settings.email_enabled:
             EmailService.send(
@@ -113,9 +147,7 @@ class NotificationService:
     def send_email(
         *,
         address: str,
-        subject: str,
-        template_name: str,
-        html_template_name: str | None = None,
+        notification: TemplatedNotification,
         language_code: str,
         context: Mapping[str, object] | None = None,
     ) -> None:
@@ -128,10 +160,7 @@ class NotificationService:
 
         Arguments:
             address: Email address of the recipient.
-            subject: Subject of the email in the default language (e.g. the
-                result of `gettext_noop`), translated into the given language.
-            template_name: Template for the plain text body.
-            html_template_name: Optional template for the HTML alternative.
+            notification: Subject and templates defining the email's presentation.
             language_code: Language code to activate while translating and
                 rendering the message.
             context: Context passed to the templates.
@@ -140,17 +169,17 @@ class NotificationService:
             context = {}
 
         with LanguageService.activated(language_code=language_code):
-            translated_subject = _(subject)
+            translated_subject = _(notification.subject)
             message = render_to_string(
-                template_name=template_name,
+                template_name=notification.template_name,
                 context=context,
             )
             html_message = (
                 render_to_string(
-                    template_name=html_template_name,
+                    template_name=notification.html_template_name,
                     context=context,
                 )
-                if html_template_name
+                if notification.html_template_name
                 else None
             )
 

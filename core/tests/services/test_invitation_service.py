@@ -2,6 +2,7 @@ from typing import Any, Generator
 
 import pytest
 from django.core import mail
+from django.utils.translation import gettext_noop
 from freezegun import freeze_time
 
 from core.models import User, Wishlist, WishlistInvitation
@@ -14,10 +15,17 @@ from core.services import (
     InvitationNotSendableError,
     InvitationPrivateWishlistError,
     InvitationService,
+    TemplatedNotification,
 )
 from core.tests.conftest import CoreFixture
 
 INVITEE_EMAIL = "invitee@example.com"
+
+INVITATION_EMAIL = TemplatedNotification(
+    subject=gettext_noop("Invitation to a wish list"),
+    template_name="email/invitation_wishlist.txt",
+    html_template_name="email/invitation_wishlist.html",
+)
 
 
 @pytest.fixture(autouse=True)
@@ -72,7 +80,7 @@ class TestSendInvitation:
             invitee_email=INVITEE_EMAIL,
         )
 
-        InvitationService.send_invitation(invitation=invitation)
+        InvitationService.send_invitation(invitation=invitation, email=INVITATION_EMAIL)
 
         invitation.refresh_from_db()
         assert invitation.sent is True
@@ -93,7 +101,7 @@ class TestSendInvitation:
             invitee_email=INVITEE_EMAIL,
         )
 
-        InvitationService.send_invitation(invitation=invitation)
+        InvitationService.send_invitation(invitation=invitation, email=INVITATION_EMAIL)
 
         message = mail.outbox[0]
         assert "The invitation expires after 10 days." in message.body
@@ -107,7 +115,7 @@ class TestSendInvitation:
             inviter=core.user_alice,
             invitee_email=INVITEE_EMAIL,
         )
-        InvitationService.send_invitation(invitation=invitation)
+        InvitationService.send_invitation(invitation=invitation, email=INVITATION_EMAIL)
 
         message = mail.outbox[0]
         assert "The invitation expires after 3 days." in message.body
@@ -122,7 +130,7 @@ class TestSendInvitation:
             inviter=inviter,
             invitee_email=INVITEE_EMAIL,
         )
-        InvitationService.send_invitation(invitation=invitation)
+        InvitationService.send_invitation(invitation=invitation, email=INVITATION_EMAIL)
 
         message = mail.outbox[0]
         assert "noname has invited you" in message.body
@@ -137,7 +145,7 @@ class TestSendInvitation:
             inviter=core.user_alice,
             invitee_email=INVITEE_EMAIL,
         )
-        InvitationService.send_invitation(invitation=invitation)
+        InvitationService.send_invitation(invitation=invitation, email=INVITATION_EMAIL)
 
         message = mail.outbox[0]
         assert message.subject == "Einladung zu einem Wunschzettel"
@@ -155,7 +163,7 @@ class TestSendInvitation:
             inviter=inviter,
             invitee_email=INVITEE_EMAIL,
         )
-        InvitationService.send_invitation(invitation=invitation)
+        InvitationService.send_invitation(invitation=invitation, email=INVITATION_EMAIL)
 
         message = mail.outbox[0]
         assert message.subject == "Einladung zu einem Wunschzettel"
@@ -167,16 +175,16 @@ class TestSendInvitation:
             inviter=core.user_alice,
             invitee_email=INVITEE_EMAIL,
         )
-        InvitationService.send_invitation(invitation=invitation)
+        InvitationService.send_invitation(invitation=invitation, email=INVITATION_EMAIL)
 
         with pytest.raises(InvitationAlreadySentError):
-            InvitationService.send_invitation(invitation=invitation)
+            InvitationService.send_invitation(invitation=invitation, email=INVITATION_EMAIL)
 
     def test_raises_if_no_invitee_email(self, core: CoreFixture) -> None:
         invitation = _unsent_without_email(core.user_alice, core.list_alice)
 
         with pytest.raises(InvitationNotSendableError):
-            InvitationService.send_invitation(invitation=invitation)
+            InvitationService.send_invitation(invitation=invitation, email=INVITATION_EMAIL)
 
 
 def _unsent_without_email(inviter: User, wishlist: Wishlist) -> WishlistInvitation:
@@ -194,7 +202,7 @@ class TestAcceptInvitation:
             inviter=core.user_alice,
             invitee_email=INVITEE_EMAIL,
         )
-        InvitationService.send_invitation(invitation=invitation)
+        InvitationService.send_invitation(invitation=invitation, email=INVITATION_EMAIL)
 
         accepted = InvitationService.accept_invitation(code=str(invitation.code), user=core.user_bob)
 
@@ -213,7 +221,7 @@ class TestAcceptInvitation:
             inviter=core.user_alice,
             invitee_email=INVITEE_EMAIL,
         )
-        InvitationService.send_invitation(invitation=invitation)
+        InvitationService.send_invitation(invitation=invitation, email=INVITATION_EMAIL)
 
         InvitationService.accept_invitation(code=str(invitation.code), user=core.user_bob)
 
@@ -227,7 +235,7 @@ class TestAcceptInvitation:
             inviter=core.user_alice,
             invitee_email=INVITEE_EMAIL,
         )
-        InvitationService.send_invitation(invitation=invitation)
+        InvitationService.send_invitation(invitation=invitation, email=INVITATION_EMAIL)
 
         # Move past the configured expiry (ten days).
         with freeze_time("2026-01-15 12:00:00"):

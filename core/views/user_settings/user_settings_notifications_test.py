@@ -4,9 +4,9 @@ import logging
 from typing import Any
 
 from django.http import HttpRequest, HttpResponse
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext_noop
 
-from core.services import NotificationService
+from core.services import NotificationService, TemplatedNotification
 from core.views._base import LoginRequiredMixin
 from core.views.user import UserDetailView
 
@@ -26,9 +26,11 @@ class UserSettingsNotificationsTestView(LoginRequiredMixin, UserDetailView):
 
         self.send_result = NotificationService.send(
             user=user,
-            subject=_("Notification"),
-            template_name="user_settings/notifications/test.txt",
-            html_template_name="user_settings/notifications/test.html",
+            notification=TemplatedNotification(
+                subject=gettext_noop("Notification"),
+                template_name="user_settings/notifications/test.txt",
+                html_template_name="user_settings/notifications/test.html",
+            ),
         )
 
         return super().get(request, *args, **kwargs)

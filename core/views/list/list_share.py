@@ -10,7 +10,7 @@ from django.utils.translation import gettext as _
 from django.utils.translation import gettext_noop
 
 from core.models import Wishlist, WishlistInvitation, WishlistLens
-from core.services import InvitationPrivateWishlistError, InvitationService
+from core.services import InvitationPrivateWishlistError, InvitationService, TemplatedNotification
 from core.views._base import LoginRequiredMixin, UpdateView, WishlistModelMixin
 from core.views._forms import (
     AriaDescribedByMixin,
@@ -22,6 +22,12 @@ from core.views._forms import (
 from ._base import HasPermissionForListViewMixin
 
 logger = logging.getLogger(__name__)
+
+INVITATION_EMAIL = TemplatedNotification(
+    subject=gettext_noop("Invitation to a wish list"),
+    template_name="email/invitation_wishlist.txt",
+    html_template_name="email/invitation_wishlist.html",
+)
 
 
 class ShareEmailWidget(
@@ -86,7 +92,7 @@ class ListShareView(
                 inviter=self.try_user(),
                 invitee_email=email,
             )
-            InvitationService.send_invitation(invitation=invitation)
+            InvitationService.send_invitation(invitation=invitation, email=INVITATION_EMAIL)
         except InvitationPrivateWishlistError:
             logger.warning("Invitation for private wish list %r requested.", wishlist.id)
             return self.redirect_back_with_error_message(_(self.error_message_private_wishlist))

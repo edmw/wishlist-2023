@@ -5,11 +5,9 @@ import secrets
 from datetime import UTC, datetime
 from typing import Any
 
-from django.utils.translation import gettext_noop
-
 from core.models import User, Wishlist, WishlistInvitation
 from core.models.types import InvitationCode, InvitationEmail, Language, Visibility
-from core.services.framework.notification_service import NotificationService
+from core.services.framework.notification_service import NotificationService, TemplatedNotification
 from core.services.models.user_service import UserService
 
 logger = logging.getLogger(__name__)
@@ -85,7 +83,7 @@ class InvitationService:
         return invitation
 
     @staticmethod
-    def send_invitation(*, invitation: WishlistInvitation) -> None:
+    def send_invitation(*, invitation: WishlistInvitation, email: TemplatedNotification) -> None:
         """Sends the specified invitation to its invitee.
 
         Marks the invitation as sent and delivers an email containing the
@@ -93,12 +91,15 @@ class InvitationService:
         delivery channel is chosen at this service layer; it is not part of
         the model hierarchy (see ADR-1000).
 
-        The email is rendered in the invitee's language if they have an
-        account, and in the inviter's language otherwise.
+        The email's presentation (subject and templates) is provided by the
+        caller, while the language is determined here: the email is rendered
+        in the invitee's language if they have an account, and in the inviter's
+        language otherwise.
 
         Arguments:
             invitation: Invitation to send. It must have been created before
                 and must not have been sent yet.
+            email: Subject and templates defining the email's presentation.
 
         Raises:
             InvitationNotSendableError: If the invitation has no invitee email
@@ -128,9 +129,7 @@ class InvitationService:
 
         NotificationService.send_email(
             address=str(invitee_email),
-            subject=gettext_noop("Invitation to a wish list"),
-            template_name="email/invitation_wishlist.txt",
-            html_template_name="email/invitation_wishlist.html",
+            notification=email,
             language_code=InvitationService._language_for_email(
                 invitee_email=str(invitee_email), inviter=inviter
             ).get_code(),
