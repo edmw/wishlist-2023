@@ -5,6 +5,7 @@ from django.core import mail
 from django.utils.translation import gettext_noop
 from freezegun import freeze_time
 
+from core.access import CoreAccess
 from core.models import User, Wishlist, WishlistInvitation
 from core.models.types import Visibility
 from core.services import (
@@ -194,6 +195,16 @@ def _unsent_without_email(inviter: User, wishlist: Wishlist) -> WishlistInvitati
     )
 
 
+def _sent_invitation(core: CoreFixture) -> WishlistInvitation:
+    invitation = InvitationService.create_invitation(
+        wishlist=core.list_alice,
+        inviter=core.user_alice,
+        invitee_email=INVITEE_EMAIL,
+    )
+    InvitationService.send_invitation(invitation=invitation, email=INVITATION_EMAIL)
+    return invitation
+
+
 @pytest.mark.django_db
 class TestAcceptInvitation:
     def test_accepts_invitation(self, core: CoreFixture) -> None:
@@ -241,3 +252,73 @@ class TestAcceptInvitation:
         with freeze_time("2026-01-15 12:00:00"):
             with pytest.raises(InvitationExpiredError):
                 InvitationService.accept_invitation(code=str(invitation.code), user=core.user_bob)
+
+
+@pytest.mark.django_db
+class TestIsSignupOpen:
+    """Sign-up gating follows the configured access mode (see ADR-1000)."""
+
+    @pytest.mark.parametrize(
+        ("access", "expected"),
+        [
+            (CoreAccess.PUBLIC, True),
+            (CoreAccess.EXISTING, False),
+            (CoreAccess.NOBODY, False),
+        ],
+    )
+    def test_without_invitation(self, access: CoreAccess, expected: bool) -> None:
+        assert InvitationService.is_signup_open(code=None, access=access) is expected
+
+    @pytest.mark.parametrize(
+        ("access", "expected"),
+        [
+            (CoreAccess.PUBLIC, True),
+            (CoreAccess.EXISTING, False),
+            (CoreAccess.NOBODY, False),
+        ],
+    )
+    def test_with_unknown_code(self, core: CoreFixture, access: CoreAccess, expected: bool) -> None:
+        assert InvitationService.is_signup_open(code="does-not-exist", access=access) is expected
+
+    @pytest.mark.parametrize(
+        ("access", "expected"),
+        [
+            (CoreAccess.PUBLIC, True),
+            (CoreAccess.EXISTING, True),
+            (CoreAccess.NOBODY, False),
+        ],
+    )
+    def test_with_valid_invitation(self, core: CoreFixture, access: CoreAccess, expected: bool) -> None:
+        invitation = _sent_invitation(core)
+
+        assert InvitationService.is_signup_open(code=str(invitation.code), access=access) is expected
+
+    @freeze_time("2026-01-01 12:00:00")
+    @pytest.mark.parametrize(
+        ("access", "expected"),
+        [
+            (CoreAccess.PUBLIC, True),
+            (CoreAccess.EXISTING, False),
+            (CoreAccess.NOBODY, False),
+        ],
+    )
+    def test_with_expired_invitation(self, core: CoreFixture, access: CoreAccess, expected: bool) -> None:
+        invitation = _sent_invitation(core)
+
+        # Move past the configured expiry (ten days).
+        with freeze_time("2026-01-15 12:00:00"):
+            assert InvitationService.is_signup_open(code=str(invitation.code), access=access) is expected
+
+    @pytest.mark.parametrize(
+        ("access", "expected"),
+        [
+            (CoreAccess.PUBLIC, True),
+            (CoreAccess.EXISTING, False),
+            (CoreAccess.NOBODY, False),
+        ],
+    )
+    def test_with_accepted_invitation(self, core: CoreFixture, access: CoreAccess, expected: bool) -> None:
+        invitation = _sent_invitation(core)
+        InvitationService.accept_invitation(code=str(invitation.code), user=core.user_bob)
+
+        assert InvitationService.is_signup_open(code=str(invitation.code), access=access) is expected

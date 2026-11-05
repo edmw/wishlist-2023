@@ -5,6 +5,7 @@ import secrets
 from datetime import UTC, datetime
 from typing import Any
 
+from core.access import CoreAccess
 from core.models import User, Wishlist, WishlistInvitation
 from core.models.types import InvitationCode, InvitationEmail, Language, Visibility
 from core.services.framework.notification_service import NotificationService, TemplatedNotification
@@ -220,24 +221,40 @@ class InvitationService:
             return None
 
     @staticmethod
-    def is_signup_open(*, code: str | None) -> bool:
-        """Returns true if sign-up may proceed on the basis of the given
-        invitation code.
+    def is_signup_open(*, code: str | None, access: CoreAccess) -> bool:
+        """Returns true if sign-up may proceed.
 
-        Sign-up stays closed during the beta period (see ADR-1000): a new
-        account can be created only on the basis of an invitation that exists
-        and has neither expired nor been accepted already.
+        The decision follows the configured access mode (see ADR-1000):
+
+        * Without a valid invitation, sign-up is open only in public mode.
+        * With a valid invitation, sign-up is open unless nobody has been
+          granted access at all.
+
+        Arguments:
+            code: The invitation code to check, or `None` if no invitation is
+                available.
+            access: The configured access mode of the application.
+
+        Returns:
+            True if sign-up may proceed, False otherwise.
+        """
+        if InvitationService._has_valid_invitation(code=code):
+            return access != CoreAccess.NOBODY
+        return access == CoreAccess.PUBLIC
+
+    @staticmethod
+    def _has_valid_invitation(*, code: str | None) -> bool:
+        """Returns true if the given invitation code refers to an invitation
+        that exists and has neither expired nor been accepted already.
 
         Arguments:
             code: The invitation code to check, or `None` if no invitation is
                 available.
 
         Returns:
-            True if sign-up may proceed with this code, False otherwise.
+            True if a valid invitation is available for this code.
         """
         if not code:
             return False
         invitation = InvitationService.get_invitation_by_code(code=code)
-        if invitation is None or invitation.expired or invitation.accepted:
-            return False
-        return True
+        return invitation is not None and not invitation.expired and not invitation.accepted

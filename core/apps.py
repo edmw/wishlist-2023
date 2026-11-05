@@ -2,7 +2,6 @@
 
 import datetime
 import zoneinfo
-from enum import StrEnum
 from typing import Optional
 
 import environs
@@ -14,11 +13,7 @@ from django.utils.html import escape
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext as _
 
-
-class CoreAccess(StrEnum):
-    PUBLIC = "public"
-    EXISTING = "existing"
-    NOBODY = "nobody"
+from core.access import CoreAccess
 
 
 class CoreConfig(AppConfig):
