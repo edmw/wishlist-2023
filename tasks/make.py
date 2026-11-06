@@ -130,7 +130,7 @@ def _preview_update(context: Context, printer: Printer, output_file: Path, compi
     for name, old_version, new_version in diff:
         if old_version is None:
             # Package was added; _diff_requirements never yields (None, None).
-            assert new_version is not None
+            assert new_version is not None  # nosec
             current_cell = "[dim](new)[/dim]"
             new_cell = Markup.ok(new_version)
         elif new_version is None:

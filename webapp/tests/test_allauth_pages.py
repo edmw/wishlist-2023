@@ -111,7 +111,10 @@ def test_view_context_takes_precedence_over_processor(client: Client) -> None:
     """
     from core import constants
 
-    user = User.objects.create_user(username="precedence_test", password="S3cure-Passw0rd!")
+    # Dummy password for a test-only user; the value is irrelevant to the test.
+    user = User.objects.create_user(  # nosec
+        username="precedence_test", password="S3cure-Passw0rd!"
+    )
     client.force_login(user)
     url = reverse(constants.VIEW_FAVORITES, kwargs={constants.USER_ID_KEY: user.id})
     response = client.get(url)
