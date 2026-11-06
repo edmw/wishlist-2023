@@ -146,6 +146,17 @@ class Wishlist(
         """
         return self.description
 
+    @property
+    def is_shareable(self) -> bool:
+        """Whether this wish list can be shared by invitation.
+
+        Private wish lists are never shared by invitation (see ADR-1000).
+
+        Returns:
+            True if the visibility allows sharing, False otherwise.
+        """
+        return self.visibility != Visibility.PRIVATE
+
     def clean(self) -> None:
         super().clean()
 

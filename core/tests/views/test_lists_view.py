@@ -7,7 +7,8 @@ from django.test import Client
 from django.urls import reverse
 
 from core import constants
-from core.models import UserID
+from core.models import UserID, Wishlist
+from core.models.types import Visibility
 from core.services import WishlistCollaborationService
 from core.tests._base import AssertLoggingMixin
 from core.tests.conftest import CoreFixture
@@ -78,6 +79,31 @@ class TestListsView(AssertLoggingMixin):
             },
         )
         assert memberships_url not in response.content.decode("utf-8")
+
+    def test_lists_view_shows_share_action_for_shareable_wishlist(
+        self, core: CoreFixture, client: Client
+    ) -> None:
+        """The share action is shown for wish lists that are not private."""
+        client.force_login(core.user_alice)
+
+        response = self._get(client, core.user_alice.id)
+
+        assert response.status_code == HTTPStatus.OK
+        assert core.list_alice.get_absolute_share_url() in response.content.decode("utf-8")
+
+    def test_lists_view_hides_share_action_for_private_wishlist(
+        self, core: CoreFixture, client: Client
+    ) -> None:
+        """The share action is not shown for private wish lists."""
+        client.force_login(core.user_alice)
+        list_alice = Wishlist.objects.get(pk=core.list_alice.pk)
+        list_alice.visibility_field = Visibility.PRIVATE
+        list_alice.save(update_fields=[Wishlist.Fields.VISIBILITY])
+
+        response = self._get(client, core.user_alice.id)
+
+        assert response.status_code == HTTPStatus.OK
+        assert core.list_alice.get_absolute_share_url() not in response.content.decode("utf-8")
 
     def test_lists_view_not_allowed(
         self, core: CoreFixture, client: Client, caplog: pytest.LogCaptureFixture

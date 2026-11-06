@@ -11,6 +11,7 @@
 * 🛠️ allow setting first and last name when creating a user via console
 * 🖌️ fix sign out button missing its background
 * 🖌️ fix confusing sign in page for invited users
+* 🖌️ hide share action for private wish lists
 * 🪛 fix passing parameters to management commands
 
 ## [2.4.0]
