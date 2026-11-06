@@ -1,4 +1,5 @@
 import os
+import shlex
 import subprocess
 import sys
 from typing import Protocol
@@ -62,6 +63,11 @@ class DockerBase:
         for interactive sessions, so stdin/stdout are passed through directly and
         the exit code of the command is propagated.
 
+        The joined command string is split into individual arguments with
+        `shlex.split` and executed without an intermediate shell, so no shell
+        features (redirection, globbing, expansion) apply and metacharacters in
+        the arguments cannot be interpreted as commands.
+
         Arguments:
             command: The command to run.
             env: Additional environment variables for the command.
@@ -71,10 +77,14 @@ class DockerBase:
             Printer.simulation_would(["run interactive command", Markup.info(command_string)])
             return
 
-        result = subprocess.run(
-            command_string,
-            shell=True,
-            env={**os.environ, **(env or {})},
-            check=False,
-        )
+        try:
+            result = subprocess.run(  # nosec
+                shlex.split(command_string),
+                shell=False,
+                env={**os.environ, **(env or {})},
+                check=False,
+            )
+        except FileNotFoundError:
+            # Exit with the code a shell would report for a missing executable.
+            sys.exit(127)
         sys.exit(result.returncode)
