@@ -1,0 +1,132 @@
+"""Tests for the invitation accept view."""
+
+from http import HTTPStatus
+from typing import Any, Generator
+from urllib.parse import urlencode
+
+import pytest
+from django.core import mail
+from django.http import HttpResponse
+from django.test import Client
+from django.urls import reverse
+from django.utils.translation import gettext_noop
+from freezegun import freeze_time
+
+from core import constants
+from core.models import WishlistInvitation
+from core.services import InvitationService, TemplatedNotification
+from core.tests.conftest import CoreFixture
+
+INVITEE_EMAIL = "invitee@example.com"
+
+INVITATION_EMAIL = TemplatedNotification(
+    subject=gettext_noop("Invitation to a wish list"),
+    template_name="email/invitation_wishlist.txt",
+    html_template_name="email/invitation_wishlist.html",
+)
+
+
+@pytest.fixture(autouse=True)
+def _locmem_email(settings: Any) -> Generator[None, None, None]:
+    """Ensures emails are captured in memory instead of being sent."""
+    settings.EMAIL_BACKEND = "django.core.mail.backends.locmem.EmailBackend"
+    mail.outbox = []
+    yield
+    mail.outbox = []
+
+
+def _sent_invitation(core: CoreFixture) -> WishlistInvitation:
+    invitation = InvitationService.create_invitation(
+        wishlist=core.list_alice,
+        inviter=core.user_alice,
+        invitee_email=INVITEE_EMAIL,
+    )
+    InvitationService.send_invitation(invitation=invitation, email=INVITATION_EMAIL)
+    return invitation
+
+
+def _accept_url(code: str) -> str:
+    return reverse(constants.VIEW_INVITATION_ACCEPT, kwargs={constants.INVITATION_CODE_KEY: code})
+
+
+@pytest.mark.django_db
+class TestInvitationAcceptView:
+    def _messages(self, response: HttpResponse) -> list[str]:
+        return [str(message) for message in response.context["messages"]]  # type: ignore[index]
+
+    def test_authenticated_user_accepts_invitation(self, core: CoreFixture, client: Client) -> None:
+        """A logged-in user accepts the invitation and is redirected to the list."""
+        invitation = _sent_invitation(core)
+        client.force_login(core.user_carol)
+
+        response = client.get(_accept_url(str(invitation.code)))
+
+        assert response.status_code == HTTPStatus.FOUND
+        assert response.headers["Location"] == core.list_alice.get_absolute_url()
+
+        invitation.refresh_from_db()
+        assert invitation.accepted is True
+        assert invitation.accepted_at is not None
+
+    def test_authenticated_user_acceptance_shows_success_message(
+        self, core: CoreFixture, client: Client
+    ) -> None:
+        """A success message is shown after accepting an invitation."""
+        invitation = _sent_invitation(core)
+        client.force_login(core.user_carol)
+
+        response = client.get(_accept_url(str(invitation.code)), follow=True)
+
+        assert "The invitation has been accepted." in self._messages(response)
+
+    def test_anonymous_user_is_redirected_to_login(self, core: CoreFixture, client: Client) -> None:
+        """An anonymous user is sent to the sign-in page with a link back to the list."""
+        invitation = _sent_invitation(core)
+
+        response = client.get(_accept_url(str(invitation.code)))
+
+        assert response.status_code == HTTPStatus.FOUND
+        next_url = urlencode({"next": core.list_alice.get_absolute_url()})
+        assert response.headers["Location"] == f"/accounts/login/?{next_url}"
+
+    def test_anonymous_user_has_invitation_parked_in_session(
+        self, core: CoreFixture, client: Client
+    ) -> None:
+        """The invitation code is parked in the session and not accepted yet."""
+        invitation = _sent_invitation(core)
+
+        client.get(_accept_url(str(invitation.code)))
+
+        assert client.session[constants.INVITATION_CODE_SESSION_KEY] == str(invitation.code)
+
+        invitation.refresh_from_db()
+        assert invitation.accepted is False
+
+    @freeze_time("2026-01-01 12:00:00")
+    def test_expired_invitation_shows_error_page(self, core: CoreFixture, client: Client) -> None:
+        """An expired invitation cannot be accepted any more."""
+        invitation = _sent_invitation(core)
+
+        # Move past the configured expiry (ten days).
+        with freeze_time("2026-01-15 12:00:00"):
+            response = client.get(_accept_url(str(invitation.code)))
+
+        assert response.status_code == HTTPStatus.OK
+        assert "This invitation has expired." in response.content.decode()
+
+    def test_unknown_code_shows_invalid_page(self, core: CoreFixture, client: Client) -> None:
+        """An unknown code renders the invalid page with a 404 status."""
+        response = client.get(_accept_url("does-not-exist"))
+
+        assert response.status_code == HTTPStatus.NOT_FOUND
+        assert "This invitation is not valid." in response.content.decode()
+
+    def test_already_accepted_invitation_redirects_to_list(self, core: CoreFixture, client: Client) -> None:
+        """An already accepted invitation cannot be accepted again."""
+        invitation = _sent_invitation(core)
+        InvitationService.accept_invitation(code=str(invitation.code), user=core.user_bob)
+        client.force_login(core.user_carol)
+
+        response = client.get(_accept_url(str(invitation.code)), follow=True)
+
+        assert "This invitation has already been accepted." in self._messages(response)
