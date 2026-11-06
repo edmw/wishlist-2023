@@ -2,6 +2,7 @@
 
 ## [x.x.x]
 
+* 🛠️ add signup notification for server administrator
 * 🖼️ add invitation acceptance for new users
 * 🖌️ fix broken translations on share and archive pages
 * 🖼️ enable sharing wish lists by email invitation

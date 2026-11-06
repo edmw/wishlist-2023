@@ -702,6 +702,10 @@ EMAIL_HOST_PASSWORD = webapp_env_decrypt("EMAIL_SMTP_PASSWORD", "")
 
 EMAIL_SUBJECT_PREFIX = f"[{EMAIL_SENDER_NAME}] "
 
+# Notify an administrator about new signups (opt-in per environment).
+SIGNUP_NOTIFICATION_ENABLED = env.bool("WEBAPP_SIGNUP_NOTIFICATION_ENABLED", False)
+ADMIN_EMAIL = env.str("WEBAPP_ADMIN_EMAIL", None)
+
 # endregion MAIL
 
 # region LOGGING
