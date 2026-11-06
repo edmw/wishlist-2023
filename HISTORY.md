@@ -2,6 +2,9 @@
 
 ## [x.x.x]
 
+* 🖼️ add invitation acceptance for new users
+* 🖌️ fix broken translations on share and archive pages
+* 🖼️ enable sharing wish lists by email invitation
 * 🖼️ add invitation expiry hint to invitation emails
 * 🖼️ fill in missing first and last names from Google at login
 * 🛠️ allow setting first and last name when creating a user via console
