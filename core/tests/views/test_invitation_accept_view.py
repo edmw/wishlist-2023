@@ -79,15 +79,17 @@ class TestInvitationAcceptView:
 
         assert "The invitation has been accepted." in self._messages(response)
 
-    def test_anonymous_user_is_redirected_to_login(self, core: CoreFixture, client: Client) -> None:
-        """An anonymous user is sent to the sign-in page with a link back to the list."""
+    def test_anonymous_user_is_redirected_to_signin_page(
+        self, core: CoreFixture, client: Client
+    ) -> None:
+        """An anonymous user is sent to the invitation sign-in page with a link back to the list."""
         invitation = _sent_invitation(core)
 
         response = client.get(_accept_url(str(invitation.code)))
 
         assert response.status_code == HTTPStatus.FOUND
         next_url = urlencode({"next": core.list_alice.get_absolute_url()})
-        assert response.headers["Location"] == f"/accounts/login/?{next_url}"
+        assert response.headers["Location"] == f"/invitations/signin/?{next_url}"
 
     def test_anonymous_user_has_invitation_parked_in_session(
         self, core: CoreFixture, client: Client

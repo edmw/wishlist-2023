@@ -27,9 +27,9 @@ class InvitationAcceptView(UserMixin, AddNeverCacheMixin, TemplateView):
 
     An authenticated user accepts the invitation immediately and is redirected
     to the invited wish list. An anonymous user has the invitation code parked
-    in their session and is sent to the sign-in page; once they have logged in
-    or signed up, a signal handler accepts the parked invitation automatically
-    (see ADR-1000).
+    in their session and is sent to a dedicated sign-in page; once they have
+    logged in or signed up, a signal handler accepts the parked invitation
+    automatically (see ADR-1000).
 
     Invitations that are invalid, expired or already accepted cannot be
     accepted any more; instead of acting on them, this view renders a page
@@ -75,11 +75,12 @@ class InvitationAcceptView(UserMixin, AddNeverCacheMixin, TemplateView):
             return redirect(accepted.wishlist.get_absolute_url())
 
         # The user is not authenticated yet; park the code in the session so
-        # that it can be accepted automatically after login or sign-up.
+        # that it can be accepted automatically after login or sign-up. The
+        # dedicated sign-in page explains this to the invitee and carries them
+        # on from there.
         request.session[constants.INVITATION_CODE_SESSION_KEY] = str(invitation.code)
-        messages.info(request, _("Please sign in or create an account to accept the invitation."))
         next_url = urlencode({"next": invitation.wishlist.get_absolute_url()})
-        return redirect(f"{reverse('account_login')}?{next_url}")
+        return redirect(f"{reverse(constants.VIEW_INVITATION_SIGNIN)}?{next_url}")
 
     def _render_outcome(self, request: HttpRequest, *, outcome: str, status: int = 200) -> HttpResponse:
         """Renders the page explaining why an invitation could not be accepted.

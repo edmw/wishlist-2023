@@ -2,7 +2,7 @@
 
 from .favorite import FavoriteCreateView, FavoriteDeleteView, FavoriteUpdateView
 from .favorites import FavoritesView
-from .invitation import InvitationAcceptView
+from .invitation import InvitationAcceptView, InvitationSigninView
 from .item import (
     ItemArchiveView,
     ItemCreateView,

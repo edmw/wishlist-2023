@@ -42,6 +42,7 @@ VIEW_WISHLIST: Final[str] = "wishlist"
 VIEW_RESERVATION_CREATE: Final[str] = "reservation-create"
 VIEW_RESERVATION_UNDO: Final[str] = "reservation-undo"
 VIEW_INVITATION_ACCEPT: Final[str] = "invitation-accept"
+VIEW_INVITATION_SIGNIN: Final[str] = "invitation-signin"
 
 ONE_MINUTE_IN_SECONDS: Final[int] = 60
 TWO_MINUTES_IN_SECONDS: Final[int] = 2 * ONE_MINUTE_IN_SECONDS

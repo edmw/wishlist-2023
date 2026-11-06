@@ -1,0 +1,18 @@
+{% extends "page.html" %}
+
+{% load i18n %}
+
+{% block header %}
+    {% with title="Sign in" %}{{ block.super }}{% endwith %}
+{% endblock header %}
+{% block content %}
+    <div class="content">
+        {% if wishlist_name and signup_open %}
+            <h2>{% blocktranslate with name=wishlist_name %}You have been invited to "{{ name }}"{% endblocktranslate %}</h2>
+            <p>{% translate "Please sign in or create an account to accept the invitation." %}</p>
+            {% include "google-signin.html" %}
+        {% else %}
+            {% include "signin.html" %}
+        {% endif %}
+    </div>
+{% endblock content %}

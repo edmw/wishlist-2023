@@ -93,9 +93,6 @@ msgstr ""
 msgid "{} ago"
 msgstr ""
 
-msgid "Invitation to a wish list"
-msgstr ""
-
 msgid "Wish added"
 msgstr ""
 
@@ -190,6 +187,9 @@ msgstr ""
 msgid "Cancel"
 msgstr ""
 
+msgid "Sign in using Google"
+msgstr ""
+
 msgid "Profile"
 msgstr ""
 
@@ -221,6 +221,13 @@ msgid ""
 " need one."
 msgstr ""
 
+#, python-format
+msgid "You have been invited to \"%(name)s\""
+msgstr ""
+
+msgid "Please sign in or create an account to accept the invitation."
+msgstr ""
+
 msgid "Close"
 msgstr ""
 
@@ -248,9 +255,6 @@ msgid ""
 "state as soon as possible."
 msgstr ""
 
-msgid "Sign in using Google"
-msgstr ""
-
 msgid "received"
 msgstr ""
 
@@ -258,6 +262,9 @@ msgid "reserved"
 msgstr ""
 
 msgid "wanted"
+msgstr ""
+
+msgid "Invitation to a wish list"
 msgstr ""
 
 #, python-format
@@ -350,9 +357,6 @@ msgid "Invitation"
 msgstr ""
 
 msgid "The invitation has been accepted."
-msgstr ""
-
-msgid "Please sign in or create an account to accept the invitation."
 msgstr ""
 
 #, python-format

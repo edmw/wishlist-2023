@@ -10,6 +10,7 @@
 * 🖼️ fill in missing first and last names from Google at login
 * 🛠️ allow setting first and last name when creating a user via console
 * 🖌️ fix sign out button missing its background
+* 🖌️ fix confusing sign in page for invited users
 * 🪛 fix passing parameters to management commands
 
 ## [2.4.0]

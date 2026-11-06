@@ -98,9 +98,6 @@ msgstr "vor einer Stunde"
 msgid "{} ago"
 msgstr "vor {}"
 
-msgid "Invitation to a wish list"
-msgstr "Einladung zu einem Wunschzettel"
-
 msgid "Wish added"
 msgstr "Wunsch hinzugefügt"
 
@@ -203,6 +200,9 @@ msgstr "Impressum"
 msgid "Cancel"
 msgstr "Abbrechen"
 
+msgid "Sign in using Google"
+msgstr "Mit Google anmelden"
+
 msgid "Profile"
 msgstr "Profil"
 
@@ -240,6 +240,14 @@ msgid ""
 " need one."
 msgstr ""
 
+#, python-format
+msgid "You have been invited to \"%(name)s\""
+msgstr "Du wurdest zum Wunschzettel '%(name)s' eingeladen."
+
+msgid "Please sign in or create an account to accept the invitation."
+msgstr ""
+"Bitte melde dich an oder lege ein Konto an, um die Einladung anzunehmen."
+
 msgid "Close"
 msgstr "Schliessen"
 
@@ -273,9 +281,6 @@ msgstr ""
 " ist ein unerwarteter Zustand, und wir versuchen, den Dienst so schnell wie "
 "möglich wieder in den Normalzustand zu versetzen."
 
-msgid "Sign in using Google"
-msgstr "Mit Google anmelden"
-
 msgid "received"
 msgstr "erhalten"
 
@@ -284,6 +289,9 @@ msgstr "reserviert"
 
 msgid "wanted"
 msgstr "gewünscht"
+
+msgid "Invitation to a wish list"
+msgstr "Einladung zu einem Wunschzettel"
 
 #, python-format
 msgid ""
@@ -384,11 +392,6 @@ msgstr ""
 #| msgid "The invitation was sent by %(inviter_name)s."
 msgid "The invitation has been accepted."
 msgstr "Die Einladung wurde von %(inviter_name)s gesendet."
-
-#, fuzzy
-#| msgid "Open the following link to accept the invitation:"
-msgid "Please sign in or create an account to accept the invitation."
-msgstr "Öffne den folgenden Link, um die Einladung anzunehmen:"
 
 #, python-format
 msgid ""
