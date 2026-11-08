@@ -16,8 +16,6 @@ TZ_NOW = datetime.datetime.now(TZ)
 class InvitationMock(ExpiresAfterFixedTime):
     EXPIRES_AFTER_SETTINGS_KEY = "EXPIRES_TIMEOUT"
 
-    expired: bool
-
     def __init__(self, sent_at: datetime.datetime | None):
         self.sent_at = sent_at
 

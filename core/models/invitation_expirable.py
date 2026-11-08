@@ -8,21 +8,25 @@ from django.utils import timezone
 
 
 class HasSentAt(Protocol):
-    sent_at: datetime.datetime
+    sent_at: datetime.datetime | None
 
 
 class ExpiresAfterFixedTimeProtocol(HasSentAt, Protocol):
-    EXPIRES_AFTER_SETTINGS_KEY: str
+    @property
+    # The member mirrors the class attribute name of the concrete models.
+    def EXPIRES_AFTER_SETTINGS_KEY(self) -> str: ...  # noqa: N802
 
 
 class ExpiresAfterFixedTime:
     """Mixin for invitations that want to provide a fixed expiration duration.
 
     The invitation type needs to provide a key with which the expiry duration
-    in seconds can be taken from the settings of the project.
+    in seconds can be taken from the settings of the project, and a `sent_at`
+    attribute holding the time at which it was sent (or `None` if not yet).
     """
 
     EXPIRES_AFTER_SETTINGS_KEY = "EXPIRES_AFTER"
+    sent_at: datetime.datetime | None  # Provided by the concrete model.
 
     @property
     def expired(self: ExpiresAfterFixedTimeProtocol) -> bool:

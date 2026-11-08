@@ -8,7 +8,8 @@ from core.models.types import InvitationCode
 
 
 class HasCode(Protocol):
-    code: InvitationCode
+    @property
+    def code(self) -> InvitationCode: ...
 
 
 class InvitationURLsMixin:
