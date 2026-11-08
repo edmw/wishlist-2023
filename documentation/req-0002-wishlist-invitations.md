@@ -127,7 +127,7 @@ address of a user therefore comes from the identity provider.
 * REQ-2.28: When a wishlist is set to PRIVATE, all its PENDING (and
   CREATED) invitations must become REVOKED. This is only possible when the
   wishlist has no editors (already implemented).
-* REQ-2.29: When a wishlist is set from PUBLIC to USER or from USER to
+* REQ-2.29: When a wishlist is set from PUBLIC to USERS or from USERS to
   PUBLIC, PENDING invitations must remain valid.
 * REQ-2.30: The system must check the visibility of the wishlist at the
   moment of acceptance, not only at creation.
@@ -176,7 +176,7 @@ address of a user therefore comes from the identity provider.
 
 ### Creating
 
-* Given a wishlist with visibility USER, when the owner invites an address
+* Given a wishlist with visibility USERS, when the owner invites an address
   with variant NOTIFY, then an invitation in state PENDING exists and a
   mail was handed over.
 * Given a wishlist with visibility PRIVATE, when the owner tries to
@@ -259,10 +259,10 @@ address of a user therefore comes from the identity provider.
   owner sets it to PRIVATE, then all these invitations are REVOKED.
 * Given a wishlist with editors, when the owner sets it to PRIVATE, then
   this is rejected (existing behavior) and no invitation is revoked.
-* Given a PENDING invitation for a USER wishlist, when the owner sets it
+* Given a PENDING invitation for a USERS wishlist, when the owner sets it
   to PUBLIC, then the invitation remains PENDING and can be accepted.
 * Given a PENDING invitation for a PUBLIC wishlist, when the owner sets it
-  to USER, then the invitation remains PENDING and can be accepted.
+  to USERS, then the invitation remains PENDING and can be accepted.
 * Given a PENDING invitation, when the wishlist becomes PRIVATE during the
   acceptance, then the acceptance fails with an error and neither favorite
   nor editor is created.
