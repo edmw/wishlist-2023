@@ -23,7 +23,7 @@ from core.views.user._base import IsUserView
 logger = logging.getLogger(__name__)
 
 
-class EmailEnabledWidget(
+class EmailEnabledWidget(  # pyright: ignore[reportIncompatibleVariableOverride]
     LabelAfterMixin,
     CheckboxStylesMixin,
     CheckboxInput,
@@ -31,7 +31,7 @@ class EmailEnabledWidget(
     label_text = gettext_noop("Enable Email")
 
 
-class PushoverEnabledWidget(
+class PushoverEnabledWidget(  # pyright: ignore[reportIncompatibleVariableOverride]
     LabelBeforeMixin,
     CheckboxStylesMixin,
     CheckboxInput,
@@ -39,7 +39,7 @@ class PushoverEnabledWidget(
     label_text = gettext_noop("Enable Pushover")
 
 
-class PushoverKeyWidget(
+class PushoverKeyWidget(  # pyright: ignore[reportIncompatibleVariableOverride]
     PlaceholderTextMixin,
     AriaDescribedByMixin,
     TextStylesMixin,

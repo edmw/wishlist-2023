@@ -24,7 +24,7 @@ from ._base import HasPermissionForItemViewMixin
 logger = logging.getLogger(__name__)
 
 
-class WishlistWidget(  # pyright: ignore[reportIncompatibleMethodOverride]
+class WishlistWidget(  # pyright: ignore[reportIncompatibleMethodOverride, reportIncompatibleVariableOverride]  # noqa: E501
     LabelBeforeMixin,
     PlaceholderTextMixin,
     AriaDescribedByMixin,

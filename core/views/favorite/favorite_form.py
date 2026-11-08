@@ -12,7 +12,7 @@ from ._base import HasPermissionForFavoriteViewMixin
 logger = logging.getLogger(__name__)
 
 
-class NotifyOnItemCreateWidget(
+class NotifyOnItemCreateWidget(  # pyright: ignore[reportIncompatibleVariableOverride]
     LabelAfterMixin,
     CheckboxStylesMixin,
     CheckboxInput,

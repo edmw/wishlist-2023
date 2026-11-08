@@ -30,7 +30,7 @@ INVITATION_EMAIL = TemplatedNotification(
 )
 
 
-class ShareEmailWidget(
+class ShareEmailWidget(  # pyright: ignore[reportIncompatibleVariableOverride]
     LabelBeforeMixin,
     PlaceholderTextMixin,
     AriaDescribedByMixin,

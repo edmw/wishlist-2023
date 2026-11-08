@@ -31,7 +31,7 @@ from ._base import HasPermissionForListViewMixin
 logger = logging.getLogger(__name__)
 
 
-class NameWidget(
+class NameWidget(  # pyright: ignore[reportIncompatibleVariableOverride]
     LabelBeforeMixin,
     PlaceholderTextMixin,
     AriaDescribedByMixin,
@@ -45,7 +45,7 @@ class NameWidget(
         super().__init__()
 
 
-class VisibilityWidget(  # pyright: ignore[reportIncompatibleMethodOverride]
+class VisibilityWidget(  # pyright: ignore[reportIncompatibleMethodOverride, reportIncompatibleVariableOverride]  # noqa: E501
     LabelBeforeMixin,
     AriaDescribedByMixin,
     RadioSelectStylesMixin,
@@ -54,7 +54,7 @@ class VisibilityWidget(  # pyright: ignore[reportIncompatibleMethodOverride]
     label_text = gettext_noop("Visibility")
 
 
-class ItemOrderingWidget(  # pyright: ignore[reportIncompatibleMethodOverride]
+class ItemOrderingWidget(  # pyright: ignore[reportIncompatibleMethodOverride, reportIncompatibleVariableOverride]  # noqa: E501
     LabelBeforeMixin,
     AriaDescribedByMixin,
     SelectStylesMixin,
@@ -63,7 +63,7 @@ class ItemOrderingWidget(  # pyright: ignore[reportIncompatibleMethodOverride]
     label_text = gettext_noop("Display order of wishes")
 
 
-class MarkReservationsWidget(
+class MarkReservationsWidget(  # pyright: ignore[reportIncompatibleVariableOverride]
     LabelAfterMixin,
     CheckboxStylesMixin,
     CheckboxInput,

@@ -23,7 +23,7 @@ from ._base import HasPermissionForListViewMixin
 logger = logging.getLogger(__name__)
 
 
-class NameWidget(
+class NameWidget(  # pyright: ignore[reportIncompatibleVariableOverride]
     LabelBeforeMixin,
     PlaceholderTextMixin,
     AriaDescribedByMixin,

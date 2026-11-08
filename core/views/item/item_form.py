@@ -23,7 +23,7 @@ from ._base import HasPermissionForItemViewMixin
 logger = logging.getLogger(__name__)
 
 
-class NameWidget(
+class NameWidget(  # pyright: ignore[reportIncompatibleVariableOverride]
     LabelBeforeMixin,
     PlaceholderTextMixin,
     AriaDescribedByMixin,
@@ -34,7 +34,7 @@ class NameWidget(
     placeholder_text = gettext_noop("Enter wish’s name")
 
 
-class DescriptionWidget(
+class DescriptionWidget(  # pyright: ignore[reportIncompatibleVariableOverride]
     LabelBeforeMixin,
     PlaceholderTextMixin,
     AriaDescribedByMixin,
@@ -45,7 +45,7 @@ class DescriptionWidget(
     placeholder_text = gettext_noop("Enter wish’s description")
 
 
-class PreferenceWidget(  # pyright: ignore[reportIncompatibleMethodOverride]
+class PreferenceWidget(  # pyright: ignore[reportIncompatibleMethodOverride, reportIncompatibleVariableOverride]  # noqa: E501
     LabelBeforeMixin,
     AriaDescribedByMixin,
     SelectStylesMixin,
@@ -54,7 +54,7 @@ class PreferenceWidget(  # pyright: ignore[reportIncompatibleMethodOverride]
     label_text = gettext_noop("Preference")
 
 
-class ReferenceWidget(
+class ReferenceWidget(  # pyright: ignore[reportIncompatibleVariableOverride]
     LabelBeforeMixin,
     PlaceholderTextMixin,
     AriaDescribedByMixin,
@@ -65,7 +65,7 @@ class ReferenceWidget(
     placeholder_text = gettext_noop("Enter URL (optional)")
 
 
-class ReferencePhotoWidget(
+class ReferencePhotoWidget(  # pyright: ignore[reportIncompatibleVariableOverride]
     LabelBeforeMixin,
     PlaceholderTextMixin,
     AriaDescribedByMixin,

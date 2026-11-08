@@ -21,7 +21,7 @@ from core.views.user import UserUpdateView
 logger = logging.getLogger(__name__)
 
 
-class UsernameWidget(
+class UsernameWidget(  # pyright: ignore[reportIncompatibleVariableOverride]
     LabelBeforeMixin,
     PlaceholderTextMixin,
     AriaDescribedByMixin,
@@ -32,7 +32,7 @@ class UsernameWidget(
     placeholder_text = gettext_noop("Enter nickname")
 
 
-class LanguageWidget(  # pyright: ignore[reportIncompatibleMethodOverride]
+class LanguageWidget(  # pyright: ignore[reportIncompatibleMethodOverride, reportIncompatibleVariableOverride]  # noqa: E501
     LabelBeforeMixin,
     AriaDescribedByMixin,
     SelectStylesMixin,

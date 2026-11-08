@@ -15,6 +15,7 @@
 * 🖌️ fix misaligned list titles for private wish lists
 * 🪛 fix passing parameters to management commands
 * 🛠️ add static type checking to code checks
+* 🪛 cleanup code (fix typing errors)
 
 ## [2.4.0]
 
