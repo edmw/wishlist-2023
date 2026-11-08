@@ -1,5 +1,6 @@
 """Check command."""
 
+import os
 import subprocess
 import textwrap
 from typing import Any
@@ -45,4 +46,18 @@ class Command(WebappBaseCommand):
             ]
         )
 
-        self.check_exit(returncode=ruff_completed.returncode or bandit_completed.returncode)
+        # PYRIGHT_PYTHON_IGNORE_WARNINGS suppresses the wrapper’s PyPI version
+        # check, keeping the run offline and its output stable.
+        pyright_completed = subprocess.run(  # nosec
+            [
+                "pyright",
+                ".",
+            ],
+            env={**os.environ, "PYRIGHT_PYTHON_IGNORE_WARNINGS": "1"},
+        )
+
+        returncode = (
+            ruff_completed.returncode or bandit_completed.returncode or pyright_completed.returncode
+        )
+
+        self.check_exit(returncode=returncode)

@@ -14,6 +14,7 @@
 * 🖌️ hide share action for private wish lists
 * 🖌️ fix misaligned list titles for private wish lists
 * 🪛 fix passing parameters to management commands
+* 🛠️ add static type checking to code checks
 
 ## [2.4.0]
 

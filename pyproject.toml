@@ -51,6 +51,7 @@ build = [
 check = [
   "ruff",
   "bandit[toml]",
+  "pyright",
   "django-stubs == 6.0.7",
   "djangorestframework-stubs == 3.16.9",
   "celery-types",
