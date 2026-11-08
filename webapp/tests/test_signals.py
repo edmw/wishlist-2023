@@ -50,7 +50,8 @@ class TestNotifyAdminOnNewSignup:
         assert "mib@example.com" in body
         assert "email/password" in body
         # The notification is plain text only, without an HTML alternative.
-        assert all(content_type != "text/html" for _, content_type in message.alternatives)
+        alternatives = message.alternatives  # type: ignore[attr-defined]
+        assert all(content_type != "text/html" for _, content_type in alternatives)
 
     def test_includes_provider_for_social_signups(self, settings: Any) -> None:
         settings.SIGNUP_NOTIFICATION_ENABLED = True

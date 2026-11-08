@@ -1,3 +1,5 @@
+from typing import cast
+
 from celery import Task, shared_task
 from celery.exceptions import MaxRetriesExceededError
 from celery.utils.log import get_task_logger
@@ -5,6 +7,7 @@ from django.conf import settings as django_settings
 from django.utils.translation import gettext_noop
 
 from core.models import FavoriteLens, WishID
+from core.models.fields import WishImageFieldFile
 from core.services import (
     ImageService,
     ImageServiceRetrieveConnectionError,
@@ -167,7 +170,7 @@ def generate_image_from_reference_photo(self: Task, wish_id: WishID) -> bool:
                 url=reference_photo,
                 max_image_pixels=django_settings.WISH_IMAGE_PIXELS_MAX,
             )
-            wish.image_field.update(name=reference_photo, image=image)
+            cast(WishImageFieldFile, wish.image_field).update(name=reference_photo, image=image)
         except ImageServiceUnidentifiedImageError:
             TaskLoggingService.task_fail(
                 "Unidentified image while retrieving image for Reference Photo",

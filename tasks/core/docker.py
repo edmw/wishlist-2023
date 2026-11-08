@@ -2,7 +2,7 @@ import os
 import shlex
 import subprocess
 import sys
-from typing import Protocol
+from typing import NoReturn, Protocol
 
 from invoke.context import Context
 from invoke.runners import Result
@@ -15,7 +15,7 @@ class DockerProtocol(Protocol):
 
     def print_banner(self, title: str, message: str) -> None: ...
 
-    def exit_with_banner(self, title: str, message: str) -> None: ...
+    def exit_with_banner(self, title: str, message: str) -> NoReturn: ...
 
     def run_in_context(self, command: list[str], env: dict | None = None) -> Result | None: ...
 
@@ -33,7 +33,7 @@ class DockerBase:
             message += f"\n{Markup.info("SIMULATION", ")")}"
         Printer.print_banner(title, message)
 
-    def exit_with_banner(self, title: str, message: str) -> None:
+    def exit_with_banner(self, title: str, message: str) -> NoReturn:
         self.print_banner(title, message)
         sys.exit(1)
 
