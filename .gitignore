@@ -4,7 +4,7 @@ webapp-frontend/node_modules
 
 # general
 .cache
-TODO.md
+TODO*.md
 
 # agents
 .agents
