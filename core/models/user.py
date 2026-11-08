@@ -50,7 +50,7 @@ class User(IDMixin[UserID], AbstractUser):
         last_login: models.DateTimeField
     """
 
-    class Meta:
+    class Meta:  # type: ignore[override]
         """Meta data for the User model."""
 
         verbose_name = "User"

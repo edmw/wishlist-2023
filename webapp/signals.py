@@ -6,7 +6,7 @@ from allauth.account.signals import user_signed_up
 from allauth.socialaccount.models import SocialLogin
 from allauth.socialaccount.signals import pre_social_login
 from django.conf import settings
-from django.contrib.auth.base_user import AbstractBaseUser
+from django.contrib.auth.models import AbstractUser
 from django.dispatch import receiver
 from django.http import HttpRequest
 from django.utils import timezone
@@ -44,7 +44,7 @@ def notify_admin_on_new_signup(sender: Any, **kwargs: Any) -> None:
     broken mail transport cannot break the signup itself.
     """
     user = kwargs.get("user")
-    if not isinstance(user, AbstractBaseUser):
+    if not isinstance(user, AbstractUser):
         return
 
     if not settings.SIGNUP_NOTIFICATION_ENABLED:
@@ -68,7 +68,7 @@ def notify_admin_on_new_signup(sender: Any, **kwargs: Any) -> None:
         logger.exception("Failure sending signup notification email", exc_info=exc)
 
 
-def _signup_notification_subject(user: AbstractBaseUser) -> str:
+def _signup_notification_subject(user: AbstractUser) -> str:
     """Builds the subject of the signup notification email.
 
     Arguments:
@@ -80,7 +80,7 @@ def _signup_notification_subject(user: AbstractBaseUser) -> str:
     return f"{settings.EMAIL_SUBJECT_PREFIX}New signup: {user.username}"
 
 
-def _signup_notification_message(user: AbstractBaseUser, kwargs: Mapping[str, Any]) -> str:
+def _signup_notification_message(user: AbstractUser, kwargs: Mapping[str, Any]) -> str:
     """Builds the plain text body of the signup notification email.
 
     Arguments:
