@@ -664,6 +664,13 @@ table.wl-lists {
     table-layout: fixed;
 }
 
+/* Reserves the space of the share action so that list titles stay aligned when a wish list cannot be shared (private lists). */
+table.wl-lists .wl-share {
+    display: inline-block;
+    width: 30px; /* matches the width of .btn-action */
+    margin-right: 1rem; /* matches Bootstrap's me-3 */
+}
+
 table.wl-lists td.wl-visibility {
     white-space: nowrap;
 }

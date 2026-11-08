@@ -12,6 +12,7 @@
 * 🖌️ fix sign out button missing its background
 * 🖌️ fix confusing sign in page for invited users
 * 🖌️ hide share action for private wish lists
+* 🖌️ fix misaligned list titles for private wish lists
 * 🪛 fix passing parameters to management commands
 
 ## [2.4.0]

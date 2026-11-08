@@ -89,7 +89,10 @@ class TestListsView(AssertLoggingMixin):
         response = self._get(client, core.user_alice.id)
 
         assert response.status_code == HTTPStatus.OK
-        assert core.list_alice.get_absolute_share_url() in response.content.decode("utf-8")
+        content = response.content.decode("utf-8")
+        assert core.list_alice.get_absolute_share_url() in content
+        # Every row renders the share slot so that titles stay aligned.
+        assert content.count('class="wl-share"') == response.context["your_wishlists_count"]
 
     def test_lists_view_hides_share_action_for_private_wishlist(
         self, core: CoreFixture, client: Client
@@ -103,7 +106,11 @@ class TestListsView(AssertLoggingMixin):
         response = self._get(client, core.user_alice.id)
 
         assert response.status_code == HTTPStatus.OK
-        assert core.list_alice.get_absolute_share_url() not in response.content.decode("utf-8")
+        content = response.content.decode("utf-8")
+        assert core.list_alice.get_absolute_share_url() not in content
+        # The share slot is still rendered (empty) so that titles stay aligned.
+        assert '<span class="wl-share"></span>' in content
+        assert content.count('class="wl-share"') == response.context["your_wishlists_count"]
 
     def test_lists_view_not_allowed(
         self, core: CoreFixture, client: Client, caplog: pytest.LogCaptureFixture
