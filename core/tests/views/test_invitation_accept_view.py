@@ -6,7 +6,7 @@ from urllib.parse import urlencode
 
 import pytest
 from django.core import mail
-from django.http import HttpResponse
+from django.http import HttpResponseBase
 from django.test import Client
 from django.urls import reverse
 from django.utils.translation import gettext_noop
@@ -51,7 +51,7 @@ def _accept_url(code: str) -> str:
 
 @pytest.mark.django_db
 class TestInvitationAcceptView:
-    def _messages(self, response: HttpResponse) -> list[str]:
+    def _messages(self, response: HttpResponseBase) -> list[str]:
         return [str(message) for message in response.context["messages"]]  # type: ignore[index]
 
     def test_authenticated_user_accepts_invitation(self, core: CoreFixture, client: Client) -> None:
