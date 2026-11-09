@@ -257,32 +257,39 @@ msgstr ""
 "entfernt. Bitte fordere die Person, die dich eingeladen hat, auf, dir eine "
 "neue Einladung zu senden."
 
-msgid "This invitation has expired."
-msgstr "Diese Einladung ist abgelaufen."
+#, python-format
+msgid "You have been invited to \"%(wishlist_name)s\" by %(inviter)s."
+msgstr ""
+"Du wurdest von %(inviter)s zum Wunschzettel '%(wishlist_name)s' eingeladen."
+
+msgid "Accept"
+msgstr "Annehmen"
+
+msgid "Decline"
+msgstr "Ablehnen"
+
+msgid "The invitation has been accepted."
+msgstr "Die Einladung wurde angenommen."
 
 msgid ""
-"The invitation link you followed is no longer valid. Please ask the person "
-"who invited you to send a new invitation."
+"You cannot become an editor of this wish list, because you are its owner."
 msgstr ""
-"Der Einladungslink, dem du gefolgt bist, ist nicht mehr gültig. Bitte "
-"fordere die Person, die dich eingeladen hat, auf, dir eine neue Einladung zu"
-" senden."
-
-msgid "This invitation has already been accepted."
-msgstr "Diese Einladung wurde bereits angenommen."
-
-msgid ""
-"The invitation link you followed was used before, so it cannot be accepted "
-"again. Please ask the person who invited you to send a new invitation if you"
-" need one."
-msgstr ""
-"Der Einladungslink, dem du gefolgt bist, wurde bereits verwendet und kann "
-"nicht erneut angenommen werden. Falls du eine Einladung benötigst, fordere "
-"die Person, die dich eingeladen hat, auf, dir eine neue zu senden."
+"Du kannst nicht Editor dieses Wunschzettels werden, weil Du der Besitzer "
+"bist."
 
 #, python-format
-msgid "You have been invited to \"%(name)s\""
-msgstr "Du wurdest zum Wunschzettel '%(name)s' eingeladen."
+msgid "You can also become an editor of \"%(wishlist_name)s\"."
+msgstr ""
+"Außerdem kannst du Editor des Wunschzettels '%(wishlist_name)s' werden."
+
+msgid "Join as editor"
+msgstr "Als Editor beitreten"
+
+msgid "Go to the wish list"
+msgstr "Zum Wunschzettel"
+
+msgid "You have been invited to a wish list."
+msgstr "Du wurdest zu einem Wunschzettel eingeladen."
 
 msgid "Please sign in or create an account to accept the invitation."
 msgstr ""
@@ -425,8 +432,11 @@ msgstr "Favoriten"
 msgid "Invitation"
 msgstr "Einladung"
 
-msgid "The invitation has been accepted."
-msgstr "Die Einladung wurde angenommen."
+msgid "The invitation has been declined."
+msgstr "Die Einladung wurde abgelehnt."
+
+msgid "You are now an editor of the wish list."
+msgstr "Du bist jetzt Editor dieses Wunschzettels."
 
 #, python-format
 msgid ""
@@ -903,6 +913,9 @@ msgstr ""
 msgid "Enter email"
 msgstr "E-Mail-Adresse eingeben"
 
+msgid "Type of invitation"
+msgstr "Art der Einladung"
+
 msgid "Share your List"
 msgstr "Deinen Wunschzettel teilen"
 
@@ -1273,6 +1286,12 @@ msgstr ""
 msgid "Edit this wish list."
 msgstr "Wunschzettel bearbeiten"
 
+msgid "Share this wish list."
+msgstr "Diesen Wunschzettel teilen."
+
+msgid "Share"
+msgstr "Teilen"
+
 msgid "Favored list"
 msgstr "Favorisierter Wunschzettel"
 
@@ -1281,3 +1300,26 @@ msgstr "Dies ist ein favorisierter Wunschzettel."
 
 msgid "Add this wish list to favorites."
 msgstr "Füge diesen Wunschzettel zu den Favoriten hinzu."
+
+#~ msgid "This invitation has expired."
+#~ msgstr "Diese Einladung ist abgelaufen."
+
+#~ msgid ""
+#~ "The invitation link you followed is no longer valid. Please ask the person "
+#~ "who invited you to send a new invitation."
+#~ msgstr ""
+#~ "Der Einladungslink, dem du gefolgt bist, ist nicht mehr gültig. Bitte "
+#~ "fordere die Person, die dich eingeladen hat, auf, dir eine neue Einladung zu"
+#~ " senden."
+
+#~ msgid "This invitation has already been accepted."
+#~ msgstr "Diese Einladung wurde bereits angenommen."
+
+#~ msgid ""
+#~ "The invitation link you followed was used before, so it cannot be accepted "
+#~ "again. Please ask the person who invited you to send a new invitation if you"
+#~ " need one."
+#~ msgstr ""
+#~ "Der Einladungslink, dem du gefolgt bist, wurde bereits verwendet und kann "
+#~ "nicht erneut angenommen werden. Falls du eine Einladung benötigst, fordere "
+#~ "die Person, die dich eingeladen hat, auf, dir eine neue zu senden."

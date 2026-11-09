@@ -281,7 +281,7 @@ class InvitationService:
                 moment of acceptance; no favorite or editor relation is created
                 in this case (see REQ-2.30/REQ-2.31).
         """
-        invitation = InvitationService._get_pending_invitation(code=code, user=user, access=access)
+        invitation = InvitationService.get_pending_invitation(code=code, user=user, access=access)
 
         if invitation.wishlist.visibility == Visibility.PRIVATE:
             raise InvitationPrivateWishlistError()
@@ -322,7 +322,7 @@ class InvitationService:
                 NOBODY, or no verified email address of the user matches the
                 invitation address (see REQ-2.22/REQ-2.42).
         """
-        invitation = InvitationService._get_pending_invitation(code=code, user=user, access=access)
+        invitation = InvitationService.get_pending_invitation(code=code, user=user, access=access)
 
         invitation.state_field = InvitationState.DECLINED
         invitation.declined_at = datetime.now(UTC)
@@ -333,7 +333,7 @@ class InvitationService:
         return invitation
 
     @staticmethod
-    def _get_pending_invitation(*, code: str, user: User, access: CoreAccess) -> WishlistInvitation:
+    def get_pending_invitation(*, code: str, user: User, access: CoreAccess) -> WishlistInvitation:
         """Returns the PENDING invitation addressed to one of the user's
         verified email addresses.
 
@@ -357,6 +357,43 @@ class InvitationService:
             raise InvitationInvalidError()
 
         if invitation.state != InvitationState.PENDING:
+            raise InvitationInvalidError()
+
+        if access == CoreAccess.NOBODY:
+            raise InvitationInvalidError()
+
+        if not InvitationService._has_verified_address(user=user, email=str(invitation.invitee_email)):
+            raise InvitationInvalidError()
+
+        return invitation
+
+    @staticmethod
+    def get_accepted_invitation(*, code: str, user: User, access: CoreAccess) -> WishlistInvitation:
+        """Returns the ACCEPTED invitation addressed to one of the user's
+        verified email addresses.
+
+        This is used for the editor consent step, which happens after the
+        invitation has been accepted and therefore no longer passes the checks
+        of `get_pending_invitation` (see REQ-2.34/REQ-2.44). All failure cases
+        — unknown token, non-accepted state, closed access mode and address
+        mismatch — raise the same error so that callers can respond identically
+        without revealing details (see REQ-2.22/REQ-2.42).
+
+        Arguments:
+            code: The plaintext invitation token to look up and check.
+            user: User on whose behalf the invitation is checked.
+            access: The configured access mode of the application.
+
+        Returns:
+            The matching invitation in state `ACCEPTED`.
+
+        Raises:
+            InvitationInvalidError: If any of the checks fails.
+        """
+        if (invitation := InvitationService.get_invitation_by_code(code=code)) is None:
+            raise InvitationInvalidError()
+
+        if invitation.state != InvitationState.ACCEPTED:
             raise InvitationInvalidError()
 
         if access == CoreAccess.NOBODY:

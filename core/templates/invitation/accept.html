@@ -10,12 +10,15 @@
         {% if outcome == "invalid" %}
             <h2>{% translate "This invitation is not valid." %}</h2>
             <p>{% translate "The invitation link you followed does not exist or has been removed. Please ask the person who invited you to send a new invitation." %}</p>
-        {% elif outcome == "expired" %}
-            <h2>{% translate "This invitation has expired." %}</h2>
-            <p>{% translate "The invitation link you followed is no longer valid. Please ask the person who invited you to send a new invitation." %}</p>
         {% else %}
-            <h2>{% translate "This invitation has already been accepted." %}</h2>
-            <p>{% translate "The invitation link you followed was used before, so it cannot be accepted again. Please ask the person who invited you to send a new invitation if you need one." %}</p>
+            <h2>{% blocktranslate with wishlist_name=invitation.wishlist.name inviter=invitation.inviter %}You have been invited to "{{ wishlist_name }}" by {{ inviter }}.{% endblocktranslate %}</h2>
+            <form method="post" class="wl-form mt-4">
+                {% csrf_token %}
+                <div class="d-flex gap-2">
+                    <button type="submit" name="action" value="accept" class="btn btn-primary">{% translate "Accept" %}</button>
+                    <button type="submit" name="action" value="decline" class="btn btn-outline-secondary">{% translate "Decline" %}</button>
+                </div>
+            </form>
         {% endif %}
     </div>
 {% endblock content %}

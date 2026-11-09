@@ -1,0 +1,21 @@
+{% extends "page.html" %}
+
+{% load i18n %}
+
+{% block header %}
+    {% with title="Invitation" %}{{ block.super }}{% endwith %}
+{% endblock header %}
+{% block content %}
+    <div class="content">
+        <h2>{% translate "The invitation has been accepted." %}</h2>
+        {% if consent_error %}
+            <div class="alert alert-danger" role="alert">{% translate "You cannot become an editor of this wish list, because you are its owner." %}</div>
+        {% endif %}
+        <p>{% blocktranslate with wishlist_name=invitation.wishlist.name %}You can also become an editor of "{{ wishlist_name }}".{% endblocktranslate %}</p>
+        <form method="post" class="wl-form mt-4">
+            {% csrf_token %}
+            <button type="submit" name="action" value="consent" class="btn btn-primary">{% translate "Join as editor" %}</button>
+        </form>
+        <p class="mt-3 mb-0"><a href="{{ invitation.wishlist.get_absolute_url }}">{% translate "Go to the wish list" %}</a></p>
+    </div>
+{% endblock content %}

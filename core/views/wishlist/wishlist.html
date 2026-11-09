@@ -18,6 +18,9 @@
                 {% if wishlist_is_editable %}
                     <a class="btn btn-link d-flex float-right" href="{{ wishlist.get_absolute_items_url }}" title="{% translate 'Edit list' %}" aria-description="{% translate 'Edit this wish list.' %}"><span class="btn-label">{% translate "Edit" %}</span> {% icon "edit-2" %}</a>
                 {% endif %}
+                {% if wishlist.owner == user and wishlist.is_shareable %}
+                    <a class="btn btn-link d-flex float-right" href="{% make_linked_url wishlist.get_absolute_share_url %}" title="{% translate 'Share list' %}" aria-description="{% translate 'Share this wish list.' %}"><span class="btn-label">{% translate "Share" %}</span> {% icon "share-2" %}</a>
+                {% endif %}
             </h2>
             {% if wishlist_is_favorite %}
                 <strong title="{% translate 'Favored list' %}" aria-description="{% translate 'This is a favored wish list.' %}">{% icon_large "star" %}</strong>

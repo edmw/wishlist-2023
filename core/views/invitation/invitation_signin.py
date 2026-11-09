@@ -15,8 +15,10 @@ class InvitationSigninView(AddNeverCacheMixin, TemplateView):
 
     `InvitationAcceptView` parks the invitation code in the session and sends
     the invitee here; once they have logged in or signed up, a signal handler
-    accepts the parked invitation automatically (see ADR-1000). This page
-    explains that to the invitee and offers the sign-in options.
+    redirects them back to the invitation page, where they explicitly accept or
+    decline (see ADR-1000). This page only explains that an invitation is
+    waiting for them — it does not reveal any details about it (see REQ-2.21) —
+    and offers the sign-in options.
 
     If no valid invitation is parked — for example because the user navigated
     here directly or the invitation can no longer be accepted — the generic
@@ -32,12 +34,8 @@ class InvitationSigninView(AddNeverCacheMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         code = self.request.session.get(constants.INVITATION_CODE_SESSION_KEY)
         invitation = InvitationService.get_invitation_by_code(code=code) if code else None
-        context["signup_open"] = InvitationService.is_signup_open(
-            code=code, access=CoreConfig.access
-        )
-        context["wishlist_name"] = (
-            invitation.wishlist.name
-            if invitation is not None and invitation.state in InvitationState.OPEN_STATES
-            else None
+        context["signup_open"] = InvitationService.is_signup_open(code=code, access=CoreConfig.access)
+        context["has_invitation"] = (
+            invitation is not None and invitation.state in InvitationState.OPEN_STATES
         )
         return context

@@ -7,7 +7,7 @@ from django.test import Client
 from django.urls import reverse
 
 from core import constants
-from core.models import UserID, Wishlist, WishlistID
+from core.models import User, UserID, Wishlist, WishlistID
 from core.models.types import ItemOrdering, Visibility
 from core.services import WishlistCollaborationService, WishlistService
 from core.tests._base import AssertLoggingMixin
@@ -299,3 +299,54 @@ class TestListDeleteView(AssertLoggingMixin):
         list_id = core.list_alice.id
         assert self._get_delete(client, user_id, list_id).status_code == HTTPStatus.FOUND
         assert self._post_delete(client, user_id, list_id).status_code == HTTPStatus.FOUND
+
+
+def _private_list(owner: User) -> Wishlist:
+    return Wishlist.objects.create(
+        owner=owner,
+        name_field="Private list",
+        description_field="",
+        visibility_field=Visibility.PRIVATE,
+        item_ordering_field=ItemOrdering.NAME_ASCENDING,
+    )
+
+
+@pytest.mark.django_db
+class TestWishlistView(AssertLoggingMixin):
+    def _get(self, client: Client, list_id: WishlistID) -> HttpResponse:
+        response = client.get(reverse(constants.VIEW_WISHLIST, kwargs={constants.LIST_ID_KEY: list_id}))
+        return cast(HttpResponse, response)
+
+    def test_wishlist_view_shows_share_action_for_owner_of_shareable_list(
+        self, core: CoreFixture, client: Client
+    ) -> None:
+        """The owner of a shareable wish list sees the share action on the detail page."""
+        client.force_login(core.user_alice)
+
+        response = self._get(client, core.list_alice.id)
+
+        content = response.content.decode()
+        assert 'title="Share list"' in content
+        assert core.list_alice.get_absolute_share_url() in content
+
+    def test_wishlist_view_hides_share_action_for_private_list(
+        self, core: CoreFixture, client: Client
+    ) -> None:
+        """No invitation function is offered for a private wish list."""
+        private_list = _private_list(owner=core.user_alice)
+        client.force_login(core.user_alice)
+
+        response = self._get(client, private_list.id)
+
+        assert 'title="Share list"' not in response.content.decode()
+
+    def test_wishlist_view_hides_share_action_for_collaborator(
+        self, core: CoreFixture, client: Client
+    ) -> None:
+        """An editor collaborator who is not the owner does not see the share action."""
+        WishlistCollaborationService.add_editor(wishlist=core.list_alice, user=core.user_bob)
+        client.force_login(core.user_bob)
+
+        response = self._get(client, core.list_alice.id)
+
+        assert 'title="Share list"' not in response.content.decode()

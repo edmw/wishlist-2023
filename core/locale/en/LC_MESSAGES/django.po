@@ -239,25 +239,34 @@ msgid ""
 "ask the person who invited you to send a new invitation."
 msgstr ""
 
-msgid "This invitation has expired."
+#, python-format
+msgid "You have been invited to \"%(wishlist_name)s\" by %(inviter)s."
+msgstr ""
+
+msgid "Accept"
+msgstr ""
+
+msgid "Decline"
+msgstr ""
+
+msgid "The invitation has been accepted."
 msgstr ""
 
 msgid ""
-"The invitation link you followed is no longer valid. Please ask the person "
-"who invited you to send a new invitation."
-msgstr ""
-
-msgid "This invitation has already been accepted."
-msgstr ""
-
-msgid ""
-"The invitation link you followed was used before, so it cannot be accepted "
-"again. Please ask the person who invited you to send a new invitation if you"
-" need one."
+"You cannot become an editor of this wish list, because you are its owner."
 msgstr ""
 
 #, python-format
-msgid "You have been invited to \"%(name)s\""
+msgid "You can also become an editor of \"%(wishlist_name)s\"."
+msgstr ""
+
+msgid "Join as editor"
+msgstr ""
+
+msgid "Go to the wish list"
+msgstr ""
+
+msgid "You have been invited to a wish list."
 msgstr ""
 
 msgid "Please sign in or create an account to accept the invitation."
@@ -388,7 +397,10 @@ msgstr ""
 msgid "Invitation"
 msgstr ""
 
-msgid "The invitation has been accepted."
+msgid "The invitation has been declined."
+msgstr ""
+
+msgid "You are now an editor of the wish list."
 msgstr ""
 
 #, python-format
@@ -792,6 +804,9 @@ msgstr ""
 msgid "Enter email"
 msgstr ""
 
+msgid "Type of invitation"
+msgstr ""
+
 msgid "Share your List"
 msgstr ""
 
@@ -1106,6 +1121,12 @@ msgid ""
 msgstr ""
 
 msgid "Edit this wish list."
+msgstr ""
+
+msgid "Share this wish list."
+msgstr ""
+
+msgid "Share"
 msgstr ""
 
 msgid "Favored list"

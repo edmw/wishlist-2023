@@ -8,11 +8,10 @@ from allauth.socialaccount.signals import pre_social_login
 from django.dispatch import receiver
 from django.http import HttpRequest
 from django.shortcuts import redirect
+from django.urls import reverse
 
 from core import constants
-from core.apps import CoreConfig
 from core.models import Language, User
-from core.services import InvitationService, InvitationServiceError
 from webapp.services import LanguageService, SignalLoggingService
 
 logger = logging.getLogger(__name__)
@@ -40,38 +39,36 @@ def allauth_user_logged_in_callback(sender: Any, **kwargs: Any) -> None:
 
 
 @receiver(user_logged_in)
-def allauth_user_logged_in_accept_invitation_callback(sender: Any, **kwargs: Any) -> None:
-    """Accepts an invitation parked in the session and redirects to the list.
+def allauth_user_logged_in_invitation_redirect_callback(sender: Any, **kwargs: Any) -> None:
+    """Redirects a user with a parked invitation back to the invitation page.
 
     When an anonymous user follows an invitation link, `InvitationAcceptView`
     parks the invitation code in their session and sends them to sign in or
     sign up. This signal fires once authentication is complete — for logins of
-    existing users as well as for new sign-ups — so that the parked invitation
-    can be accepted automatically without the invitee having to present the
-    code again (see ADR-1000).
+    existing users as well as for new sign-ups — so that the invitee is sent
+    back to the invitation page, where they explicitly accept or decline (see
+    ADR-1000). The parked code stays in the session; it is only consumed when
+    the invitation has been accepted or declined.
 
-    If no invitation is parked, or if it can no longer be accepted, this
-    handler does nothing and allauth's own redirect applies.
+    If no invitation is parked, this handler does nothing and allauth's own
+    redirect applies.
     """
     request = kwargs.get("request")
-    user = kwargs.get("user")
-    if not isinstance(request, HttpRequest) or not isinstance(user, User):
+    if not isinstance(request, HttpRequest):
         return
 
-    code = request.session.pop(constants.INVITATION_CODE_SESSION_KEY, None)
+    code = request.session.get(constants.INVITATION_CODE_SESSION_KEY)
     if not code:
         return
 
-    try:
-        invitation = InvitationService.accept_invitation(code=code, user=user, access=CoreConfig.access)
-    except InvitationServiceError as exc:
-        logger.info(
-            "Parked invitation could not be accepted after login (%s).",
-            type(exc).__name__,
+    raise ImmediateHttpResponse(
+        response=redirect(
+            reverse(
+                constants.VIEW_INVITATION_ACCEPT,
+                kwargs={constants.INVITATION_CODE_KEY: str(code)},
+            )
         )
-        return
-
-    raise ImmediateHttpResponse(response=redirect(invitation.wishlist.get_absolute_url()))
+    )
 
 
 @receiver(pre_social_login)

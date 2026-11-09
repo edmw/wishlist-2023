@@ -12,10 +12,13 @@ from core import constants
 from core.access import CoreAccess
 from core.apps import CoreConfig
 from core.models import Wishlist, WishlistID, WishlistInvitation
-from core.models.types import InvitationState, ItemOrdering, Visibility
+from core.models.types import InvitationState, InvitationVariant, ItemOrdering, Visibility
 from core.tests.conftest import CoreFixture
 
 INVITEE_EMAIL = "invitee@example.com"
+
+# The variant used when a test does not specify one explicitly.
+NOTIFY_VARIANT = InvitationVariant(InvitationVariant.NOTIFY)
 
 
 @pytest.fixture(autouse=True)
@@ -49,14 +52,20 @@ class TestListShareView:
         return cast(HttpResponse, response)
 
     def _post_share(
-        self, client: Client, user_id: Any, list_id: WishlistID, *, follow: bool = False
+        self,
+        client: Client,
+        user_id: Any,
+        list_id: WishlistID,
+        *,
+        variant: InvitationVariant = NOTIFY_VARIANT,
+        follow: bool = False,
     ) -> HttpResponse:
         response = client.post(
             reverse(
                 constants.VIEW_LIST_SHARE,
                 kwargs={constants.USER_ID_KEY: user_id, constants.LIST_ID_KEY: list_id},
             ),
-            data={"email": INVITEE_EMAIL},
+            data={"email": INVITEE_EMAIL, "variant": str(variant)},
             follow=follow,
         )
         return cast(HttpResponse, response)
@@ -86,6 +95,16 @@ class TestListShareView:
 
         assert "The invitation expires after 3 days." in response.content.decode()
 
+    def test_share_page_offers_variant_choice(self, core: CoreFixture, client: Client) -> None:
+        """The share page offers the choice between the two invitation variants."""
+        client.force_login(core.user_alice)
+        response = self._get_share(client, core.user_alice.id, core.list_alice.id)
+
+        content = response.content.decode()
+        assert "Type of invitation" in content
+        assert 'value="notify"' in content
+        assert 'value="editor"' in content
+
     def test_share_view_sends_invitation(self, core: CoreFixture, client: Client) -> None:
         """Alice sharing her public wish list creates and sends an invitation."""
         client.force_login(core.user_alice)
@@ -108,6 +127,18 @@ class TestListShareView:
         match = re.search(r"/invitations/([^/\s]+)/", str(message.body))
         assert match is not None
         assert WishlistInvitation.hash_token(match.group(1)) == str(invitation.code)
+
+    def test_share_view_sends_editor_invitation(self, core: CoreFixture, client: Client) -> None:
+        """Choosing the editor variant creates an invitation of that variant."""
+        editor_variant = InvitationVariant(InvitationVariant.EDITOR)
+        client.force_login(core.user_alice)
+        response = self._post_share(client, core.user_alice.id, core.list_alice.id, variant=editor_variant)
+
+        assert response.status_code == HTTPStatus.FOUND
+
+        invitation = WishlistInvitation.objects.get()
+        assert invitation.variant == editor_variant
+        assert len(mail.outbox) == 1
 
     def test_share_view_success_message(self, core: CoreFixture, client: Client) -> None:
         """A success message is shown after sharing a wish list."""

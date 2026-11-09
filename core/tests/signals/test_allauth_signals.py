@@ -1,7 +1,13 @@
 import pytest
+from allauth.account.signals import user_logged_in
+from allauth.core.exceptions import ImmediateHttpResponse
 from allauth.socialaccount.models import SocialAccount, SocialLogin
 from allauth.socialaccount.signals import pre_social_login
+from django.http import HttpRequest, HttpResponseRedirect
+from django.test.client import RequestFactory
+from django.urls import reverse
 
+from core import constants
 from core.models import User
 
 
@@ -101,3 +107,40 @@ class TestPreSocialLoginNameSync:
         user.refresh_from_db()
         assert user.first_name == ""
         assert user.last_name == ""
+
+
+@pytest.mark.django_db
+class TestUserLoggedInInvitationRedirect:
+    """A user with a parked invitation is redirected back to the invitation page."""
+
+    def _request(self, *, code: str | None) -> HttpRequest:
+        request = RequestFactory().get("/")
+        session: dict[str, object] = {}
+        if code is not None:
+            session[constants.INVITATION_CODE_SESSION_KEY] = code
+        request.session = session  # type: ignore[attr-defined]
+        return request
+
+    def test_parked_invitation_redirects_back_to_invitation_page(self) -> None:
+        user = User.objects.create_user(username="mib", email="mib@example.com", password=None)
+        request = self._request(code="some-token")
+
+        with pytest.raises(ImmediateHttpResponse) as excinfo:
+            user_logged_in.send(sender=User, request=request, user=user)
+
+        response = excinfo.value.response
+        assert isinstance(response, HttpResponseRedirect)
+        expected_url = reverse(
+            constants.VIEW_INVITATION_ACCEPT, kwargs={constants.INVITATION_CODE_KEY: "some-token"}
+        )
+        assert response.url == expected_url
+        # The parked code stays in the session; it is only consumed when the
+        # invitation has been accepted or declined.
+        assert request.session[constants.INVITATION_CODE_SESSION_KEY] == "some-token"
+
+    def test_no_parked_invitation_does_not_redirect(self) -> None:
+        user = User.objects.create_user(username="mib", email="mib@example.com", password=None)
+        request = self._request(code=None)
+
+        # No exception is raised; allauth's own redirect applies.
+        user_logged_in.send(sender=User, request=request, user=user)

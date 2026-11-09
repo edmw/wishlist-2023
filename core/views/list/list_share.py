@@ -3,7 +3,7 @@ from typing import Any, cast
 
 from django.contrib import messages
 from django.db.models import QuerySet
-from django.forms import EmailField, EmailInput, Form, ModelForm
+from django.forms import ChoiceField, EmailField, EmailInput, Form, ModelForm, RadioSelect
 from django.http import HttpResponse
 from django.http.response import HttpResponseRedirect
 from django.utils.translation import gettext as _
@@ -11,6 +11,7 @@ from django.utils.translation import gettext_noop
 
 from core.apps import CoreConfig
 from core.models import Wishlist, WishlistInvitation, WishlistLens
+from core.models.types import InvitationVariant
 from core.services import (
     InvitationAccessClosedError,
     InvitationLimitExceededError,
@@ -22,6 +23,7 @@ from core.views._forms import (
     AriaDescribedByMixin,
     LabelBeforeMixin,
     PlaceholderTextMixin,
+    RadioSelectStylesMixin,
     TextStylesMixin,
 )
 
@@ -40,12 +42,26 @@ class ShareEmailWidget(  # pyright: ignore[reportIncompatibleVariableOverride]
     placeholder_text = gettext_noop("Enter email")
 
 
+class ShareVariantWidget(  # pyright: ignore[reportIncompatibleMethodOverride, reportIncompatibleVariableOverride]  # noqa: E501
+    LabelBeforeMixin,
+    AriaDescribedByMixin,
+    RadioSelectStylesMixin,
+    RadioSelect,
+):
+    label_text = gettext_noop("Type of invitation")
+
+
 class ShareEmailField(EmailField):
     widget = ShareEmailWidget
 
 
 class ListShareForm(Form):
     email = ShareEmailField(required=True)
+    variant = ChoiceField(
+        choices=InvitationVariant.VARIANTS,
+        initial=InvitationVariant.NOTIFY,
+        widget=ShareVariantWidget,
+    )
 
     def __init__(self, *args: Any, **kwargs: Any):
         self.instance = kwargs.pop("instance")
@@ -92,11 +108,13 @@ class ListShareView(
     def form_valid(self, form: ModelForm) -> HttpResponse:
         wishlist = cast(Wishlist, self.get_object())
         email = str(form.cleaned_data["email"])
+        variant = InvitationVariant(str(form.cleaned_data["variant"]))
         try:
             invitation = InvitationService.create_invitation(
                 wishlist=wishlist,
                 inviter=self.try_user(),
                 invitee_email=email,
+                variant=variant,
                 access=CoreConfig.access,
             )
             InvitationService.send_invitation(invitation=invitation)

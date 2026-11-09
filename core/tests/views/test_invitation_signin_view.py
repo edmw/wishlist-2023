@@ -2,7 +2,6 @@
 
 from http import HTTPStatus
 from typing import Any
-from urllib.parse import urlencode
 
 import pytest
 from django.test import Client
@@ -12,6 +11,7 @@ from core import constants
 from core.access import CoreAccess
 from core.apps import CoreConfig
 from core.models import WishlistInvitation
+from core.models.types import InvitationState
 from core.services import InvitationService
 from core.tests.conftest import CoreFixture
 
@@ -46,21 +46,42 @@ class TestInvitationSigninView:
     def test_shows_invitation_context_for_parked_invitation(
         self, core: CoreFixture, client: Client, settings: Any
     ) -> None:
-        """An invitee with a parked invitation sees the list name and no restriction notice."""
+        """An invitee with a parked invitation sees the generic invitation notice and no
+        restriction notice; no details about the list are revealed (see REQ-2.21)."""
         # In the default access mode "existing" sign-up through an invitation
         # is only possible when explicitly enabled.
         settings.INVITATION_REGISTRATION_ENABLED = True
         _park_invitation(client, _sent_invitation(core))
 
-        response = client.get(f"{_signin_url()}?{urlencode({'next': core.list_alice.get_absolute_url()})}")
+        response = client.get(_signin_url())
 
         assert response.status_code == HTTPStatus.OK
         content = response.content.decode()
-        assert 'You have been invited to "Wishes for Alice"' in content
+        assert "You have been invited to a wish list." in content
         assert "Please sign in or create an account to accept the invitation." in content
-        assert f'name="next" value="{core.list_alice.get_absolute_url()}"' in content
+        # No details about the invitation are revealed (see REQ-2.21); in
+        # particular no link to the list is carried through the sign-in flow.
+        assert core.list_alice.name not in content
+        assert f'value="{core.list_alice.get_absolute_url()}"' not in content
         assert 'id="google-signin"' in content
         assert "restricted to returning users" not in content
+
+    def test_shows_generic_content_for_parked_invalid_invitation(
+        self, core: CoreFixture, client: Client
+    ) -> None:
+        """A parked invitation that can no longer be accepted shows the generic sign-in page."""
+        _park_invitation(client, _sent_invitation(core))
+
+        # The invitation is used up in the meantime.
+        WishlistInvitation.objects.update(state_field=InvitationState.ACCEPTED)
+
+        response = client.get(_signin_url())
+
+        assert response.status_code == HTTPStatus.OK
+        content = response.content.decode()
+        assert "You have been invited to a wish list." not in content
+        # The default access mode is "existing".
+        assert "restricted to returning users" in content
 
     def test_shows_generic_content_without_parked_invitation(self, client: Client) -> None:
         """A user without a parked invitation sees the generic sign-in page."""

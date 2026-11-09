@@ -12,6 +12,10 @@
         {{ form.email }}
         <small id="description_email" class="form-text text-muted">{% render_errors form.email.errors %}</small>
     </div>
+    <div class="mb-3">
+        {{ form.variant }}
+        <small id="description_variant" class="form-text text-muted">{% render_errors form.variant.errors %}</small>
+    </div>
 {% endblock form_extra %}
 
 {% block note %}
