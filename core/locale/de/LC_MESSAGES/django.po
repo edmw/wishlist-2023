@@ -28,6 +28,30 @@ msgstr ""
 "diesen Fehler informieren möchtest, füge bitte diesen Code "
 "<strong>{request_id}</strong> zu deiner Nachricht hinzu."
 
+msgid "Created"
+msgstr "Erstellt"
+
+msgid "Pending"
+msgstr "Ausstehend"
+
+msgid "Accepted"
+msgstr "Angenommen"
+
+msgid "Declined"
+msgstr "Abgelehnt"
+
+msgid "Expired"
+msgstr "Abgelaufen"
+
+msgid "Revoked"
+msgstr "Widerrufen"
+
+msgid "Notify"
+msgstr "Benachrichtigung"
+
+msgid "Notify and editor"
+msgstr "Benachrichtigung und Editor"
+
 msgid "Name (ascending)"
 msgstr "Name (aufsteigend)"
 
@@ -98,6 +122,12 @@ msgstr "vor einer Stunde"
 msgid "{} ago"
 msgstr "vor {}"
 
+msgid "Invitation to a wish list"
+msgstr "Einladung zu einem Wunschzettel"
+
+msgid "Invitation to a wish list with editor offer"
+msgstr "Einladung zu einem Wunschzettel mit Editor-Angebot"
+
 msgid "Wish added"
 msgstr "Wunsch hinzugefügt"
 
@@ -156,6 +186,13 @@ msgstr ""
 "<h1>%(inviter_name)s hat dich zum Wunschzettel "
 "<strong>'%(wishlist_name)s'</strong> eingeladen.</h1>"
 
+msgid ""
+"You may also become an editor of this wish list. After accepting the "
+"invitation, you can decide whether to take up this offer."
+msgstr ""
+"Du kannst auch Editor dieses Wunschzettels werden. Nach der Annahme der "
+"Einladung kannst du entscheiden, ob du dieses Angebot annimmst."
+
 msgid "Open the following link to accept the invitation:"
 msgstr "Öffne den folgenden Link, um die Einladung anzunehmen:"
 
@@ -209,36 +246,39 @@ msgstr "Profil"
 msgid "Sign in"
 msgstr "Anmelden"
 
-#, fuzzy
-#| msgid "The invitation expires after %(duration)s."
 msgid "This invitation is not valid."
-msgstr "Die Einladung ist gültig für %(duration)s."
+msgstr "Diese Einladung ist nicht gültig."
 
 msgid ""
 "The invitation link you followed does not exist or has been removed. Please "
 "ask the person who invited you to send a new invitation."
 msgstr ""
+"Der Einladungslink, dem du gefolgt bist, existiert nicht oder wurde "
+"entfernt. Bitte fordere die Person, die dich eingeladen hat, auf, dir eine "
+"neue Einladung zu senden."
 
-#, fuzzy
-#| msgid "The invitation expires after %(duration)s."
 msgid "This invitation has expired."
-msgstr "Die Einladung ist gültig für %(duration)s."
+msgstr "Diese Einladung ist abgelaufen."
 
 msgid ""
 "The invitation link you followed is no longer valid. Please ask the person "
 "who invited you to send a new invitation."
 msgstr ""
+"Der Einladungslink, dem du gefolgt bist, ist nicht mehr gültig. Bitte "
+"fordere die Person, die dich eingeladen hat, auf, dir eine neue Einladung zu"
+" senden."
 
-#, fuzzy
-#| msgid "This wish has already been reserved."
 msgid "This invitation has already been accepted."
-msgstr "Dieser Wunsch wurde bereits reserviert."
+msgstr "Diese Einladung wurde bereits angenommen."
 
 msgid ""
 "The invitation link you followed was used before, so it cannot be accepted "
 "again. Please ask the person who invited you to send a new invitation if you"
 " need one."
 msgstr ""
+"Der Einladungslink, dem du gefolgt bist, wurde bereits verwendet und kann "
+"nicht erneut angenommen werden. Falls du eine Einladung benötigst, fordere "
+"die Person, die dich eingeladen hat, auf, dir eine neue zu senden."
 
 #, python-format
 msgid "You have been invited to \"%(name)s\""
@@ -289,9 +329,6 @@ msgstr "reserviert"
 
 msgid "wanted"
 msgstr "gewünscht"
-
-msgid "Invitation to a wish list"
-msgstr "Einladung zu einem Wunschzettel"
 
 #, python-format
 msgid ""
@@ -386,12 +423,10 @@ msgid "Favorites"
 msgstr "Favoriten"
 
 msgid "Invitation"
-msgstr ""
+msgstr "Einladung"
 
-#, fuzzy
-#| msgid "The invitation was sent by %(inviter_name)s."
 msgid "The invitation has been accepted."
-msgstr "Die Einladung wurde von %(inviter_name)s gesendet."
+msgstr "Die Einladung wurde angenommen."
 
 #, python-format
 msgid ""
@@ -884,6 +919,16 @@ msgid ""
 msgstr ""
 "Private Wunschzettel können nicht geteilt werden. Bitte ändere zuerst die "
 "Sichtbarkeit des Wunschzettels."
+
+msgid "Invitations are currently not possible. Please try again later."
+msgstr ""
+"Aktuell sind keine Einladungen möglich. Bitte versuche es später erneut."
+
+msgid ""
+"You have reached the daily limit of invitations. Please try again tomorrow."
+msgstr ""
+"Du hast das tägliche Limit für Einladungen erreicht. Bitte versuche es "
+"morgen erneut."
 
 msgid "Your Lists"
 msgstr "Deine Wunschzettel"

@@ -23,6 +23,30 @@ msgid ""
 "please add this code <strong>{request_id}</strong> to your message."
 msgstr ""
 
+msgid "Created"
+msgstr ""
+
+msgid "Pending"
+msgstr ""
+
+msgid "Accepted"
+msgstr ""
+
+msgid "Declined"
+msgstr ""
+
+msgid "Expired"
+msgstr ""
+
+msgid "Revoked"
+msgstr ""
+
+msgid "Notify"
+msgstr ""
+
+msgid "Notify and editor"
+msgstr ""
+
 msgid "Name (ascending)"
 msgstr ""
 
@@ -93,6 +117,12 @@ msgstr ""
 msgid "{} ago"
 msgstr ""
 
+msgid "Invitation to a wish list"
+msgstr ""
+
+msgid "Invitation to a wish list with editor offer"
+msgstr ""
+
 msgid "Wish added"
 msgstr ""
 
@@ -143,6 +173,11 @@ msgstr ""
 msgid ""
 "<h1>%(inviter_name)s has invited you to the wish list "
 "<strong>'%(wishlist_name)s'</strong>.</h1>"
+msgstr ""
+
+msgid ""
+"You may also become an editor of this wish list. After accepting the "
+"invitation, you can decide whether to take up this offer."
 msgstr ""
 
 msgid "Open the following link to accept the invitation:"
@@ -262,9 +297,6 @@ msgid "reserved"
 msgstr ""
 
 msgid "wanted"
-msgstr ""
-
-msgid "Invitation to a wish list"
 msgstr ""
 
 #, python-format
@@ -772,6 +804,13 @@ msgstr ""
 msgid ""
 "Private wish lists cannot be shared. Please change the visibility of the "
 "list before you share it."
+msgstr ""
+
+msgid "Invitations are currently not possible. Please try again later."
+msgstr ""
+
+msgid ""
+"You have reached the daily limit of invitations. Please try again tomorrow."
 msgstr ""
 
 msgid "Your Lists"

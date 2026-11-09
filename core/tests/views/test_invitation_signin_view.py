@@ -1,6 +1,7 @@
 """Tests for the invitation sign-in view."""
 
 from http import HTTPStatus
+from typing import Any
 from urllib.parse import urlencode
 
 import pytest
@@ -21,12 +22,16 @@ def _signin_url() -> str:
     return reverse(constants.VIEW_INVITATION_SIGNIN)
 
 
-def _created_invitation(core: CoreFixture) -> WishlistInvitation:
-    return InvitationService.create_invitation(
+def _sent_invitation(core: CoreFixture) -> WishlistInvitation:
+    """Creates and sends an invitation; returns it in state PENDING."""
+    invitation = InvitationService.create_invitation(
         wishlist=core.list_alice,
         inviter=core.user_alice,
         invitee_email=INVITEE_EMAIL,
+        access=CoreConfig.access,
     )
+    InvitationService.send_invitation(invitation=invitation)
+    return invitation
 
 
 def _park_invitation(client: Client, invitation: WishlistInvitation) -> None:
@@ -39,10 +44,13 @@ def _park_invitation(client: Client, invitation: WishlistInvitation) -> None:
 @pytest.mark.django_db
 class TestInvitationSigninView:
     def test_shows_invitation_context_for_parked_invitation(
-        self, core: CoreFixture, client: Client
+        self, core: CoreFixture, client: Client, settings: Any
     ) -> None:
         """An invitee with a parked invitation sees the list name and no restriction notice."""
-        _park_invitation(client, _created_invitation(core))
+        # In the default access mode "existing" sign-up through an invitation
+        # is only possible when explicitly enabled.
+        settings.INVITATION_REGISTRATION_ENABLED = True
+        _park_invitation(client, _sent_invitation(core))
 
         response = client.get(f"{_signin_url()}?{urlencode({'next': core.list_alice.get_absolute_url()})}")
 
@@ -68,7 +76,7 @@ class TestInvitationSigninView:
         self, core: CoreFixture, client: Client, monkeypatch: pytest.MonkeyPatch
     ) -> None:
         """In nobody mode even an invited user cannot sign up and sees the restriction notice."""
-        _park_invitation(client, _created_invitation(core))
+        _park_invitation(client, _sent_invitation(core))
         monkeypatch.setattr(CoreConfig, "access", CoreAccess.NOBODY)
 
         response = client.get(_signin_url())

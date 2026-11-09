@@ -9,23 +9,21 @@ lists remain inaccessible without an invitation.
 from http import HTTPStatus
 
 import pytest
+from allauth.account.models import EmailAddress
 from django.test import Client
 from django.urls import reverse
-from django.utils.translation import gettext_noop
 
 from core import constants
+from core.access import CoreAccess
 from core.models import Favorite, Reservation, User, Wishlist, WishlistInvitation
 from core.models.types import ItemOrdering, Visibility
-from core.services import InvitationService, TemplatedNotification
+from core.services import InvitationService
 from core.tests.conftest import CoreFixture
 
 INVITEE_EMAIL = "carol@localhost"
 
-INVITATION_EMAIL = TemplatedNotification(
-    subject=gettext_noop("Invitation to a wish list"),
-    template_name="email/invitation_wishlist.txt",
-    html_template_name="email/invitation_wishlist.html",
-)
+# The baseline access mode for the view tests.
+ACCESS = CoreAccess.EXISTING
 
 
 def _users_list(owner: User) -> Wishlist:
@@ -52,13 +50,15 @@ def _private_list(owner: User) -> Wishlist:
 class TestInvitedUserAccess:
     def _accept_invitation(self, core: CoreFixture, wishlist: Wishlist) -> WishlistInvitation:
         """Creates a sent invitation for the list and accepts it as carol."""
+        EmailAddress.objects.create(user=core.user_carol, email=INVITEE_EMAIL, verified=True, primary=True)
         invitation = InvitationService.create_invitation(
             wishlist=wishlist,
             inviter=core.user_alice,
             invitee_email=INVITEE_EMAIL,
+            access=ACCESS,
         )
-        InvitationService.send_invitation(invitation=invitation, email=INVITATION_EMAIL)
-        InvitationService.accept_invitation(code=str(invitation.token), user=core.user_carol)
+        InvitationService.send_invitation(invitation=invitation)
+        InvitationService.accept_invitation(code=str(invitation.token), user=core.user_carol, access=ACCESS)
         return invitation
 
     def test_can_view_users_list(self, core: CoreFixture, client: Client) -> None:
@@ -81,9 +81,13 @@ class TestInvitedUserAccess:
         assert response.status_code == HTTPStatus.OK
 
     def test_can_favorite_list(self, core: CoreFixture, client: Client) -> None:
-        """An invited user can favorite the list."""
+        """An invited user can add another wish list visible to users to their favorites.
+
+        Accepting the invitation already added the invited list to carol's
+        favorites (see REQ-2.33), so a different list is used here.
+        """
+        self._accept_invitation(core, _users_list(core.user_alice))
         wishlist = _users_list(core.user_alice)
-        self._accept_invitation(core, wishlist)
         client.force_login(core.user_carol)
 
         response = client.post(

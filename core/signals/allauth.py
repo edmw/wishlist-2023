@@ -10,13 +10,9 @@ from django.http import HttpRequest
 from django.shortcuts import redirect
 
 from core import constants
+from core.apps import CoreConfig
 from core.models import Language, User
-from core.services import (
-    InvitationAlreadyAcceptedError,
-    InvitationExpiredError,
-    InvitationNotFoundError,
-    InvitationService,
-)
+from core.services import InvitationService, InvitationServiceError
 from webapp.services import LanguageService, SignalLoggingService
 
 logger = logging.getLogger(__name__)
@@ -67,8 +63,8 @@ def allauth_user_logged_in_accept_invitation_callback(sender: Any, **kwargs: Any
         return
 
     try:
-        invitation = InvitationService.accept_invitation(code=code, user=user)
-    except (InvitationNotFoundError, InvitationExpiredError, InvitationAlreadyAcceptedError) as exc:
+        invitation = InvitationService.accept_invitation(code=code, user=user, access=CoreConfig.access)
+    except InvitationServiceError as exc:
         logger.info(
             "Parked invitation could not be accepted after login (%s).",
             type(exc).__name__,

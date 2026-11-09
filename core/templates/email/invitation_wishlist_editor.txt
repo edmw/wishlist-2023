@@ -1,0 +1,13 @@
+{% load core i18n %}{% blocktranslate with inviter_name=inviter_name wishlist_name=wishlist_name %}{{ inviter_name }} has invited you to the wish list '{{ wishlist_name }}'.{% endblocktranslate %}
+
+{% translate "You may also become an editor of this wish list. After accepting the invitation, you can decide whether to take up this offer." %}
+
+{% translate "Open the following link to accept the invitation:" %}
+{{ invitation_url }}
+
+{% blocktranslate with inviter_name=inviter_name %}The invitation was sent by {{ inviter_name }}.{% endblocktranslate %}
+
+{% blocktranslate with duration=expires_after|natural_duration %}The invitation expires after {{ duration }}.{% endblocktranslate %}
+
+--
+{% translate "Please do not reply." %}

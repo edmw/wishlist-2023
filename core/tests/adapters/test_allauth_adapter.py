@@ -1,5 +1,7 @@
 """Tests for the allauth integration of the Core application."""
 
+from typing import Any
+
 import pytest
 from django.http import HttpRequest
 from django.test.client import RequestFactory
@@ -49,13 +51,24 @@ class TestSignupOpen:
         ],
     )
     def test_with_valid_invitation(
-        self, core: CoreFixture, monkeypatch: pytest.MonkeyPatch, access: CoreAccess, expected: bool
+        self,
+        core: CoreFixture,
+        settings: Any,
+        monkeypatch: pytest.MonkeyPatch,
+        access: CoreAccess,
+        expected: bool,
     ) -> None:
-        monkeypatch.setattr(CoreConfig, "access", access)
+        # In the "existing" mode sign-up through an invitation is only open
+        # when explicitly enabled. The invitation is created before the access
+        # mode changes, as it would be in a running system.
+        settings.INVITATION_REGISTRATION_ENABLED = True
         invitation = InvitationService.create_invitation(
             wishlist=core.list_alice,
             inviter=core.user_alice,
             invitee_email="invitee@example.com",
+            access=CoreAccess.EXISTING,
         )
+        InvitationService.send_invitation(invitation=invitation)
+        monkeypatch.setattr(CoreConfig, "access", access)
 
         assert signup_open(request=_request(code=str(invitation.token))) is expected

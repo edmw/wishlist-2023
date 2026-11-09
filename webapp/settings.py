@@ -117,6 +117,14 @@ def env_decrpyt(key: str, default: str | None, fernet: Fernet | None) -> str | N
 
 WISHLIST_INVITATION_EXPIRES_AFTER = 10 * 24 * 3600  # ten days in seconds
 
+# Maximum number of invitations a single owner may create within a rolling
+# window of the last 24 hours, in any state (see REQ-2.8/REQ-2.9).
+WISHLIST_INVITATION_DAILY_LIMIT = env.int("WISHLIST_INVITATION_DAILY_LIMIT", 30)
+
+# Whether registration through an invitation is possible while the access
+# mode is EXISTING; off by default (see REQ-2.39/REQ-2.40).
+INVITATION_REGISTRATION_ENABLED = env.bool("INVITATION_REGISTRATION_ENABLED", False)
+
 WISH_IMAGE_PIXELS_MAX = 40_000_000
 
 # endregion WISHLIST

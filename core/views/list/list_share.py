@@ -9,8 +9,14 @@ from django.http.response import HttpResponseRedirect
 from django.utils.translation import gettext as _
 from django.utils.translation import gettext_noop
 
+from core.apps import CoreConfig
 from core.models import Wishlist, WishlistInvitation, WishlistLens
-from core.services import InvitationPrivateWishlistError, InvitationService, TemplatedNotification
+from core.services import (
+    InvitationAccessClosedError,
+    InvitationLimitExceededError,
+    InvitationPrivateWishlistError,
+    InvitationService,
+)
 from core.views._base import LoginRequiredMixin, UpdateView, WishlistModelMixin
 from core.views._forms import (
     AriaDescribedByMixin,
@@ -22,12 +28,6 @@ from core.views._forms import (
 from ._base import HasPermissionForListViewMixin
 
 logger = logging.getLogger(__name__)
-
-INVITATION_EMAIL = TemplatedNotification(
-    subject=gettext_noop("Invitation to a wish list"),
-    template_name="email/invitation_wishlist.txt",
-    html_template_name="email/invitation_wishlist.html",
-)
 
 
 class ShareEmailWidget(  # pyright: ignore[reportIncompatibleVariableOverride]
@@ -70,6 +70,12 @@ class ListShareView(
     error_message_private_wishlist = gettext_noop(
         "Private wish lists cannot be shared. Please change the visibility of the list before you share it."
     )
+    error_message_access_closed = gettext_noop(
+        "Invitations are currently not possible. Please try again later."
+    )
+    error_message_limit_exceeded = gettext_noop(
+        "You have reached the daily limit of invitations. Please try again tomorrow."
+    )
 
     def get_queryset(self) -> QuerySet[Wishlist]:
         user = self.try_user()
@@ -91,11 +97,18 @@ class ListShareView(
                 wishlist=wishlist,
                 inviter=self.try_user(),
                 invitee_email=email,
+                access=CoreConfig.access,
             )
-            InvitationService.send_invitation(invitation=invitation, email=INVITATION_EMAIL)
+            InvitationService.send_invitation(invitation=invitation)
         except InvitationPrivateWishlistError:
             logger.warning("Invitation for private wish list %r requested.", wishlist.id)
             return self.redirect_back_with_error_message(_(self.error_message_private_wishlist))
+        except InvitationAccessClosedError:
+            logger.info("Invitation for wish list %r rejected; the access mode is closed.", wishlist.id)
+            return self.redirect_back_with_error_message(_(self.error_message_access_closed))
+        except InvitationLimitExceededError:
+            logger.info("Invitation for wish list %r rejected; the daily limit was reached.", wishlist.id)
+            return self.redirect_back_with_error_message(_(self.error_message_limit_exceeded))
 
         if message := getattr(self, "success_message", None):
             messages.success(self.request, _(message))

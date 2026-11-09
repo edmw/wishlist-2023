@@ -54,3 +54,26 @@ class FavoriteService:
             True, if the specified wish list is a favorite, otherwise False.
         """
         return FavoriteLens.view().by_user(user=user).by_wishlist(wishlist=wishlist).exists()
+
+    @staticmethod
+    def add_favorite(*, user: User, wishlist: Wishlist) -> Favorite:
+        """Adds the specified wish list to the favorites of the specified
+        user.
+
+        If the user has already added this wish list to their favorites, the
+        existing favorite is returned unchanged; otherwise a new one is
+        created with notifications on item creation enabled (see REQ-2.33).
+
+        Arguments:
+            user: User to add the favorite for.
+            wishlist: Wish list to be added as a favorite.
+
+        Returns:
+            The favorite entity.
+        """
+        favorite, _ = Favorite.objects.get_or_create(
+            user=user,
+            wishlist=wishlist,
+            defaults={Favorite.Fields.NOTIFY_ON_ITEM_CREATE: True},
+        )
+        return favorite

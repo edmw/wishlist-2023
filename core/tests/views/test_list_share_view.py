@@ -9,6 +9,8 @@ from django.test import Client
 from django.urls import reverse
 
 from core import constants
+from core.access import CoreAccess
+from core.apps import CoreConfig
 from core.models import Wishlist, WishlistID, WishlistInvitation
 from core.models.types import InvitationState, ItemOrdering, Visibility
 from core.tests.conftest import CoreFixture
@@ -152,6 +154,39 @@ class TestListShareView:
 
         assert WishlistInvitation.objects.count() == 0
         assert len(mail.outbox) == 0
+
+    def test_share_view_rejected_when_access_closed(
+        self, core: CoreFixture, client: Client, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """In nobody mode sharing is rejected with an error message."""
+        client.force_login(core.user_alice)
+        monkeypatch.setattr(CoreConfig, "access", CoreAccess.NOBODY)
+
+        response = self._post_share(client, core.user_alice.id, core.list_alice.id, follow=True)
+
+        assert "Invitations are currently not possible. Please try again later." in self._messages(response)
+        assert WishlistInvitation.objects.count() == 0
+        assert len(mail.outbox) == 0
+
+    def test_share_view_rejected_when_daily_limit_reached(
+        self, core: CoreFixture, client: Client, settings: Any
+    ) -> None:
+        """Once the owner reached the daily limit, further invitations are rejected."""
+        settings.WISHLIST_INVITATION_DAILY_LIMIT = 1
+        client.force_login(core.user_alice)
+
+        assert (
+            self._post_share(client, core.user_alice.id, core.list_alice.id).status_code == HTTPStatus.FOUND
+        )
+
+        response = self._post_share(client, core.user_alice.id, core.list_alice.id, follow=True)
+
+        assert (
+            "You have reached the daily limit of invitations. Please try again tomorrow."
+            in self._messages(response)
+        )
+        assert WishlistInvitation.objects.count() == 1
+        assert len(mail.outbox) == 1
 
     def test_share_view_other_list(self, core: CoreFixture, client: Client) -> None:
         """Bob trying to share alice’s wish list."""

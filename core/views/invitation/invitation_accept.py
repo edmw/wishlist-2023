@@ -10,11 +10,11 @@ from django.utils.translation import gettext as _
 from django.utils.translation import gettext_noop
 
 from core import constants
+from core.apps import CoreConfig
 from core.models.types import InvitationState
 from core.services import (
-    InvitationAlreadyAcceptedError,
-    InvitationExpiredError,
-    InvitationNotFoundError,
+    InvitationInvalidError,
+    InvitationPrivateWishlistError,
     InvitationService,
 )
 from core.views._base import TemplateView, UserMixin
@@ -62,15 +62,15 @@ class InvitationAcceptView(UserMixin, AddNeverCacheMixin, TemplateView):
 
         if user := self.user:
             try:
-                accepted = InvitationService.accept_invitation(code=code, user=user)
-            except InvitationNotFoundError:
-                # The invitation was removed between the lookup and the accept.
+                accepted = InvitationService.accept_invitation(
+                    code=code, user=user, access=CoreConfig.access
+                )
+            except InvitationInvalidError, InvitationPrivateWishlistError:
+                # Unknown token, non-pending state (including derived EXPIRED),
+                # closed access mode, address mismatch and a list that is
+                # private at acceptance time all map to the same outcome; no
+                # details are revealed (see REQ-2.22/REQ-2.31).
                 return self._render_outcome(request, outcome="invalid", status=404)
-            except InvitationExpiredError:
-                return self._render_outcome(request, outcome="expired")
-            except InvitationAlreadyAcceptedError:
-                messages.info(request, _("This invitation has already been accepted."))
-                return redirect(invitation.wishlist.get_absolute_url())
 
             messages.success(request, _("The invitation has been accepted."))
             return redirect(accepted.wishlist.get_absolute_url())

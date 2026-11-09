@@ -5,26 +5,24 @@ from typing import Any, Generator
 from urllib.parse import urlencode
 
 import pytest
+from allauth.account.models import EmailAddress
 from django.core import mail
 from django.http import HttpResponseBase
 from django.test import Client
 from django.urls import reverse
-from django.utils.translation import gettext_noop
 from freezegun import freeze_time
 
 from core import constants
-from core.models import WishlistInvitation
+from core.access import CoreAccess
+from core.models import User, WishlistInvitation
 from core.models.types import InvitationState
-from core.services import InvitationService, TemplatedNotification
+from core.services import InvitationService
 from core.tests.conftest import CoreFixture
 
 INVITEE_EMAIL = "invitee@example.com"
 
-INVITATION_EMAIL = TemplatedNotification(
-    subject=gettext_noop("Invitation to a wish list"),
-    template_name="email/invitation_wishlist.txt",
-    html_template_name="email/invitation_wishlist.html",
-)
+# The baseline access mode for the view tests.
+ACCESS = CoreAccess.EXISTING
 
 
 @pytest.fixture(autouse=True)
@@ -36,13 +34,19 @@ def _locmem_email(settings: Any) -> Generator[None, None, None]:
     mail.outbox = []
 
 
+def _verified_email(user: User, email: str) -> EmailAddress:
+    """Creates a verified allauth email address for the given user."""
+    return EmailAddress.objects.create(user=user, email=email, verified=True, primary=True)
+
+
 def _sent_invitation(core: CoreFixture) -> WishlistInvitation:
     invitation = InvitationService.create_invitation(
         wishlist=core.list_alice,
         inviter=core.user_alice,
         invitee_email=INVITEE_EMAIL,
+        access=ACCESS,
     )
-    InvitationService.send_invitation(invitation=invitation, email=INVITATION_EMAIL)
+    InvitationService.send_invitation(invitation=invitation)
     return invitation
 
 
@@ -57,6 +61,7 @@ class TestInvitationAcceptView:
 
     def test_authenticated_user_accepts_invitation(self, core: CoreFixture, client: Client) -> None:
         """A logged-in user accepts the invitation and is redirected to the list."""
+        _verified_email(core.user_carol, INVITEE_EMAIL)
         invitation = _sent_invitation(core)
         client.force_login(core.user_carol)
 
@@ -73,6 +78,7 @@ class TestInvitationAcceptView:
         self, core: CoreFixture, client: Client
     ) -> None:
         """A success message is shown after accepting an invitation."""
+        _verified_email(core.user_carol, INVITEE_EMAIL)
         invitation = _sent_invitation(core)
         client.force_login(core.user_carol)
 
@@ -80,9 +86,7 @@ class TestInvitationAcceptView:
 
         assert "The invitation has been accepted." in self._messages(response)
 
-    def test_anonymous_user_is_redirected_to_signin_page(
-        self, core: CoreFixture, client: Client
-    ) -> None:
+    def test_anonymous_user_is_redirected_to_signin_page(self, core: CoreFixture, client: Client) -> None:
         """An anonymous user is sent to the invitation sign-in page with a link back to the list."""
         invitation = _sent_invitation(core)
 
@@ -127,8 +131,9 @@ class TestInvitationAcceptView:
 
     def test_already_accepted_invitation_redirects_to_list(self, core: CoreFixture, client: Client) -> None:
         """An already accepted invitation cannot be accepted again."""
+        _verified_email(core.user_bob, INVITEE_EMAIL)
         invitation = _sent_invitation(core)
-        InvitationService.accept_invitation(code=str(invitation.token), user=core.user_bob)
+        InvitationService.accept_invitation(code=str(invitation.token), user=core.user_bob, access=ACCESS)
         client.force_login(core.user_carol)
 
         response = client.get(_accept_url(str(invitation.token)), follow=True)
