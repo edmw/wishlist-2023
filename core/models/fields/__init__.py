@@ -7,6 +7,8 @@ from .fullname import FullnameField
 from .invitation_code import InvitationCodeField
 from .invitation_email import InvitationEmailField
 from .invitation_id import InvitationIDField
+from .invitation_state import InvitationStateField
+from .invitation_variant import InvitationVariantField
 from .item_ordering import ItemOrderingField
 from .language import LanguageField
 from .name import NameField

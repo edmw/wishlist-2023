@@ -7,7 +7,7 @@ from freezegun import freeze_time
 
 from core.access import CoreAccess
 from core.models import User, Wishlist, WishlistInvitation
-from core.models.types import Visibility
+from core.models.types import InvitationState, Visibility
 from core.services import (
     InvitationAlreadyAcceptedError,
     InvitationAlreadySentError,
@@ -52,8 +52,11 @@ class TestCreateInvitation:
         assert invitation.inviter_id == core.user_alice.id
         assert str(invitation.invitee_email) == INVITEE_EMAIL
         assert len(str(invitation.code)) > 0
-        assert invitation.sent is False
-        assert invitation.accepted is False
+        assert invitation.state == InvitationState.CREATED
+        # Only the hash of the token is stored; the plaintext token stays on
+        # the freshly created instance so that the link can be built.
+        assert invitation.token is not None
+        assert str(invitation.code) == WishlistInvitation.hash_token(str(invitation.token))
 
     def test_rejects_private_wishlist(self, core: CoreFixture) -> None:
         private_list = Wishlist.objects.create(
@@ -81,18 +84,22 @@ class TestSendInvitation:
             invitee_email=INVITEE_EMAIL,
         )
 
+        token = str(invitation.token)
+
         InvitationService.send_invitation(invitation=invitation, email=INVITATION_EMAIL)
 
         invitation.refresh_from_db()
-        assert invitation.sent is True
+        assert invitation.state == InvitationState.PENDING
         assert invitation.sent_at is not None
+        # The plaintext token is no longer available once the instance was reloaded.
+        assert invitation.token is None
 
         assert len(mail.outbox) == 1
         message = mail.outbox[0]
         assert message.to == [INVITEE_EMAIL]
-        # The email contains the invitation link with the code.
-        assert str(invitation.code) in message.body
-        assert f"/invitations/{invitation.code}/" in message.body
+        # The email contains the invitation link with the plaintext token; only its hash is stored.
+        assert token in message.body
+        assert f"/invitations/{token}/" in message.body
 
     def test_email_contains_expiry_hint(self, core: CoreFixture) -> None:
         """The email states how long the invitation stays valid."""
@@ -181,18 +188,17 @@ class TestSendInvitation:
         with pytest.raises(InvitationAlreadySentError):
             InvitationService.send_invitation(invitation=invitation, email=INVITATION_EMAIL)
 
-    def test_raises_if_no_invitee_email(self, core: CoreFixture) -> None:
-        invitation = _unsent_without_email(core.user_alice, core.list_alice)
+    def test_raises_if_token_not_available(self, core: CoreFixture) -> None:
+        """An invitation reloaded from the database carries no plaintext token."""
+        invitation = InvitationService.create_invitation(
+            wishlist=core.list_alice,
+            inviter=core.user_alice,
+            invitee_email=INVITEE_EMAIL,
+        )
+        invitation.refresh_from_db()
 
         with pytest.raises(InvitationNotSendableError):
             InvitationService.send_invitation(invitation=invitation, email=INVITATION_EMAIL)
-
-
-def _unsent_without_email(inviter: User, wishlist: Wishlist) -> WishlistInvitation:
-    return WishlistInvitation.objects.create(
-        inviter=inviter,
-        wishlist=wishlist,
-    )
 
 
 def _sent_invitation(core: CoreFixture) -> WishlistInvitation:
@@ -215,11 +221,11 @@ class TestAcceptInvitation:
         )
         InvitationService.send_invitation(invitation=invitation, email=INVITATION_EMAIL)
 
-        accepted = InvitationService.accept_invitation(code=str(invitation.code), user=core.user_bob)
+        accepted = InvitationService.accept_invitation(code=str(invitation.token), user=core.user_bob)
 
         assert accepted.pk == invitation.pk
         accepted.refresh_from_db()
-        assert accepted.accepted is True
+        assert accepted.state == InvitationState.ACCEPTED
         assert accepted.accepted_at is not None
 
     def test_raises_if_not_found(self, core: CoreFixture) -> None:
@@ -234,10 +240,10 @@ class TestAcceptInvitation:
         )
         InvitationService.send_invitation(invitation=invitation, email=INVITATION_EMAIL)
 
-        InvitationService.accept_invitation(code=str(invitation.code), user=core.user_bob)
+        InvitationService.accept_invitation(code=str(invitation.token), user=core.user_bob)
 
         with pytest.raises(InvitationAlreadyAcceptedError):
-            InvitationService.accept_invitation(code=str(invitation.code), user=core.user_carol)
+            InvitationService.accept_invitation(code=str(invitation.token), user=core.user_carol)
 
     @freeze_time("2026-01-01 12:00:00")
     def test_raises_if_expired(self, core: CoreFixture) -> None:
@@ -251,7 +257,7 @@ class TestAcceptInvitation:
         # Move past the configured expiry (ten days).
         with freeze_time("2026-01-15 12:00:00"):
             with pytest.raises(InvitationExpiredError):
-                InvitationService.accept_invitation(code=str(invitation.code), user=core.user_bob)
+                InvitationService.accept_invitation(code=str(invitation.token), user=core.user_bob)
 
 
 @pytest.mark.django_db
@@ -291,7 +297,7 @@ class TestIsSignupOpen:
     def test_with_valid_invitation(self, core: CoreFixture, access: CoreAccess, expected: bool) -> None:
         invitation = _sent_invitation(core)
 
-        assert InvitationService.is_signup_open(code=str(invitation.code), access=access) is expected
+        assert InvitationService.is_signup_open(code=str(invitation.token), access=access) is expected
 
     @freeze_time("2026-01-01 12:00:00")
     @pytest.mark.parametrize(
@@ -307,7 +313,7 @@ class TestIsSignupOpen:
 
         # Move past the configured expiry (ten days).
         with freeze_time("2026-01-15 12:00:00"):
-            assert InvitationService.is_signup_open(code=str(invitation.code), access=access) is expected
+            assert InvitationService.is_signup_open(code=str(invitation.token), access=access) is expected
 
     @pytest.mark.parametrize(
         ("access", "expected"),
@@ -319,6 +325,6 @@ class TestIsSignupOpen:
     )
     def test_with_accepted_invitation(self, core: CoreFixture, access: CoreAccess, expected: bool) -> None:
         invitation = _sent_invitation(core)
-        InvitationService.accept_invitation(code=str(invitation.code), user=core.user_bob)
+        InvitationService.accept_invitation(code=str(invitation.token), user=core.user_bob)
 
-        assert InvitationService.is_signup_open(code=str(invitation.code), access=access) is expected
+        assert InvitationService.is_signup_open(code=str(invitation.token), access=access) is expected

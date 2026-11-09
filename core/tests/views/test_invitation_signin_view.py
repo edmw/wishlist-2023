@@ -30,8 +30,9 @@ def _created_invitation(core: CoreFixture) -> WishlistInvitation:
 
 
 def _park_invitation(client: Client, invitation: WishlistInvitation) -> None:
+    """Parks the plaintext token in the session, as `InvitationAcceptView` does."""
     session = client.session
-    session[constants.INVITATION_CODE_SESSION_KEY] = str(invitation.code)
+    session[constants.INVITATION_CODE_SESSION_KEY] = str(invitation.token)
     session.save()
 
 

@@ -58,7 +58,7 @@ class TestInvitedUserAccess:
             invitee_email=INVITEE_EMAIL,
         )
         InvitationService.send_invitation(invitation=invitation, email=INVITATION_EMAIL)
-        InvitationService.accept_invitation(code=str(invitation.code), user=core.user_carol)
+        InvitationService.accept_invitation(code=str(invitation.token), user=core.user_carol)
         return invitation
 
     def test_can_view_users_list(self, core: CoreFixture, client: Client) -> None:

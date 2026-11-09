@@ -1,3 +1,4 @@
+import re
 from http import HTTPStatus
 from typing import Any, Generator, cast
 
@@ -9,7 +10,7 @@ from django.urls import reverse
 
 from core import constants
 from core.models import Wishlist, WishlistID, WishlistInvitation
-from core.models.types import ItemOrdering, Visibility
+from core.models.types import InvitationState, ItemOrdering, Visibility
 from core.tests.conftest import CoreFixture
 
 INVITEE_EMAIL = "invitee@example.com"
@@ -95,13 +96,16 @@ class TestListShareView:
         assert invitation.wishlist_id == core.list_alice.id
         assert invitation.inviter_id == core.user_alice.id
         assert str(invitation.invitee_email) == INVITEE_EMAIL
-        assert invitation.sent is True
+        assert invitation.state == InvitationState.PENDING
         assert invitation.sent_at is not None
 
         assert len(mail.outbox) == 1
         message = mail.outbox[0]
         assert message.to == [INVITEE_EMAIL]
-        assert f"/invitations/{invitation.code}/" in message.body
+        # The email contains the invitation link with the plaintext token; only its hash is stored.
+        match = re.search(r"/invitations/([^/\s]+)/", str(message.body))
+        assert match is not None
+        assert WishlistInvitation.hash_token(match.group(1)) == str(invitation.code)
 
     def test_share_view_success_message(self, core: CoreFixture, client: Client) -> None:
         """A success message is shown after sharing a wish list."""

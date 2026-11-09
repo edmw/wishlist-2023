@@ -58,4 +58,4 @@ class TestSignupOpen:
             invitee_email="invitee@example.com",
         )
 
-        assert signup_open(request=_request(code=str(invitation.code))) is expected
+        assert signup_open(request=_request(code=str(invitation.token))) is expected

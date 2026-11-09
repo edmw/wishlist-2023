@@ -16,29 +16,39 @@ TZ_NOW = datetime.datetime.now(TZ)
 class InvitationMock(ExpiresAfterFixedTime):
     EXPIRES_AFTER_SETTINGS_KEY = "EXPIRES_TIMEOUT"
 
-    def __init__(self, sent_at: datetime.datetime | None):
-        self.sent_at = sent_at
+    def __init__(self, created_at: datetime.datetime | None):
+        self.created_at = created_at
 
 
 @freeze_time(TZ_NOW)
 def test_expired(settings: Any) -> None:
     settings.EXPIRES_TIMEOUT = 60
     invitation = InvitationMock(
-        sent_at=timezone.now() - datetime.timedelta(seconds=60),
+        created_at=timezone.now() - datetime.timedelta(seconds=60),
     )
     assert invitation.expired is True
 
 
 @freeze_time(TZ_NOW)
-def test_expired_not_sent() -> None:
-    invitation = InvitationMock(sent_at=None)
+def test_not_expired_recently_created(settings: Any) -> None:
+    settings.EXPIRES_TIMEOUT = 60
+    invitation = InvitationMock(
+        created_at=timezone.now() - datetime.timedelta(seconds=30),
+    )
+    assert invitation.expired is False
+
+
+@freeze_time(TZ_NOW)
+def test_not_expired_without_creation_time() -> None:
+    """An instance that has not been persisted yet cannot be expired."""
+    invitation = InvitationMock(created_at=None)
     assert invitation.expired is False
 
 
 @freeze_time(TZ_NOW)
 def test_expired_missing_setting() -> None:
     invitation = InvitationMock(
-        sent_at=timezone.now() - datetime.timedelta(seconds=60),
+        created_at=timezone.now() - datetime.timedelta(seconds=60),
     )
     with pytest.raises(AttributeError):
         assert invitation.expired is True

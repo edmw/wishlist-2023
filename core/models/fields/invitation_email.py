@@ -19,6 +19,6 @@ class InvitationEmailField(models.EmailField):
         kwargs["verbose_name"] = "Invitee email"
         kwargs["help_text"] = self.description
         kwargs["db_column"] = "invitee_email"
-        kwargs["blank"] = True
+        kwargs["blank"] = False
         kwargs["max_length"] = InvitationEmail.max_length
         super().__init__(*args, **kwargs)

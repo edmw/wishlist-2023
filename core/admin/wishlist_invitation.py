@@ -19,6 +19,7 @@ class WishlistInvitationAdmin(admin.ModelAdmin):
                     WishlistInvitation.Fields.INVITER,
                     WishlistInvitation.Fields.INVITEE_EMAIL,
                     WishlistInvitation.Fields.CODE,
+                    WishlistInvitation.Fields.VARIANT,
                 )
             },
         ),
@@ -27,10 +28,11 @@ class WishlistInvitationAdmin(admin.ModelAdmin):
             {
                 "fields": (
                     WishlistInvitation.Fields.CREATED_AT,
-                    WishlistInvitation.Fields.SENT,
+                    WishlistInvitation.Fields.STATE,
                     WishlistInvitation.Fields.SENT_AT,
-                    WishlistInvitation.Fields.ACCEPTED,
                     WishlistInvitation.Fields.ACCEPTED_AT,
+                    WishlistInvitation.Fields.DECLINED_AT,
+                    WishlistInvitation.Fields.REVOKED_AT,
                 )
             },
         ),
@@ -42,21 +44,22 @@ class WishlistInvitationAdmin(admin.ModelAdmin):
         WishlistInvitation.Fields.CREATED_AT,
         WishlistInvitation.Fields.SENT_AT,
         WishlistInvitation.Fields.ACCEPTED_AT,
+        WishlistInvitation.Fields.DECLINED_AT,
+        WishlistInvitation.Fields.REVOKED_AT,
     )
 
     list_display = (
         WishlistInvitation.Fields.WISHLIST,
         WishlistInvitation.Fields.INVITER,
         WishlistInvitation.Fields.INVITEE_EMAIL,
+        WishlistInvitation.Fields.VARIANT,
+        WishlistInvitation.Fields.STATE,
         WishlistInvitation.Fields.CREATED_AT,
-        WishlistInvitation.Fields.SENT,
-        WishlistInvitation.Fields.ACCEPTED,
     )
 
-    list_filter = (WishlistInvitation.Fields.SENT, WishlistInvitation.Fields.ACCEPTED)
+    list_filter = (WishlistInvitation.Fields.STATE, WishlistInvitation.Fields.VARIANT)
 
     search_fields = [
         WishlistInvitation.Fields.ID,
-        WishlistInvitation.Fields.CODE,
         WishlistInvitation.Fields.INVITEE_EMAIL,
     ]

@@ -10,6 +10,7 @@ from django.utils.translation import gettext as _
 from django.utils.translation import gettext_noop
 
 from core import constants
+from core.models.types import InvitationState
 from core.services import (
     InvitationAlreadyAcceptedError,
     InvitationExpiredError,
@@ -49,10 +50,10 @@ class InvitationAcceptView(UserMixin, AddNeverCacheMixin, TemplateView):
             logger.info("Invitation accept requested for an unknown code.")
             return self._render_outcome(request, outcome="invalid", status=404)
 
-        if invitation.expired:
+        if invitation.state == InvitationState.EXPIRED:
             return self._render_outcome(request, outcome="expired")
 
-        if invitation.accepted:
+        if invitation.state == InvitationState.ACCEPTED:
             # The invitation has been consumed already; accepting it again is
             # not possible. The invitee can still view the list through its
             # visibility, so point them there.
@@ -74,11 +75,13 @@ class InvitationAcceptView(UserMixin, AddNeverCacheMixin, TemplateView):
             messages.success(request, _("The invitation has been accepted."))
             return redirect(accepted.wishlist.get_absolute_url())
 
-        # The user is not authenticated yet; park the code in the session so
-        # that it can be accepted automatically after login or sign-up. The
-        # dedicated sign-in page explains this to the invitee and carries them
-        # on from there.
-        request.session[constants.INVITATION_CODE_SESSION_KEY] = str(invitation.code)
+        # The user is not authenticated yet; park the plaintext token in the
+        # session so that it can be accepted automatically after login or
+        # sign-up. Only a hash of the token is stored (see REQ-2.17), so the
+        # value from the URL is what gets parked, not the invitation's code.
+        # The dedicated sign-in page explains this to the invitee and carries
+        # them on from there.
+        request.session[constants.INVITATION_CODE_SESSION_KEY] = code
         next_url = urlencode({"next": invitation.wishlist.get_absolute_url()})
         return redirect(f"{reverse(constants.VIEW_INVITATION_SIGNIN)}?{next_url}")
 

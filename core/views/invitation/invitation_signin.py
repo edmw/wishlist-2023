@@ -4,6 +4,7 @@ from django.utils.translation import gettext_noop
 
 from core import constants
 from core.apps import CoreConfig
+from core.models.types import InvitationState
 from core.services import InvitationService
 from core.views._base import TemplateView
 from webapp.views import AddNeverCacheMixin
@@ -36,7 +37,7 @@ class InvitationSigninView(AddNeverCacheMixin, TemplateView):
         )
         context["wishlist_name"] = (
             invitation.wishlist.name
-            if invitation is not None and not invitation.expired and not invitation.accepted
+            if invitation is not None and invitation.state in InvitationState.OPEN_STATES
             else None
         )
         return context
