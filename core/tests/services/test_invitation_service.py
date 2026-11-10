@@ -908,3 +908,49 @@ class TestIsSignupOpen:
             InvitationService.is_signup_open(code=str(invitation.token), access=CoreAccess.EXISTING)
             is False
         )
+
+
+@pytest.mark.django_db
+class TestInvitationAllowsEmail:
+    """Registration through an invitation only uses its invitee address (REQ-2.41)."""
+
+    def test_matching_email(self, core: CoreFixture) -> None:
+        invitation = _sent_invitation(core)
+
+        assert (
+            InvitationService.invitation_allows_email(code=str(invitation.token), email=INVITEE_EMAIL)
+            is True
+        )
+
+    def test_match_is_case_insensitive(self, core: CoreFixture) -> None:
+        invitation = _sent_invitation(core)
+
+        assert (
+            InvitationService.invitation_allows_email(
+                code=str(invitation.token), email=INVITEE_EMAIL.upper()
+            )
+            is True
+        )
+
+    def test_different_email(self, core: CoreFixture) -> None:
+        invitation = _sent_invitation(core)
+
+        assert (
+            InvitationService.invitation_allows_email(
+                code=str(invitation.token), email="someone-else@example.com"
+            )
+            is False
+        )
+
+    def test_without_code(self, core: CoreFixture) -> None:
+        assert InvitationService.invitation_allows_email(code=None, email=INVITEE_EMAIL) is False
+
+    def test_without_email(self, core: CoreFixture) -> None:
+        invitation = _sent_invitation(core)
+
+        assert InvitationService.invitation_allows_email(code=str(invitation.token), email=None) is False
+
+    def test_with_unknown_code(self, core: CoreFixture) -> None:
+        assert (
+            InvitationService.invitation_allows_email(code="does-not-exist", email=INVITEE_EMAIL) is False
+        )

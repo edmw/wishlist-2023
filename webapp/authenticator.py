@@ -15,16 +15,16 @@ from webapp.services import AuthLoggingService
 logger = logging.getLogger(__name__)
 
 
-def _is_open_for_signup(*, request: HttpRequest) -> bool:
+def _is_open_for_signup(*, request: HttpRequest, sociallogin: SocialLogin | None = None) -> bool:
     """Returns true if sign-up is currently open.
 
     The decision is delegated to the policy configured in `SIGNUP_POLICY` (a
-    dotted path to a callable taking the current request). If no policy is
-    configured, sign-up stays open.
+    dotted path to a callable taking the current request and, optionally, the
+    pending social login). If no policy is configured, sign-up stays open.
     """
     if (policy := getattr(django_settings, "SIGNUP_POLICY", None)) is None:
         return True
-    return import_string(policy)(request=request)
+    return import_string(policy)(request=request, sociallogin=sociallogin)
 
 
 class WebappAccountAdapter(DefaultAccountAdapter):
@@ -42,9 +42,11 @@ class WebappSocialAccountAdapter(DefaultSocialAccountAdapter):
         """Returns true if sign-up is currently open (see `_is_open_for_signup`).
 
         Overwrites `is_open_for_signup` from Account Adapter; without this
-        override, sign-ups via social accounts would bypass the check above.
+        override, sign-ups via social accounts would bypass the check above. The
+        pending social login is forwarded so that the policy can verify the
+        identity provider's e-mail against a parked invitation (see REQ-2.41).
         """
-        return _is_open_for_signup(request=request)
+        return _is_open_for_signup(request=request, sociallogin=sociallogin)
 
     def authentication_error(
         self,

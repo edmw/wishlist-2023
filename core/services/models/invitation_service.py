@@ -516,6 +516,32 @@ class InvitationService:
         )
 
     @staticmethod
+    def invitation_allows_email(*, code: str | None, email: str | None) -> bool:
+        """Returns true if the given e-mail address matches the invitee address
+        of the invitation referenced by the token (case-insensitive).
+
+        Used to enforce that registration through an invitation in existing mode
+        only happens with the invited e-mail address (see REQ-2.41). A missing
+        token or e-mail never matches, and a token without a matching invitation
+        does not match either.
+
+        Arguments:
+            code: The plaintext invitation token to check, or `None` if no
+                invitation is available.
+            email: The e-mail address to compare against the invitee address, or
+                `None` if none is available.
+
+        Returns:
+            True if the e-mail matches the invitation's invitee address.
+        """
+        if not code or not email:
+            return False
+        invitation = InvitationService.get_invitation_by_code(code=code)
+        if invitation is None:
+            return False
+        return str(invitation.invitee_email).strip().lower() == email.strip().lower()
+
+    @staticmethod
     def _has_valid_invitation(*, code: str | None) -> bool:
         """Returns true if the given invitation token refers to an invitation
         that is currently PENDING.

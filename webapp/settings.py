@@ -125,6 +125,14 @@ WISHLIST_INVITATION_DAILY_LIMIT = env.int("WISHLIST_INVITATION_DAILY_LIMIT", 30)
 # mode is EXISTING; off by default (see REQ-2.39/REQ-2.40).
 INVITATION_REGISTRATION_ENABLED = env.bool("INVITATION_REGISTRATION_ENABLED", False)
 
+# Who may create an account in this application (see ADR-1000, REQ-2.38–2.44):
+# PUBLIC for open sign-up, EXISTING for invitation-based registration only, and
+# NOBODY to disable new accounts entirely. It is read here at import time so the
+# allauth settings below can reflect the effective mode; `CoreConfig.access` is
+# kept in sync as the runtime source of truth used by the core adapters.
+ACCESS_MODE = env.enum("CORE_ACCESS_MODE", default=CoreAccess.EXISTING, enum=CoreAccess, by_value=True)
+CoreConfig.access = ACCESS_MODE
+
 WISH_IMAGE_PIXELS_MAX = 40_000_000
 
 # endregion WISHLIST
@@ -392,7 +400,10 @@ if not ENVIRONMENT_IS_BUILDING:
         "OAUTH_PKCE_ENABLED": True,
     }
 
-SOCIALACCOUNT_AUTO_SIGNUP = CoreConfig.access == CoreAccess.PUBLIC
+# In public mode a new social account is created immediately; in any other mode
+# sign-up is gated by the policy below, so auto sign-up stays off. Reflects the
+# effective access mode (see `ACCESS_MODE` above).
+SOCIALACCOUNT_AUTO_SIGNUP = ACCESS_MODE == CoreAccess.PUBLIC
 
 # Pluggable authentication policies: dotted paths to callables provided by an
 # installed app. Unset means the generic default behavior applies (sign-up
