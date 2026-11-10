@@ -8,7 +8,7 @@ class CoreAccess(StrEnum):
 
     * `PUBLIC` -- sign-up is open to everyone.
     * `EXISTING` -- only existing users can participate; new accounts are
-        created on the basis of an invitation (see ADR-1000).
+        created on the basis of an invitation.
     * `NOBODY` -- no new accounts can be created at all, not even on the
         basis of an invitation.
     """
