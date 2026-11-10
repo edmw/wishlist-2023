@@ -35,8 +35,8 @@ def _send_signup(user: User, **kwargs: Any) -> None:
 @pytest.mark.django_db
 class TestNotifyAdminOnNewSignup:
     def test_sends_plain_text_email_when_enabled(self, settings: Any) -> None:
-        settings.SIGNUP_NOTIFICATION_ENABLED = True
-        settings.ADMIN_EMAIL = ADMIN_EMAIL
+        settings.WEBAPP_SIGNUP_NOTIFICATION_ENABLED = True
+        settings.WEBAPP_ADMIN_EMAIL = ADMIN_EMAIL
 
         user = User(username="mib", email="mib@example.com", first_name="Michael", last_name="Baumgärtner")
         _send_signup(user)
@@ -54,8 +54,8 @@ class TestNotifyAdminOnNewSignup:
         assert all(content_type != "text/html" for _, content_type in alternatives)
 
     def test_includes_provider_for_social_signups(self, settings: Any) -> None:
-        settings.SIGNUP_NOTIFICATION_ENABLED = True
-        settings.ADMIN_EMAIL = ADMIN_EMAIL
+        settings.WEBAPP_SIGNUP_NOTIFICATION_ENABLED = True
+        settings.WEBAPP_ADMIN_EMAIL = ADMIN_EMAIL
 
         user = User(username="newbie", email="newbie@example.com")
         account = SocialAccount(provider="google", uid="123456789012345678901")
@@ -69,8 +69,8 @@ class TestNotifyAdminOnNewSignup:
         assert "email/password" not in body
 
     def test_does_not_send_when_disabled(self, settings: Any) -> None:
-        settings.SIGNUP_NOTIFICATION_ENABLED = False
-        settings.ADMIN_EMAIL = ADMIN_EMAIL
+        settings.WEBAPP_SIGNUP_NOTIFICATION_ENABLED = False
+        settings.WEBAPP_ADMIN_EMAIL = ADMIN_EMAIL
 
         user = User(username="mib", email="mib@example.com")
         _send_signup(user)
@@ -80,8 +80,8 @@ class TestNotifyAdminOnNewSignup:
     def test_warns_when_enabled_without_address(
         self, settings: Any, caplog: pytest.LogCaptureFixture
     ) -> None:
-        settings.SIGNUP_NOTIFICATION_ENABLED = True
-        settings.ADMIN_EMAIL = None
+        settings.WEBAPP_SIGNUP_NOTIFICATION_ENABLED = True
+        settings.WEBAPP_ADMIN_EMAIL = None
 
         user = User(username="mib", email="mib@example.com")
         _send_signup(user)
@@ -90,8 +90,8 @@ class TestNotifyAdminOnNewSignup:
         assert "WEBAPP_ADMIN_EMAIL" in caplog.text
 
     def test_transport_failure_is_swallowed(self, settings: Any, monkeypatch: pytest.MonkeyPatch) -> None:
-        settings.SIGNUP_NOTIFICATION_ENABLED = True
-        settings.ADMIN_EMAIL = ADMIN_EMAIL
+        settings.WEBAPP_SIGNUP_NOTIFICATION_ENABLED = True
+        settings.WEBAPP_ADMIN_EMAIL = ADMIN_EMAIL
 
         def _raise(**kwargs: Any) -> None:
             raise RuntimeError("smtp down")

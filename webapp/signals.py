@@ -38,8 +38,8 @@ def log_google_uid(
 def notify_admin_on_new_signup(sender: Any, **kwargs: Any) -> None:
     """Notifies the configured administrator about a new signup.
 
-    A plain text email is sent to `settings.ADMIN_EMAIL` if
-    `settings.SIGNUP_NOTIFICATION_ENABLED` is enabled and an address is
+    A plain text email is sent to `settings.WEBAPP_ADMIN_EMAIL` if
+    `settings.WEBAPP_SIGNUP_NOTIFICATION_ENABLED` is enabled and an address is
     configured. Transport failures are logged but never raised so that a
     broken mail transport cannot break the signup itself.
     """
@@ -47,10 +47,10 @@ def notify_admin_on_new_signup(sender: Any, **kwargs: Any) -> None:
     if not isinstance(user, AbstractUser):
         return
 
-    if not settings.SIGNUP_NOTIFICATION_ENABLED:
+    if not settings.WEBAPP_SIGNUP_NOTIFICATION_ENABLED:
         return
 
-    address = settings.ADMIN_EMAIL
+    address = settings.WEBAPP_ADMIN_EMAIL
     if not address:
         logger.warning(
             "Signup notification is enabled but WEBAPP_ADMIN_EMAIL is not set; "

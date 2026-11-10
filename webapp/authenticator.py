@@ -18,11 +18,11 @@ logger = logging.getLogger(__name__)
 def _is_open_for_signup(*, request: HttpRequest, sociallogin: SocialLogin | None = None) -> bool:
     """Returns true if sign-up is currently open.
 
-    The decision is delegated to the policy configured in `SIGNUP_POLICY` (a
-    dotted path to a callable taking the current request and, optionally, the
+    The decision is delegated to the policy configured in `WEBAPP_SIGNUP_POLICY`
+    (a dotted path to a callable taking the current request and, optionally, the
     pending social login). If no policy is configured, sign-up stays open.
     """
-    if (policy := getattr(django_settings, "SIGNUP_POLICY", None)) is None:
+    if (policy := getattr(django_settings, "WEBAPP_SIGNUP_POLICY", None)) is None:
         return True
     return import_string(policy)(request=request, sociallogin=sociallogin)
 
