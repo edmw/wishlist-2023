@@ -4,7 +4,7 @@ Date: 2023-05-13
 
 ## Status
 
-Accepted
+Superseded — the invitation behavior described here (boolean `sent`/`accepted` flags, automatic acceptance on first visit of the wish list, and the consequence that a wish list can only be made private again if all invitations are deleted) no longer applies. The current behavior is specified by [req-0002](./req-0002-wishlist-invitations.md): invitations follow an explicit state machine (CREATED/PENDING/ACCEPTED/DECLINED/EXPIRED/REVOKED), acceptance is a deliberate action on the invitation page, and making a wish list private revokes its open invitations. The architectural decisions of this ADR — the generic `Invitation` model, the service layer, and the two-step create/send process — remain in force.
 
 ## Context
 
