@@ -12,12 +12,11 @@ from core.services import InvitationService
 def signup_open(*, request: HttpRequest, sociallogin: SocialLogin | None = None) -> bool:
     """Returns true if sign-up is currently open.
 
-    The decision follows the configured access mode (see ADR-1000): in public
-    mode sign-up is open to everyone; in existing mode only on the basis of a
-    valid invitation and when registration through invitations is enabled by
-    configuration; in nobody mode never. In existing mode, a social login may
-    additionally only register with the verified e-mail address of the
-    invitation (see REQ-2.41).
+    The decision follows the configured access mode: in public mode sign-up is
+    open to everyone; in existing mode only on the basis of a valid invitation
+    and when registration through invitations is enabled by configuration; in
+    nobody mode never. In existing mode, a social login may additionally only
+    register with the verified e-mail address of the invitation (REQ-2.41).
 
     Arguments:
         request: The current request whose session is inspected.
@@ -27,24 +26,30 @@ def signup_open(*, request: HttpRequest, sociallogin: SocialLogin | None = None)
     Returns:
         True if sign-up may proceed, False otherwise.
     """
-    code = request.session.get(constants.INVITATION_CODE_SESSION_KEY)
     access = CoreConfig.access
-    if not InvitationService.is_signup_open(code=code, access=access):
+
+    # Check for a valid invitation
+    invitation_code = request.session.get(constants.INVITATION_CODE_SESSION_KEY)
+    if invitation_code:
+        if InvitationService.is_signup_open(code=invitation_code, access=access):
+            if sociallogin is not None:
+                email = _verified_email(sociallogin=sociallogin)
+                return InvitationService.invitation_allows_email(code=invitation_code, email=email)
+            else:
+                return True
+
+    if access == CoreAccess.NOBODY:
         return False
-    # In existing mode a valid PENDING invitation is guaranteed by the check
-    # above; a social login may only register with its invited e-mail address.
-    if sociallogin is not None and access == CoreAccess.EXISTING and code:
-        email = _verified_email(sociallogin=sociallogin)
-        return InvitationService.invitation_allows_email(code=code, email=email)
-    return True
+    if access == CoreAccess.PUBLIC:
+        return True
+    return False
 
 
 def _verified_email(*, sociallogin: SocialLogin) -> str | None:
     """Returns a verified e-mail address of the given social login.
 
     The primary verified address is preferred; any other verified address is
-    used as a fallback. Returns `None` if no verified address is available (see
-    REQ-2.41, which requires registration to use a verified identity).
+    used as a fallback. Returns `None` if no verified address is available.
 
     Arguments:
         sociallogin: The pending social login whose addresses are inspected.
