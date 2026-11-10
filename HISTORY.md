@@ -16,6 +16,10 @@
 * 🪛 fix passing parameters to management commands
 * 🛠️ add static type checking to code checks
 * 🪛 cleanup code (fix typing errors)
+* 🖼️ align invitation behavior with requirements
+* 🖼️ complete the invitation flow in the web interface
+* 🖼️ gate invitation registration by access mode and address
+* 🖼️ revoke open invitations when a list becomes private
 
 ## [2.4.0]
 
