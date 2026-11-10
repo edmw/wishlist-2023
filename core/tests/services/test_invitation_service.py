@@ -591,7 +591,7 @@ class TestVisibilityChanges:
         assert accepted.state == InvitationState.ACCEPTED
 
     def test_accept_fails_when_list_becomes_private(self, core: CoreFixture) -> None:
-        """Accepting on a list that is PRIVATE at that moment fails without side effects."""
+        """A list that became private has its open invitations revoked; accepting fails."""
         wishlist = _users_list(core.user_alice)
         _verified_email(core.user_bob, INVITEE_EMAIL)
         invitation = _sent_invitation(core, wishlist=wishlist)
@@ -599,13 +599,13 @@ class TestVisibilityChanges:
         wishlist.visibility = Visibility(Visibility.PRIVATE)
         wishlist.save(update_fields=[Wishlist.Fields.VISIBILITY])
 
-        with pytest.raises(InvitationPrivateWishlistError):
+        with pytest.raises(InvitationInvalidError):
             InvitationService.accept_invitation(
                 code=str(invitation.token), user=core.user_bob, access=ACCESS
             )
 
         invitation.refresh_from_db()
-        assert invitation.state == InvitationState.PENDING
+        assert invitation.state == InvitationState.REVOKED
         assert Favorite.objects.filter(user=core.user_bob, wishlist=wishlist).count() == 0
         assert not WishlistCollaborationService.is_editor(wishlist=wishlist, user=core.user_bob)
 
@@ -620,10 +620,32 @@ class TestVisibilityChanges:
         wishlist.visibility = Visibility(Visibility.PRIVATE)
         wishlist.save(update_fields=[Wishlist.Fields.VISIBILITY])
 
+        with pytest.raises(InvitationInvalidError):
+            InvitationService.accept_invitation(
+                code=str(invitation.token), user=core.user_bob, access=ACCESS
+            )
+
+    def test_accept_fails_for_pending_invitation_on_private_list(self, core: CoreFixture) -> None:
+        """A PENDING invitation on a private list is rejected at acceptance time.
+
+        The visibility check in `accept_invitation` guards against invitations that
+        are still open although the list is private (see REQ-2.30/REQ-2.31); the
+        queryset update bypasses the model hook that normally revokes them.
+        """
+        wishlist = _users_list(core.user_alice)
+        _verified_email(core.user_bob, INVITEE_EMAIL)
+        invitation = _sent_invitation(core, wishlist=wishlist)
+
+        Wishlist.objects.filter(pk=wishlist.pk).update(visibility_field=Visibility.PRIVATE)
+        wishlist.refresh_from_db()
+
         with pytest.raises(InvitationPrivateWishlistError):
             InvitationService.accept_invitation(
                 code=str(invitation.token), user=core.user_bob, access=ACCESS
             )
+
+        invitation.refresh_from_db()
+        assert invitation.state == InvitationState.PENDING
 
     def test_visibility_switch_keeps_pending(self, core: CoreFixture) -> None:
         """Switching between PUBLIC and USERS leaves PENDING invitations valid."""

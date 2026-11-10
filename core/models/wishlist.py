@@ -118,7 +118,25 @@ class Wishlist(
         update_fields: Iterable[str] | None = None,
         **kwargs: Any,
     ) -> None:
+        """Saves the current instance.
+
+        If this save changes the visibility of an existing wish list to private,
+        all open invitations of the list are revoked (see REQ-2.27/REQ-2.28). The
+        hook lives on the model so that every path — form, admin, or a future
+        service — is covered; switching between the other visibilities has no
+        effect on invitations (see REQ-2.29).
+        """
         self.full_clean()
+
+        becomes_private = False
+        if self.pk and self.visibility == Visibility.PRIVATE:
+            if update_fields is None or Wishlist.Fields.VISIBILITY in update_fields:
+                current_visibility = (
+                    Wishlist.objects.filter(pk=self.pk)
+                    .values_list(Wishlist.Fields.VISIBILITY, flat=True)
+                    .first()
+                )
+                becomes_private = current_visibility != Visibility.PRIVATE
 
         super().save(
             *args,
@@ -128,6 +146,11 @@ class Wishlist(
             update_fields=update_fields,
             **kwargs,
         )
+
+        if becomes_private:
+            from core.services import InvitationService
+
+            InvitationService.revoke_pending_for_wishlist(wishlist=self)
 
     @override
     def captionable(self) -> str:
